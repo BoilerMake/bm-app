@@ -46,3 +46,4 @@ For one it makes mocking things much easier, because you can just create your ow
 	- Maybe application (Again, for live updates)
 - Each of those places can have it's own front end app/framework thing
 	- ofc with lots of sharing between them
+	- test
