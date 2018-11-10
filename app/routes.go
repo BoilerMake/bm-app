@@ -4,10 +4,14 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func (s *server) routes() {
-	s.router.Get("/announcements", s.getAnnouncements)
+// routes generates a router and assigns it to the Server's handler
+// It will overwrite any handler that may already exist
+func (s *Server) routes() {
+	r := chi.NewRouter()
 
-	s.router.Route("/exec", func(r chi.Router) {
+	r.Get("/announcements", s.getAnnouncements)
+
+	r.Route("/exec", func(r chi.Router) {
 		r.Use(s.adminOnly())
 
 		r.Get("/", s.execRoot)
@@ -29,6 +33,8 @@ func (s *server) routes() {
 			r.Get("/{id}", s.execGetApplication)
 		})
 	})
+
+	s.Handler = r
 }
 
 
