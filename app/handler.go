@@ -1,7 +1,9 @@
 package app
 
+/*
+
 import (
-	"http"
+	"net/http"
 )
 
 // This is just an example handler
@@ -13,3 +15,4 @@ func (s *Server) handleSomething() http.HandlerFunc {
 		...
 	}
 }
+*/

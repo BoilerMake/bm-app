@@ -4,12 +4,25 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// routes generates a router and assigns it to the Server's handler
-// It will overwrite any handler that may already exist
+// routes generates a router and assigns it to the Server's handler.
+// It will overwrite any handler that may already exist.
 func (s *Server) routes() {
 	r := chi.NewRouter()
 
-	r.Get("/announcements", s.getAnnouncements)
+	r.Get("/", s.getRoot)
+	r.Get("/faq", s.getFAQ)
+	r.Get("/login", s.getLogin)
+	r.Post("/login", s.postLogin)
+	r.Get("/register", s.getRegister)
+	r.Post("/register", s.postRegister)
+	// TODO GitHub auth
+
+	r.Router("/api", func(r chi.Router) {
+		r.Get("/announcements", s.getAnnouncements)
+		r.Router("/users", func(r chi.Router) {
+
+		})
+	})
 
 	r.Route("/exec", func(r chi.Router) {
 		r.Use(s.adminOnly())
@@ -36,7 +49,6 @@ func (s *Server) routes() {
 
 	s.Handler = r
 }
-
 
 /*
 Current routes based on front end
