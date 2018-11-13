@@ -3,6 +3,7 @@ package env
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 
@@ -38,18 +39,28 @@ func Load(overwrite bool) (err error) {
 func parseFile(r io.Reader) (parsed map[string]string, err error) {
 	parsed = make(map[string]string)
 
+	lineCount := 0
 	s := bufio.NewScanner(r)
 	for s.Scan() {
+		lineCount++
 		line := s.Text()
 
 		// Ignore commented and blank lines
 		if line[0] != '#' && len(line) != 0 {
 			split := strings.Split(line, "=")
 
-			key := strings.TrimSpace(split[0])
-			value := strings.TrimSpace(split[1])
+			// Make sure there's actually a value assigned
+			if len(split) < 2 {
+				return parsed, fmt.Errorf("error parsing .env at line %d", lineCount)
+			}
 
-			parsed[key] = value
+			// Ignore placeholder assignments (like "PORT=")
+			if split[1] != "" {
+				key := strings.TrimSpace(split[0])
+				value := strings.TrimSpace(strings.Join(split[1:], "="))
+
+				parsed[key] = value
+			}
 		}
 	}
 

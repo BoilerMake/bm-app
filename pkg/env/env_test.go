@@ -8,19 +8,22 @@ import (
 
 func TestParseFile(t *testing.T) {
 	tt := []struct {
-		name     string
-		input    string
-		expected map[string]string
+		name      string
+		input     string
+		expected  map[string]string
+		shouldErr bool
 	}{
 		{
-			name:     "empty",
-			input:    "",
-			expected: map[string]string{},
+			name:      "empty",
+			input:     "",
+			expected:  map[string]string{},
+			shouldErr: false,
 		},
 		{
-			name:     "single commented line",
-			input:    "# This is a comment",
-			expected: map[string]string{},
+			name:      "single commented line",
+			input:     "# This is a comment",
+			expected:  map[string]string{},
+			shouldErr: false,
 		},
 		{
 			name:  "single valid line",
@@ -28,6 +31,7 @@ func TestParseFile(t *testing.T) {
 			expected: map[string]string{
 				"VALUE": "key",
 			},
+			shouldErr: false,
 		},
 		{
 			name:  "two valid lines",
@@ -36,6 +40,7 @@ func TestParseFile(t *testing.T) {
 				"VALUE":  "key",
 				"VALUE2": "key2",
 			},
+			shouldErr: false,
 		},
 		{
 			name:  "valid comment empty",
@@ -44,6 +49,27 @@ func TestParseFile(t *testing.T) {
 				"VALUE":  "key",
 				"VALUE2": "key2",
 			},
+			shouldErr: false,
+		},
+		{
+			name:      "no assignment",
+			input:     "VALUE=",
+			expected:  map[string]string{},
+			shouldErr: false,
+		},
+		{
+			name:  "equals in value",
+			input: "VALUE=URL:==with--characters++=like=equals==",
+			expected: map[string]string{
+				"VALUE": "URL:==with--characters++=like=equals==",
+			},
+			shouldErr: false,
+		},
+		{
+			name:      "invalid line",
+			input:     "THING",
+			expected:  map[string]string{},
+			shouldErr: true,
 		},
 	}
 
@@ -51,7 +77,7 @@ func TestParseFile(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			r := strings.NewReader(tc.input)
 			result, err := parseFile(r)
-			if err != nil {
+			if err != nil && !tc.shouldErr {
 				t.Errorf("Parsing failed: %v", err)
 			}
 
