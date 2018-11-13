@@ -43,6 +43,15 @@ func TestParseFile(t *testing.T) {
 			shouldErr: false,
 		},
 		{
+			name:  "two valid lines with empties",
+			input: "VALUE=key\n\n\n\n\n\n\nVALUE2=key2",
+			expected: map[string]string{
+				"VALUE":  "key",
+				"VALUE2": "key2",
+			},
+			shouldErr: false,
+		},
+		{
 			name:  "valid comment empty",
 			input: "VALUE=key\n# It's ya boy\nVALUE2=key2",
 			expected: map[string]string{

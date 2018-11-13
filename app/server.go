@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -21,26 +22,44 @@ type Server struct {
 
 // NewServer returns a new Server struct based on a given config.
 func NewServer() *Server {
-	return &Server{
-		Addr:           ":" + os.Getenv("PORT"),
-		Handler:        srv.routes(),
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		IdleTimeout:    15 * time.Second,
-		MaxHeaderBytes: 1 << 13, // 8 KiB
+	srv := &Server{
+		&http.Server{
+			Addr:           ":" + os.Getenv("PORT"),
+			ReadTimeout:    5 * time.Second,
+			WriteTimeout:   10 * time.Second,
+			IdleTimeout:    15 * time.Second,
+			MaxHeaderBytes: 1 << 13, // 8 KiB
+		},
 	}
+
+	// TODO init db here
+
+	// Register routes
+	// NOTE this doesn't seem like the cleanest way to do this, I'm open to solutions
+	srv.routes()
+
+	return srv
 }
 
 // Start begins listening for HTTP or HTTPS requests, depending on the mode given in config.
 // It will attempt to gracefully shutdown on SIGINT.
-func (s *Server) Start() {
-	mode := os.Getenv("ENV_MODE")
+func (s *Server) Start() (err error) {
+	mode, ok := os.LookupEnv("ENV_MODE")
+	if !ok {
+		return fmt.Errorf("environment variable not set: %v", "ENV_MODE")
+	}
 
 	if mode == "production" {
 		log.Printf("Starting server in PRODUCTION mode at %s", s.Addr)
 
+		// NOTE this is likely not the best way to store our certs, using something like crypto/x509 may be better
+		certsPath, ok := os.LookupEnv("CERTS_DIR")
+		if !ok {
+			return fmt.Errorf("environment variable not set: %v", "CERTS_DIR")
+		}
+
 		m := autocert.Manager{
-			Cache:  autocert.DirCache(conf.CertsPath),
+			Cache:  autocert.DirCache(certsPath),
 			Prompt: autocert.AcceptTOS,
 			// FIXME put these into a hosts file, config, or env var? idk probs one of those
 			HostPolicy: autocert.HostWhitelist("boilermake.org", "www.boilermake.org"),
@@ -56,7 +75,7 @@ func (s *Server) Start() {
 				log.Fatalf("Could not listen on %s: %v\n", s.Addr, err)
 			}
 		}()
-	} else {
+	} else if mode == "development" {
 		log.Printf("Starting server in DEVELOPMENT mode at %s", s.Addr)
 
 		go func() {
@@ -66,21 +85,20 @@ func (s *Server) Start() {
 		}()
 	}
 
-	stop := make(chan os.Signal, 1)
 	// Fun fact, empty structs take up 0 bytes
 	done := make(chan struct{})
-
+	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
 	go func() {
-		<-quit
+		<-stop
 		log.Println("Server is shutting down...")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		server.SetKeepAlivesEnabled(false)
-		if err := server.Shutdown(ctx); err != nil {
+		s.SetKeepAlivesEnabled(false)
+		if err := s.Shutdown(ctx); err != nil {
 			log.Fatalf("Could not gracefully shutdown the server: %v\n", err)
 		}
 
@@ -92,4 +110,6 @@ func (s *Server) Start() {
 
 	<-done
 	log.Println("Server stopped")
+
+	return err
 }

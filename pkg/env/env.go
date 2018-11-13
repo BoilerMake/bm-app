@@ -45,8 +45,9 @@ func parseFile(r io.Reader) (parsed map[string]string, err error) {
 		lineCount++
 		line := s.Text()
 
+		// TODO maybe use other string method instead of split, you're rejoining anyway...
 		// Ignore commented and blank lines
-		if line[0] != '#' && len(line) != 0 {
+		if len(line) != 0 && line[0] != '#' {
 			split := strings.Split(line, "=")
 
 			// Make sure there's actually a value assigned
