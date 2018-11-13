@@ -35,7 +35,7 @@ func NewServer() *Server {
 	// TODO init db here
 
 	// Register routes
-	// NOTE this doesn't seem like the cleanest way to do this, I'm open to solutions
+	// NOTE this doesn't seem like the cleanest way to do this, I'm v open to solutions
 	srv.routes()
 
 	return srv
@@ -90,6 +90,9 @@ func (s *Server) Start() (err error) {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
+	// NOTE shutting the server down this way means we can't have a server.Stop().
+	// We can rearchitecure the channels above to be members of a server, and then server.Stop() would be possible
+	// We could also always do `syscall.Kill(syscall.Getpid(), syscall.SIGINT)` but that doesn't seem as clean to me.
 	go func() {
 		<-stop
 		log.Println("Server is shutting down...")

@@ -44,7 +44,7 @@ For one it makes mock testing things much easier, because you can just create yo
 	- ofc with lots of sharing between them
 	- test
 
-Or maybe not... This is something we should discuss as a team
+Or maybe not... This is something we should probs discuss as a team
 
 ## Ideal way to structure handlers:
 - Validate input

@@ -1,14 +1,14 @@
-package cmd
+package main
 
 import (
 	"log"
 
-	"github.com/cjenright/new-backend/app"
+	"github.com/cjenright/new-backend/internal/app"
 	"github.com/cjenright/new-backend/pkg/env"
 )
 
 // Serve creates and starts a new server.
-func Serve() {
+func main() {
 	err := env.Load(true)
 	if err != nil {
 		log.Fatalln(err)

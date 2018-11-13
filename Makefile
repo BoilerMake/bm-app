@@ -1,11 +1,18 @@
-BINARY_NAME=new-backend
+# Add any other binaries to build here, seperated by a space
+TARGETS := serve
 
-all: test build
+all: test build serve
 build:
-	go build -o $(BINARY_NAME) -v
+	for target in $(TARGETS); do \
+		go build -o bin/$$target ./cmd/$$target; \
+	done
+
 test:
 	go test -v ./...
+
 clean:
 	go clean
-	rm $(BINARY_NAME)
+	rm -rf ./bin
 
+serve:
+	./bin/serve
