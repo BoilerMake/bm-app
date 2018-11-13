@@ -1,11 +1,7 @@
 # new-backend
-Ideal way to structure handlers:
-- Validate input
-- Query/update some data
-- Return a response
 
 ## Why dependency inject into server?
-For one it makes mocking things much easier, because you can just create your own server instance and test that with more granularity.  See [How I write Go HTTP services after seven years](https://medium.com/statuscode/how-i-write-go-http-services-after-seven-years-37c208122831) for more info on that.
+For one it makes mock testing things much easier, because you can just create your own server instance and test that with more granularity.  See [How I write Go HTTP services after seven years](https://medium.com/statuscode/how-i-write-go-http-services-after-seven-years-37c208122831) for more info on that.
 
 ## Current structure of backend
 - One route ("/") sends the entire react app (~1.5 MB!!)
@@ -47,3 +43,10 @@ For one it makes mocking things much easier, because you can just create your ow
 - Each of those places can have it's own front end app/framework thing
 	- ofc with lots of sharing between them
 	- test
+
+Or maybe not... This is something we should discuss as a team
+
+## Ideal way to structure handlers:
+- Validate input
+- Query/update some data
+- Return a response
