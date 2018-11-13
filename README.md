@@ -33,18 +33,10 @@ For one it makes mock testing things much easier, because you can just create yo
 			- Again may be neutral or even a positive, but I'd rather write go
 
 ## Thoughts on new structure
-- Static pages should be static
-	- Made with go templates or some server side render thing
-	- Make sure these are being cached
-- API should be used in a few select spots
-	- Announcements
-	- Some exec pages (For live updates)
-	- Maybe application (Again, for live updates)
-- Each of those places can have it's own front end app/framework thing
-	- ofc with lots of sharing between them
-	- test
-
-Or maybe not... This is something we should probs discuss as a team
+- SPA might not be the best idea
+- Not all pages need to be a full app
+- But, maybe making them that way makes things a lot easier
+	- We should talk about this as a team
 
 ## Ideal way to structure handlers:
 - Validate input
