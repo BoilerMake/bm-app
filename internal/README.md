@@ -1,5 +1,5 @@
 # `internal/`
-This directory should have packages that we don't want others to use.  This is stuff like "business logic", so http handlers and all that jazz. This doesn't me that other will not be able to see this directory, just that they probably shouldn't.
+This directory should have packages that we don't want others to use.  This is stuff like "business logic", so http handlers and all that jazz. This doesn't mean that other will not be able to see this directory, just that they probably shouldn't.
 
 ## Structure
 ### `app/`
