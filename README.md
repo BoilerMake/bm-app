@@ -1,10 +1,13 @@
 # new-backend
 
 ## How to run
-`cp .env.local .env`  
-Then make any env changes you need, then run  
-`make`  
-Which will test, build, and run the server    
+- First make sure go is installed.
+	- Run `go` in your terminal to determine this
+	- If it's not installed, go (heh) here https://golang.org/doc/install
+- `cp .env.local .env`  
+  - Then make any env changes you need, then run  
+- `make`  
+  - Which will test, build, and run the server    
 
 ## Why dependency inject into server?
 For one it makes mock testing things much easier, because you can just create your own server instance and test that with more granularity.  See [How I write Go HTTP services after seven years](https://medium.com/statuscode/how-i-write-go-http-services-after-seven-years-37c208122831) for more info on that.
