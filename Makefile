@@ -1,18 +1,29 @@
+# TODO this should be replaced with make.go which you can run with `go run make.go`
+# I know we've got some windows bois (🤮 it's 2018, use unix 😡), and this should solve their woes
+# ^ That doesn't mean we shouldn't have a Makefile though! running `make` is still faster than `go run make.go`
+
 # Add any other binaries to build here, seperated by a space
 TARGETS := serve
 
+INFO_STR=[INFO]
+
 all: test build serve
 build:
-	for target in $(TARGETS); do \
+	@for target in $(TARGETS); do \
+		echo $(INFO_STR) building binary \"$$target\"; \
 		go build -o bin/$$target ./cmd/$$target; \
 	done
 
 test:
-	go test -v ./...
+	@echo $(INFO_STR) running tests
+	@go test -v ./...
 
 clean:
-	go clean
-	rm -rf ./bin
+	@echo $(INFO_STR) cleaning dependencies and removing binaries
+	@go clean
+	@go mod tidy
+	@rm -rf ./bin
 
 serve:
-	./bin/serve
+	@echo $(INFO_STR) running bin/serve
+	@./bin/serve

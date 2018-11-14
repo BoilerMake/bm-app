@@ -5,7 +5,7 @@ import (
 )
 
 // routes generates a router and assigns it to the Server's handler.
-// It will overwrite any handler that may already exist.
+// It will overwrite any handler that may already exist in that server.
 func (s *Server) routes() {
 	r := chi.NewRouter()
 
