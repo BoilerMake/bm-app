@@ -2,12 +2,14 @@
 TARGETS := serve
 
 all: test build serve
+	
 build:
 	for target in $(TARGETS); do \
 		go build -o bin/$$target ./cmd/$$target; \
 	done
 
 test:
+	# Runs every tests (*_test.go)
 	go test -v ./...
 
 clean:

@@ -9,6 +9,7 @@ import (
 func (s *Server) routes() {
 	r := chi.NewRouter()
 
+	// ./root.go
 	r.Get("/", s.getRoot())
 	/*
 		r.Get("/faq", s.getFAQ)
