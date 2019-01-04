@@ -1,2 +1,2 @@
 # `pkg/`
-Packages that we're ok with others using should be put here.
+Things that are not as application specific as `internal/`.
