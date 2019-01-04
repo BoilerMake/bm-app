@@ -4,7 +4,7 @@
 ### Getting started
 - [Install Go](https://golang.org/doc/install)
 - Copy and setup variables in `.env`
-	- `$ cp .env.local .env`
+	- `$ cp .env.example .env`
   - Then make any env changes you need
 - Install [PostgreSQL](https://www.postgresql.org/)
 
