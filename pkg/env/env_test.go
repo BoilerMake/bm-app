@@ -68,9 +68,9 @@ func TestParseFile(t *testing.T) {
 		},
 		{
 			name:  "equals in value",
-			input: "VALUE=URL:==with--characters++=like=equals==",
+			input: "VALUE=URL:==,with--characters++=like=equals==",
 			expected: map[string]string{
-				"VALUE": "URL:==with--characters++=like=equals==",
+				"VALUE": "URL:==,with--characters++=like=equals==",
 			},
 			shouldErr: false,
 		},
@@ -83,15 +83,19 @@ func TestParseFile(t *testing.T) {
 	}
 
 	for _, tc := range tt {
+		tc := tc
+
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
 			r := strings.NewReader(tc.input)
 			result, err := parseFile(r)
 			if err != nil && !tc.shouldErr {
-				t.Errorf("Parsing failed: %v", err)
+				t.Errorf("parsing failed: %v", err)
 			}
 
 			if !reflect.DeepEqual(result, tc.expected) {
-				t.Errorf("Expected: %v, got: %v", tc.expected, result)
+				t.Errorf("expected: %v, got: %v", tc.expected, result)
 			}
 		})
 	}
