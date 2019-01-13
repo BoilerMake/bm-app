@@ -5,12 +5,9 @@
 *.so
 *.dylib
 bin/
-cmd/serve/serve
 
 # Test binary, build with `go test -c`
 *.test
 
 # Configs we don't want pushed
 .env
-
-web/src/node_modules/

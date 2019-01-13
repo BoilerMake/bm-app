@@ -3,11 +3,11 @@
 # ^ That doesn't mean we shouldn't have a Makefile though! running `make` is still faster than `go run make.go`
 
 # Add any other binaries to build here, seperated by a space
-TARGETS := serve
+TARGETS := server
 
 INFO_STR=[INFO]
 
-all: test build serve
+all: test build server
 build:
 	@for target in $(TARGETS); do \
 		echo $(INFO_STR) building binary \"$$target\"; \
@@ -24,6 +24,6 @@ clean:
 	@go mod tidy
 	@rm -rf ./bin
 
-serve:
-	@echo $(INFO_STR) running bin/serve
-	@./bin/serve
+server:
+	@echo $(INFO_STR) running bin/server
+	@./bin/server

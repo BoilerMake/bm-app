@@ -1,53 +1,22 @@
 # new-backend
 
-## How to run
-- First make sure go is installed.
-	- Run `go` in your terminal to determine this
-	- If it's not installed, go (heh) here https://golang.org/doc/install
-- `cp .env.local .env`  
-  - Then make any env changes you need, then run  
-- `make`  
+## Development instructions
+### Getting started
+- [Install Go](https://golang.org/doc/install)
+- Copy and setup variables in `.env`
+	- `$ cp .env.example .env`
+  - Then make any env changes you need
+- Install [PostgreSQL](https://www.postgresql.org/)
+
+### Bootstrapping the database
+- Create the database
+	- `$ createdb boilermake`
+- Run migrations using [goose](https://github.com/pressly/goose)
+	- Install goose
+		- `$ go get -u github.com/pressly/goose/cmd/goose`
+	- `$ cd migrations`
+	- `$ goose postgres YOUR_CONNSTR up`
+
+### Running the server
+- `$ make`
   - Which will test, build, and run the server    
-
-## Why dependency inject into server?
-For one it makes mock testing things much easier, because you can just create your own server instance and test that with more granularity.  See [How I write Go HTTP services after seven years](https://medium.com/statuscode/how-i-write-go-http-services-after-seven-years-37c208122831) for more info on that.
-
-## Current structure of backend
-- One route ("/") sends the entire react app (~1.5 MB!!)
-- The domains you see in the browser are not always requests sent to our backend
-	- They're just react telling you lies, and hitting the api
-	- e.g.:
-		- "/login" is not registered at all in our current backend
-		- But, that page is in the js from the react app
-		- When pressing login, react sends a POST request with form info to this URL:
-			- `api.boilermake.org/v1/users/login`
-- There's some pros and cons things about this
-	- Good:
-		- More uniform request handling
-			- Everything goes through the api, all render is done client side
-		- Only make one http request for static content
-		- Requests after will generally be small
-		- Moves complexity from backend to frontend (maybe neutral?)
-	- Bad:
-		- Huge initial load times
-		- Overall will typically send more over the wire
-			- Depends on number of pages hit, but on average this is probably true
-		- Puts more work on the client by making them render and create the DOM
-			- Can be especially slow on mobile/lower power devices
-			- and drain batter quicker
-		- Worse SEO
-			- Google can't index dynamic pages as well as static
-			- Kinda... It may be better now than it was before
-		- Requires writing a lot more js
-			- Again may be neutral or even a positive, but I'd rather write go
-
-## Thoughts on new structure
-- SPA might not be the best idea
-- Not all pages need to be a full app
-- But, maybe making them that way makes things a lot easier
-	- We should talk about this as a team
-
-## Ideal way to structure handlers:
-- Validate input
-- Query/update some data
-- Return a response

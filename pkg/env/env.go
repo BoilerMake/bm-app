@@ -3,19 +3,27 @@ package env
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
-
 	"strings"
+)
+
+var (
+	ErrNoDotEnv = errors.New("no .env file found")
 )
 
 // Load reads in the file called .env and sets all given environement variables.
 // If overwrite is set to true, Load will use the values present in .env instead of the current values.
 func Load(overwrite bool) (err error) {
-	// env file is ALWAYS is .env
+	// env file will ALWAYS be .env
 	f, err := os.Open(".env")
 	if err != nil {
+		if err == os.ErrNotExist {
+			return ErrNoDotEnv
+		}
+
 		return err
 	}
 
@@ -45,20 +53,19 @@ func parseFile(r io.Reader) (parsed map[string]string, err error) {
 		lineCount++
 		line := s.Text()
 
-		// TODO maybe use other string method instead of split, you're rejoining anyway...
 		// Ignore commented and blank lines
 		if len(line) != 0 && line[0] != '#' {
-			split := strings.Split(line, "=")
+			equalsPos := strings.Index(line, "=")
 
 			// Make sure there's actually a value assigned
-			if len(split) < 2 {
-				return parsed, fmt.Errorf("error parsing .env at line %d", lineCount)
+			if equalsPos == -1 {
+				return parsed, fmt.Errorf(".env expected variable assignment at line %d", lineCount)
 			}
 
-			// Ignore placeholder assignments (like "PORT=")
-			if split[1] != "" {
-				key := strings.TrimSpace(split[0])
-				value := strings.TrimSpace(strings.Join(split[1:], "="))
+			// Ignore placeholder assignments, e.g. "PORT="
+			if line[equalsPos+1:] != "" {
+				key := strings.TrimSpace(line[0:equalsPos])
+				value := strings.TrimSpace(line[equalsPos+1:])
 
 				parsed[key] = value
 			}
