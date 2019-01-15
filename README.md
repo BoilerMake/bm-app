@@ -7,6 +7,7 @@
 	- `$ cp .env.example .env`
   - Then make any env changes you need
 - Install [PostgreSQL](https://www.postgresql.org/)
+	- If you installed with brew, run `$ brew services start postgresql`
 
 ### Bootstrapping the database
 - Create the database
