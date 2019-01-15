@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/BoilerMake/new-backend/internal/http"
-	"github.com/BoilerMake/new-backend/internal/http/api"
-	"github.com/BoilerMake/new-backend/internal/http/web"
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/pkg/env"
 )
@@ -26,13 +24,7 @@ func main() {
 	defer db.Close()
 	us := &postgres.UserService{db}
 
-	apiHandler := api.NewHandler()
-	webHandler := web.NewHandler()
-
-	apiHandler.UserService = us
-	webHandler.UserService = us
-	// TODO should this just be NewHandler(us)?
-	h := &http.Handler{apiHandler, webHandler}
+	h := http.NewHandler(us)
 
 	host, ok := os.LookupEnv("HOST")
 	if !ok {

@@ -15,16 +15,17 @@ type Handler struct {
 	//EventService models.EventService
 }
 
-func NewHandler() *Handler {
-	h := Handler{}
+func NewHandler(us models.UserService) *Handler {
+	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
-	r.Get("/api", h.getRoot)
+	r.Get("/", h.getRoot)
 
 	h.Mux = r
 	return &h
 }
 
+// getRoot is an example handler endpoint. at hostname.com/api
 func (h *Handler) getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ya like API tests?")
 }

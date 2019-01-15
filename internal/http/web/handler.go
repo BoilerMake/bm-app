@@ -15,8 +15,8 @@ type Handler struct {
 	//EventService models.EventService
 }
 
-func NewHandler() *Handler {
-	h := Handler{}
+func NewHandler(us models.UserService) *Handler {
+	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
 	r.Get("/", h.getRoot)
