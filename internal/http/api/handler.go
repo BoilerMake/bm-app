@@ -25,7 +25,7 @@ func NewHandler(us models.UserService) *Handler {
 	return &h
 }
 
-// getRoot is an example handler endpoint. at hostname.com/api
+// getRoot is an example handler endpoint. It server get requests at hostname.com/api
 func (h *Handler) getRoot(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "ya like API tests?")
 }
