@@ -17,6 +17,7 @@
 		- `$ go get -u github.com/pressly/goose/cmd/goose`
 	- `$ cd migrations`
 	- `$ goose postgres YOUR_CONNSTR up`
+		- For example it could be `$ goose postgres "user=cj dbname=boilermake sslmode=disable" up`
 
 ### Running the server
 - `$ make`
