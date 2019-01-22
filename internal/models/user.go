@@ -24,11 +24,8 @@ type User struct {
 	LastName     string `json:"lastName"`  // NOT NULL
 	Phone        string `json:"phone"`
 
-	ProjectIdea string `json:"projectIdea"`
-	// TODO Feels kinda hacky to me... Use array instead?
-	TeamMember1 string `json:"teamMember1"`
-	TeamMember2 string `json:"teamMember2"`
-	TeamMember3 string `json:"teamMember3"`
+	ProjectIdea string   `json:"projectIdea"`
+	TeamMembers []string `json:"teamMembers"`
 }
 
 // A UserService defines an interface between the user struct (AKA the model)

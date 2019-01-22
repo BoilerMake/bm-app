@@ -27,10 +27,7 @@ type dbUser struct {
 	Phone        sql.NullString
 
 	ProjectIdea sql.NullString
-	// TODO figure out how to read in array from db
-	TeamMember1 sql.NullString
-	TeamMember2 sql.NullString
-	TeamMember3 sql.NullString
+	TeamMembers []string
 }
 
 // toModel converts a database specific dbUser to the more generic User struct.
@@ -46,9 +43,7 @@ func (u *dbUser) toModel() *models.User {
 		Phone:        u.Phone.String,
 
 		ProjectIdea: u.ProjectIdea.String,
-		TeamMember1: u.TeamMember1.String,
-		TeamMember2: u.TeamMember2.String,
-		TeamMember3: u.TeamMember3.String,
+		TeamMembers: u.TeamMembers,
 	}
 }
 
@@ -64,7 +59,7 @@ type UserService struct {
 // - nil user
 func (s *UserService) Create(u *models.User) error {
 	// TODO convert teammembern into array
-	_, err := s.DB.Exec(`INSERT INTO users(
+	_, err := s.DB.Exec(`INSERT INTO users (
 			role, 
 			email, 
 			password_hash, 
@@ -72,10 +67,8 @@ func (s *UserService) Create(u *models.User) error {
 			lastname, 
 			phone, 
 			projectidea, 
-			teammember1, 
-			teammember2, 
-			teammember3) 
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, u.TeamMember1, u.TeamMember2, u.TeamMember3)
+			teammembers, 
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, pq.Array(u.TeamMembers))
 
 	// TODO make sure when an exec fails it doesn't have an effect on the db
 	// Check postgres specific error
@@ -106,11 +99,9 @@ func (s *UserService) GetById(id string) (*models.User, error) {
 		last_name, 
 		phone, 
 		project_idea, 
-		teammember1, 
-		teammember2, 
-		teammember3 
+		team_members
 	FROM users 
-	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMember1, &dbu.TeamMember2, &dbu.TeamMember3)
+	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers))
 
 	// FIXME i think if there's an err dbu will be nil so toModel will panic.
 	// Seems like toModel needs to check for nil and maybe return an err.
@@ -127,9 +118,7 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 		last_name, 
 		phone, 
 		project_idea, 
-		teammember1, 
-		teammember2, 
-		teammember3 
+		team_members 
 	FROM users`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all users: %v", err)
@@ -138,7 +127,7 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 
 	for rows.Next() {
 		var dbu dbUser
-		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.FirstName, &dbu.LastName, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMember1, &dbu.TeamMember2, &dbu.TeamMember3)
+		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.FirstName, &dbu.LastName, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMembers)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get all users: %v", err)
 		}
@@ -168,10 +157,8 @@ func (s *UserService) Update(u *models.User) error {
 		lastname = $5, 
 		phone = $6, 
 		projectidea = $7, 
-		teammember1 = $8, 
-		teammember2 = $9, 
-		teammember3 = $10
-	WHERE id = $11`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, u.TeamMember1, u.TeamMember2, u.TeamMember3, u.ID)
+		team_members = $8, 
+	WHERE id = $11`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, pq.Array(u.TeamMembers), u.ID)
 
 	// TODO make sure when an exec fails it doesn't have an effect on the db
 	// Check postgres specific error
