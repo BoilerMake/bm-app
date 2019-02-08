@@ -13,7 +13,7 @@ func TestGetRoot(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	h := http.HandlerFunc(NewHandler(nil).getRoot)
+	h := http.HandlerFunc(NewHandler(nil).getRoot())
 	h.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {

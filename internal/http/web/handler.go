@@ -19,12 +19,14 @@ func NewHandler(us models.UserService) *Handler {
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
-	r.Get("/", h.getRoot)
+	r.Get("/", h.getRoot())
 
 	h.Mux = r
 	return &h
 }
 
-func (h *Handler) getRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "ya like web tests?")
+func (h *Handler) getRoot() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "ya like web tests?")
+	}
 }
