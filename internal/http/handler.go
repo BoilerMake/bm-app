@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-// Handler should tie together the handlers found in rest and web.
+// A Handler ties together the handlers found in api and web.
 type Handler struct {
 	*chi.Mux
 
@@ -16,6 +16,7 @@ type Handler struct {
 	WebHandler *web.Handler
 }
 
+// NewHandler creates a handler that wraps the subhandlers for the entire app.
 func NewHandler(us models.UserService) *Handler {
 	h := Handler{
 		APIHandler: api.NewHandler(us),

@@ -13,11 +13,13 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 )
 
+// A Server wraps an http.Server and provides some additional functionality.
 type Server struct {
 	*http.Server
 }
 
-func NewServer(address string, h *Handler) (srv *Server) {
+// NewServer creates a new Server.
+func NewServer(address string, h *Handler) (s *Server) {
 	return &Server{
 		&http.Server{
 			Addr:           address,
@@ -32,7 +34,8 @@ func NewServer(address string, h *Handler) (srv *Server) {
 
 // Start begins listening for HTTP or HTTPS requests, depending on the
 // environment mode. It will attempt to gracefully shutdown on SIGINT.
-// TODO This probably shouldn't block like it does right now
+// TODO Maybe this shouldn't block like it does right now.  If we go for that
+// approach then we'll have to block execution some other way in main.go.
 func (s *Server) Start() (err error) {
 	mode, ok := os.LookupEnv("ENV_MODE")
 	if !ok {

@@ -1,9 +1,3 @@
-// TODO we may need to change what hashing alg we're using for this based on
-// the current backend, unless we want to rehash people's passwords as they log
-// in (but... why would we really do that lol)
-// TODO a pretty classic blunder is to make your own password library and get
-// stuff wrong (subtly or not)... We're not writing our own hashing alg but
-// using some password lib could be more robust than what we have below
 package argon2
 
 import (
