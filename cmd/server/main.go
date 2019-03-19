@@ -35,7 +35,7 @@ func main() {
 	// Initialize databse
 	connStr, ok := os.LookupEnv("DB_CONN")
 	if !ok {
-		log.Fatalf("environment variable not set: %v", "HOST")
+		log.Fatalf("environment variable not set: %v", "DB_CONN")
 	}
 	db, err := postgres.Open(connStr)
 	defer db.Close()
