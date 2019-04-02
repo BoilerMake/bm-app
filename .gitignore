@@ -11,3 +11,7 @@ bin/
 
 # Configs we don't want pushed
 .env
+
+# Dependencies
+PGDATA/
+go.*
