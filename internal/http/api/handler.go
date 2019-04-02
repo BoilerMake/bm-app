@@ -13,6 +13,8 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
+
+	gomail "gopkg.in/gomail.v2"
 )
 
 var (

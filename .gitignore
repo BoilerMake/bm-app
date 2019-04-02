@@ -14,4 +14,3 @@ bin/
 
 # Dependencies
 PGDATA/
-go.*

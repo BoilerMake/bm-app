@@ -11,4 +11,5 @@ require (
 	github.com/ziutek/mymysql v1.5.4 // indirect
 	golang.org/x/crypto v0.0.0-20181106171534-e4dc69e5b2fd
 	golang.org/x/sys v0.0.0-20190124100055-b90733256f2e // indirect
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )
