@@ -45,6 +45,8 @@ func NewHandler(us models.UserService) *Handler {
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
+	// Password Reset
+	r.Put("/password_reset", h.putPasswordReset())
 
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/", h.getSelf())
@@ -127,6 +129,32 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			Path:       "/",
 			RawExpires: "0",
 		})
+	}
+}
+
+// postResetPassword resets the password given an email.
+func (h *Handler) putPasswordReset() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type Message struct {
+			Email string
+		}
+		// Get email from body
+		var e Message
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&e)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = h.UserService.ResetPassword(e.Email)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 	}
 }
 

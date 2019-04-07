@@ -123,7 +123,8 @@ func (s *UserService) Login(u *models.User) error {
 		return models.ErrIncorrectLogin
 	}
 
-	return err
+	// UNREACHABLE CODE
+	//return err
 }
 
 // GetById returns a single user with the given id.
@@ -243,4 +244,35 @@ func (s *UserService) Update(u *models.User) error {
 	}
 
 	return err
+}
+
+// TODO remove token automatically if expired
+// Finding email happends in this method, could be neater
+func (s *UserService) ResetPassword(email string) error {
+
+	randomToken := "RandomToken"
+	_, err := s.DB.Exec(`
+	INSERT INTO
+		password_reset_tokens (uid, token, valid_until)
+	VALUES
+		((SELECT id FROM users WHERE email = $1), $2, current_timestamp + interval '1 hour')
+	ON CONFLICT (uid)
+	DO UPDATE
+	SET
+	 	uid = (SELECT id FROM users WHERE email = $1), 
+    	token = $2, 
+		valid_until = current_timestamp + interval '1 hour';`, email, randomToken)
+
+	// Not sure what to return
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "not_null_violation":
+			return models.ErrRequiredField
+		default:
+			return pgerr
+		}
+	}
+
+	return nil
 }
