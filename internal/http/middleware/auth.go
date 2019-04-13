@@ -77,9 +77,9 @@ func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *j
 		// they *may* be rewritten later on in the request chain, but that shouldn't
 		// really matter as long as the resulting token is still valid.
 
-		// We ensure that a new token is not issued until enough time has elapsed
-		// In this case, a new token will only be issued if the old token is within
-		// 30 seconds of expiry. Otherwise, return a bad request status
+		// We make sure that a new token is only issued when enough time has elapsed
+		// A new token will be issued if it is within 30 seconds of expiry,
+		// Otherwise a bad request status error will be sent
 
 		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
 			return nil, fmt.Errorf("Status Bad Request")
