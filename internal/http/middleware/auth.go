@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -46,16 +47,22 @@ func WithJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+type Claims struct {
+	jwt.StandardClaims
+}
+
 // getToken decodes a JWT.  This func is separated not only to shorten the
 // WithJWT func but more importantly to make the whole "return token, err"
 // process more clear.
+
 func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *jwt.Token, err error) {
 	cookie, err := r.Cookie(jwtCookie)
 	if err != nil {
 		return nil, err
 	}
+	claims := &Claims{}
 
-	token, err = jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
+	token, err = jwt.ParseWithClaims(cookie.Value, claims, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -69,6 +76,30 @@ func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *j
 		// TODO refresh tokens here and put into request cookies here, keep in mind
 		// they *may* be rewritten later on in the request chain, but that shouldn't
 		// really matter as long as the resulting token is still valid.
+
+		// We ensure that a new token is not issued until enough time has elapsed
+		// In this case, a new token will only be issued if the old token is within
+		// 30 seconds of expiry. Otherwise, return a bad request status
+
+		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
+			return nil, fmt.Errorf("Status Bad Request")
+		}
+
+		// Now, create a new token for the current use, with a renewed expiration time
+		expirationTime := time.Now().Add(5 * time.Minute)
+		claims.ExpiresAt = expirationTime.Unix()
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		tokenString, err := token.SignedString(JWTSigningKey)
+		if err != nil {
+			return nil, fmt.Errorf("Status Internal Server Error")
+		}
+
+		http.SetCookie(nil, &http.Cookie{
+			Name:    jwtCookie,
+			Value:   tokenString,
+			Expires: expirationTime,
+		})
+
 		return token, err
 	}
 }
