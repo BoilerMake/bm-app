@@ -27,6 +27,12 @@ var (
 	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
 )
 
+// Password Reset errors
+var (
+	ErrInvalidToken = errors.New("token is invalid")
+	ErrExpiredToken = errors.New("token has expired")
+)
+
 const (
 	RoleHacker = iota
 	RoleSponsor
@@ -132,5 +138,6 @@ type UserService interface {
 	GetByEmail(id string) (*User, error)
 	GetAll() (*[]User, error)
 	Update(u *User) error
-	ResetPassword(email string) error
+	SendPasswordReset(email string) error
+	ResetPassword(token string, newPassword string) error
 }

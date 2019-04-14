@@ -5,10 +5,14 @@
 package postgres
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/argon2"
 
 	"github.com/lib/pq"
 )
@@ -247,26 +251,120 @@ func (s *UserService) Update(u *models.User) error {
 }
 
 // TODO remove token automatically if expired
-// Finding email happends in this method, could be neater
-func (s *UserService) ResetPassword(email string) error {
+// Finding email happens in this method, could be neater
+// Ignoring random string collisions for now (extremely unlikely)
+// TODO Error checking
+// - remove magic numbers for token length
+func (s *UserService) SendPasswordReset(email string) error {
+	token, err := GenerateRandomString(32)
+	if err != nil {
+		return err
+	}
+	hashedToken, err := argon2.DefaultParameters.HashPassword(token)
+	if err != nil {
+		return err
+	}
+	// n=3 length gives (62^5) unique ids
+	tokenID, err := GenerateRandomString(5)
+	if err != nil {
+		return err
+	}
 
-	randomToken := "RandomToken"
-	_, err := s.DB.Exec(`
+	_, err = s.DB.Exec(`
 	INSERT INTO
-		password_reset_tokens (uid, token, valid_until)
+		password_reset_tokens (uid, tokenID, hashedToken)
 	VALUES
-		((SELECT id FROM users WHERE email = $1), $2, current_timestamp + interval '1 hour')
-	ON CONFLICT (uid)
-	DO UPDATE
-	SET
-	 	uid = (SELECT id FROM users WHERE email = $1), 
-    	token = $2, 
-		valid_until = current_timestamp + interval '1 hour';`, email, randomToken)
+		((SELECT id FROM users WHERE email = $1), $2, $3);`, email, tokenID, hashedToken)
 
-	// Not sure what to return
+	// Not sure what error to return
 	// User should not know if the email exists
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
+		// User not in db (log internally)
+		// No error should be returned to user
+		case "not_null_violation":
+			return nil
+		default:
+			return pgerr
+		}
+	}
+	//remove
+	userToken := tokenID + token
+	fmt.Printf("Token: %s\n", userToken)
+
+	return nil
+}
+
+// Password should be validated before sending (token will be deleted)
+// TODO remove magic number "5"
+// Add real error
+func (s *UserService) ResetPassword(token string, password string) error {
+	if len(token) < 5 {
+		return models.ErrIncorrectLogin
+	}
+	tokenID := token[:5]
+	userToken := token[5:]
+
+	id := -1
+	var uid int
+	var hashedToken string
+	row := s.DB.QueryRow(`SELECT id, uid, hashedToken FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
+	err := row.Scan(&id, &uid, &hashedToken)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	}
+
+	// Not sure what error to return
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		// User not in db (log internally)
+		// No error should be returned to user
+		case "not_null_violation":
+			return nil
+		default:
+			return pgerr
+		}
+	}
+
+	if argon2.CheckPassword(userToken, hashedToken) {
+		fmt.Println("Correct token!")
+		unexpired, err := s.IsUnexpiredToken(id)
+		if err != nil {
+			return err
+		}
+		if unexpired {
+			s.TokenChangePassword(id, uid, password)
+			fmt.Println("Password changed!")
+		} else {
+			fmt.Println("Token has expired.")
+		}
+	} else {
+		fmt.Println("Invalid token.")
+	}
+
+	return nil
+}
+
+// TokenChangePassword changes password then deletes the token used
+// TODO error checking on failed change
+func (s *UserService) TokenChangePassword(id int, uid int, password string) error {
+	passwordHash, err := argon2.DefaultParameters.HashPassword(password)
+	if err != nil {
+		return err
+	}
+
+	// Remove any trace of unhashed password (can never be too safe)
+	password = ""
+
+	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
+	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
+	// TODO make sure when an exec fails it doesn't have an effect on the db
+	// Check postgres specific error
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "unique_violation":
+			return models.ErrEmailInUse
 		case "not_null_violation":
 			return models.ErrRequiredField
 		default:
@@ -274,5 +372,54 @@ func (s *UserService) ResetPassword(email string) error {
 		}
 	}
 
-	return nil
+	return err
+}
+
+// IsUnexpiredToken Checks if the password token is not expired
+// TODO allow expiry to be env variable
+func (s *UserService) IsUnexpiredToken(id int) (bool, error) {
+	var createdAt time.Time
+	var now time.Time
+	err := s.DB.QueryRow(`SELECT created_at, current_timestamp FROM password_reset_tokens WHERE id = $1`, id).Scan(&createdAt, &now)
+	if err != nil {
+		return false, err
+	}
+	elapsed := now.Sub(createdAt).Minutes()
+	// TODO CHANGE THIS MAGIC NUMBER FOR EXPIRY
+	if elapsed > 15 || elapsed < 0 {
+		return false, models.ErrExpiredToken
+	}
+
+	return true, nil
+}
+
+// GenerateRandomBytes returns securely generated random bytes.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	// Note that err == nil only if we read len(b) bytes.
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// GenerateRandomString returns a securely generated random string.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomString(n int) (string, error) {
+	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	bytes, err := GenerateRandomBytes(n)
+	if err != nil {
+		return "", err
+	}
+	for i, b := range bytes {
+		bytes[i] = letters[b%byte(len(letters))]
+	}
+	return string(bytes), nil
 }

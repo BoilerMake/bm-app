@@ -45,8 +45,8 @@ func NewHandler(us models.UserService) *Handler {
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
-	// Password Reset
-	r.Put("/password_reset", h.putPasswordReset())
+	r.Post("/forgot", h.postForgotPassword())
+	r.Post("/reset-password", h.postResetPassword())
 
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/", h.getSelf())
@@ -132,13 +132,13 @@ func (h *Handler) postLogin() http.HandlerFunc {
 	}
 }
 
-// postResetPassword resets the password given an email.
-func (h *Handler) putPasswordReset() http.HandlerFunc {
+// postForgotPassword sends the password reset email
+func (h *Handler) postForgotPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type Message struct {
 			Email string
 		}
-		// Get email from body
+		// Get info from body
 		var e Message
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&e)
@@ -148,13 +148,37 @@ func (h *Handler) putPasswordReset() http.HandlerFunc {
 			return
 		}
 
-		err = h.UserService.ResetPassword(e.Email)
+		err = h.UserService.SendPasswordReset(e.Email)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	}
+}
 
+// postResetPassword resets the password with a valid token
+func (h *Handler) postResetPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		type Message struct {
+			UserToken   string
+			NewPassword string
+		}
+		// Get info from body
+		var m Message
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&m)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = h.UserService.ResetPassword(m.UserToken, m.NewPassword)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 
