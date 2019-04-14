@@ -138,6 +138,6 @@ type UserService interface {
 	GetByEmail(id string) (*User, error)
 	GetAll() (*[]User, error)
 	Update(u *User) error
-	SendPasswordReset(email string) error
+	SendPasswordReset(email string) (string, error)
 	ResetPassword(token string, newPassword string) error
 }

@@ -255,19 +255,19 @@ func (s *UserService) Update(u *models.User) error {
 // Ignoring random string collisions for now (extremely unlikely)
 // TODO Error checking
 // - remove magic numbers for token length
-func (s *UserService) SendPasswordReset(email string) error {
+func (s *UserService) SendPasswordReset(email string) (string, error) {
 	token, err := GenerateRandomString(32)
 	if err != nil {
-		return err
+		return "", err
 	}
 	hashedToken, err := argon2.DefaultParameters.HashPassword(token)
 	if err != nil {
-		return err
+		return "", err
 	}
 	// n=3 length gives (62^5) unique ids
 	tokenID, err := GenerateRandomString(5)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	_, err = s.DB.Exec(`
@@ -283,16 +283,15 @@ func (s *UserService) SendPasswordReset(email string) error {
 		// User not in db (log internally)
 		// No error should be returned to user
 		case "not_null_violation":
-			return nil
+			return "", nil
 		default:
-			return pgerr
+			return "", pgerr
 		}
 	}
-	//remove
-	userToken := tokenID + token
-	fmt.Printf("Token: %s\n", userToken)
 
-	return nil
+	userToken := tokenID + token
+
+	return userToken, nil
 }
 
 // Password should be validated before sending (token will be deleted)

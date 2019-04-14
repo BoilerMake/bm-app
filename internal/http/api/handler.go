@@ -10,6 +10,7 @@ import (
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/mailgun/mailgun-go"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
@@ -148,12 +149,39 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			return
 		}
 
-		err = h.UserService.SendPasswordReset(e.Email)
+		token, err := h.UserService.SendPasswordReset(e.Email)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		SendEmail(e.Email, "Password Reset", "Your reset token is: "+token)
+	}
+}
+
+// SendEmail sends a plain text email to the given address
+// TODO This email function belongs somewhere else
+func SendEmail(recipient string, subject string, body string) {
+	mgDomain, ok := os.LookupEnv("MAILGUN_DOMAIN")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "MAILGUN_DOMAIN")
+	}
+	mgAPIKey, ok := os.LookupEnv("MAILGUN_API_KEY")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "MAILGUN_API_KEY")
+	}
+
+	// Create an instance of the Mailgun Client
+	mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
+	// TODO change sender email
+	sender := "boilermake-test@boilermake.org"
+	// The message object allows you to add attachments and Bcc recipients
+	message := mg.NewMessage(sender, subject, body, recipient)
+	_, _, err := mg.Send(message)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
