@@ -59,6 +59,9 @@ type User struct {
 
 	ProjectIdea string   `json:"projectIdea"`
 	TeamMembers []string `json:"teamMembers"`
+
+	IsActive bool `json:"isActive"`
+	ConfirmationCode string `json:"confirmationCode"`
 }
 
 // GetJWT creates a JWT from a User.
@@ -126,10 +129,11 @@ func (u *User) CheckPassword(password string) bool {
 // and its representation in our database.  Abstracting it to an interface
 // makes it database independent, which helps with testing.
 type UserService interface {
-	Signup(u *User) (int, error)
+	Signup(u *User) (int, string, error)
 	Login(u *User) error
 	GetById(id string) (*User, error)
-	GetByEmail(id string) (*User, error)
+	GetByEmail(email string) (*User, error)
+	GetByCode(code string) (*User, error)
 	GetAll() (*[]User, error)
 	Update(u *User) error
 }
