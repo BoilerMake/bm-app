@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -15,6 +14,10 @@ var (
 	JWTCtxKey      = contextKey("JWT")
 	JWTErrorCtxKey = contextKey("JWTError")
 )
+
+type Claims struct {
+	jwt.StandardClaims
+}
 
 // WithJWT provides a middleware that attempts to decode a JWT from a request's
 // cookies.  It sets two fields in the requests context, one with the actual
@@ -47,10 +50,6 @@ func WithJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-type Claims struct {
-	jwt.StandardClaims
-}
-
 // getToken decodes a JWT.  This func is separated not only to shorten the
 // WithJWT func but more importantly to make the whole "return token, err"
 // process more clear.
@@ -77,17 +76,7 @@ func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *j
 		// they *may* be rewritten later on in the request chain, but that shouldn't
 		// really matter as long as the resulting token is still valid.
 
-		// We make sure that a new token is only issued when enough time has elapsed
-		// A new token will be issued if it is within 30 seconds of expiry,
-		// Otherwise a bad request status error will be sent
-
-		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
-			return nil, fmt.Errorf("Status Bad Request")
-		}
-
-		// Now, create a new token for the current use, with a renewed expiration time
-		expirationTime := time.Now().Add(5 * time.Minute)
-		claims.ExpiresAt = expirationTime.Unix()
+		// We create a token using a custom claims type
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 		tokenString, err := token.SignedString(JWTSigningKey)
 		if err != nil {
