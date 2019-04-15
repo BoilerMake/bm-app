@@ -78,16 +78,10 @@ func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *j
 
 		// We create a token using a custom claims type
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		tokenString, err := token.SignedString(JWTSigningKey)
+
 		if err != nil {
 			return nil, fmt.Errorf("Status Internal Server Error")
 		}
-
-		http.SetCookie(nil, &http.Cookie{
-			Name:    jwtCookie,
-			Value:   tokenString,
-			Expires: expirationTime,
-		})
 
 		return token, err
 	}
