@@ -8,13 +8,14 @@ TARGETS := server
 INFO_STR=[INFO]
 
 all: test build server
+run: build server
 build:
 	@for target in $(TARGETS); do \
 		echo $(INFO_STR) building binary \"$$target\"; \
 		go build -o bin/$$target ./cmd/$$target; \
 	done
 
-test:
+test: 
 	@echo $(INFO_STR) running tests
 	@go test -v ./...
 
