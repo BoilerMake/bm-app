@@ -7,10 +7,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/mailgun/mailgun-go"
+	"github.com/mailgun/mailgun-go/v3"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
@@ -149,39 +150,42 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			return
 		}
 
-		token, err := h.UserService.SendPasswordReset(e.Email)
+		token, err := h.UserService.GetPasswordReset(e.Email)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		SendEmail(e.Email, "Password Reset", "Your reset token is: "+token)
-	}
-}
+		// This will be formatted better once the front end is setup for the link
+		recipient := e.Email
+		subject := "Password Reset"
+		body := "Your reset token is: " + token
 
-// SendEmail sends a plain text email to the given address
-// TODO This email function belongs somewhere else
-func SendEmail(recipient string, subject string, body string) {
-	mgDomain, ok := os.LookupEnv("MAILGUN_DOMAIN")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "MAILGUN_DOMAIN")
-	}
-	mgAPIKey, ok := os.LookupEnv("MAILGUN_API_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "MAILGUN_API_KEY")
-	}
+		mgDomain, ok := os.LookupEnv("MAILGUN_DOMAIN")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "MAILGUN_DOMAIN")
+		}
+		mgAPIKey, ok := os.LookupEnv("MAILGUN_API_KEY")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "MAILGUN_API_KEY")
+		}
 
-	// Create an instance of the Mailgun Client
-	mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
-	// TODO change sender email
-	sender := "boilermake-test@boilermake.org"
-	// The message object allows you to add attachments and Bcc recipients
-	message := mg.NewMessage(sender, subject, body, recipient)
-	_, _, err := mg.Send(message)
+		// Sending the email (can be made into a method)
+		mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
+		// Maybe make this env var
+		sender := "team@boilermake.org"
+		message := mg.NewMessage(sender, subject, body, recipient)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+		// Send the message	with a 10 second timeout
+		resp, id, err := mg.Send(ctx, message)
 
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("ID: %s Resp: %s\n", id, resp)
 	}
 }
 

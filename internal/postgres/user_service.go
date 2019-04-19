@@ -17,6 +17,12 @@ import (
 	"github.com/lib/pq"
 )
 
+const passwordResetTokenLength int = 32
+const userIDTokenLength int = 5
+
+// Time in minutes
+const tokenExpiryTime int = 15
+
 // UserService is a PostgreSQL implementation of models.UserService
 type UserService struct {
 	DB *sql.DB
@@ -250,13 +256,9 @@ func (s *UserService) Update(u *models.User) error {
 	return err
 }
 
-// TODO remove token automatically if expired
-// Finding email happens in this method, could be neater
-// Ignoring random string collisions for now (extremely unlikely)
-// TODO Error checking
-// - remove magic numbers for token length
-func (s *UserService) SendPasswordReset(email string) (string, error) {
-	token, err := GenerateRandomString(32)
+// Creates the user's token for a password reset
+func (s *UserService) GetPasswordReset(email string) (string, error) {
+	token, err := GenerateRandomString(passwordResetTokenLength)
 	if err != nil {
 		return "", err
 	}
@@ -264,8 +266,7 @@ func (s *UserService) SendPasswordReset(email string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// n=3 length gives (62^5) unique ids
-	tokenID, err := GenerateRandomString(5)
+	tokenID, err := GenerateRandomString(userIDTokenLength)
 	if err != nil {
 		return "", err
 	}
@@ -294,15 +295,13 @@ func (s *UserService) SendPasswordReset(email string) (string, error) {
 	return userToken, nil
 }
 
-// Password should be validated before sending (token will be deleted)
-// TODO remove magic number "5"
-// Add real error
+// Resets the user's password
 func (s *UserService) ResetPassword(token string, password string) error {
-	if len(token) < 5 {
-		return models.ErrIncorrectLogin
+	if len(token) < userIDTokenLength+passwordResetTokenLength {
+		return models.ErrInvalidToken
 	}
-	tokenID := token[:5]
-	userToken := token[5:]
+	tokenID := token[:userIDTokenLength]
+	userToken := token[userIDTokenLength:]
 
 	id := -1
 	var uid int
@@ -326,6 +325,7 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		}
 	}
 
+	// TODO output useful errors
 	if argon2.CheckPassword(userToken, hashedToken) {
 		fmt.Println("Correct token!")
 		unexpired, err := s.IsUnexpiredToken(id)
@@ -335,14 +335,13 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		if unexpired {
 			s.TokenChangePassword(id, uid, password)
 			fmt.Println("Password changed!")
+			return nil
 		} else {
-			fmt.Println("Token has expired.")
+			return models.ErrExpiredToken
 		}
-	} else {
-		fmt.Println("Invalid token.")
 	}
 
-	return nil
+	return models.ErrInvalidToken
 }
 
 // TokenChangePassword changes password then deletes the token used
@@ -359,23 +358,11 @@ func (s *UserService) TokenChangePassword(id int, uid int, password string) erro
 	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
 	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
 	// TODO make sure when an exec fails it doesn't have an effect on the db
-	// Check postgres specific error
-	if pgerr, ok := err.(*pq.Error); ok {
-		switch pgerr.Code.Name() {
-		case "unique_violation":
-			return models.ErrEmailInUse
-		case "not_null_violation":
-			return models.ErrRequiredField
-		default:
-			return pgerr
-		}
-	}
 
 	return err
 }
 
 // IsUnexpiredToken Checks if the password token is not expired
-// TODO allow expiry to be env variable
 func (s *UserService) IsUnexpiredToken(id int) (bool, error) {
 	var createdAt time.Time
 	var now time.Time
@@ -384,8 +371,8 @@ func (s *UserService) IsUnexpiredToken(id int) (bool, error) {
 		return false, err
 	}
 	elapsed := now.Sub(createdAt).Minutes()
-	// TODO CHANGE THIS MAGIC NUMBER FOR EXPIRY
-	if elapsed > 15 || elapsed < 0 {
+
+	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
 		return false, models.ErrExpiredToken
 	}
 
