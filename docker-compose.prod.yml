@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  backend:
+
+  # The database will only be run in 
+  database:
