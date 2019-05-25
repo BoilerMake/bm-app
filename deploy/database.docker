@@ -1,0 +1,17 @@
+FROM postgres:11.3-alpine
+
+# Move migrations to temporary directory
+COPY ./migrations/ /backend_migrations/
+
+# Strip "goose down" bits from migrations so they can run automatically
+# Then, move them into docker-entrypoint-initdb.d which automatically runs any
+# .sql or .sh files inside it
+WORKDIR /
+RUN apk add --no-cache sed
+RUN for file in $(ls /backend_migrations); do \
+			echo "/backend_migrations/$file" && \
+			echo "docker/$file" && \
+			sed '/+goose Down/,$d' "/backend_migrations/$file" > "/docker-entrypoint-initdb.d/$file"; \
+		done
+
+# Database will start from postgres image because we didn't override ENTRYPOINT

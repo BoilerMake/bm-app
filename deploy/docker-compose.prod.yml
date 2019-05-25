@@ -1,0 +1,40 @@
+# PRODUCTION version of docker-compose configuration
+version: "3"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./deploy/backend.docker
+    restart: always
+    depends_on:
+      - database
+      - proxy
+    env_file:
+      - ./.env
+
+  database:
+    build:
+      context: .
+      dockerfile: ./deploy/database.docker
+    restart: always
+    volumes:
+      - ./migrations/:/backend_migrations/
+    ports:
+      - "47298:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - ./.env
+
+  proxy:
+    image: nginx:1.15-alpine
+    restart: always
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf
+      - ./deploy/nginx/:/etc/nginx/conf.d/
+    ports:
+      # Expose port 80 of container to port 8080 of host
+      - "80:80"
+      - "443:443"
