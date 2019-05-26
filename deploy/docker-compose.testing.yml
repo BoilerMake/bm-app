@@ -1,0 +1,16 @@
+# TESTING version of docker-compose configuration
+# This file extends docker-compose.base.yml
+version: "3"
+services:
+  backend:
+    volumes:
+      - ./.testing.env:/backend/.env
+
+  database:
+    env_file:
+      - ./.testing.env
+
+  proxy:
+    ports:
+      # Expose port 80 of container to port 8080 of host
+      - "8080:80"

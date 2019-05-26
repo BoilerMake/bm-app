@@ -1,0 +1,36 @@
+# BASE version of docker-compose configuration
+# Dev, prod, and testing will build off of this file
+version: "3"
+services:
+  backend:
+    build:
+      context: ../
+      dockerfile: ./deploy/backend.docker
+    restart: always
+    depends_on:
+      - database
+      - proxy
+
+  database:
+    build:
+      context: ../
+      dockerfile: ./deploy/database.docker
+    restart: always
+    volumes:
+      - ./migrations/:/backend_migrations/
+    ports:
+      # Expose port 5432 of container to port 47298 of host
+      # Useful for using Sequel Pro or pgweb to inspect the db
+      - "47298:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # TODO volume for pg data for all modes
+
+  proxy:
+    image: nginx:1.15-alpine
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/:/etc/nginx/conf.d/

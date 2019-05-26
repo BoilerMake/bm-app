@@ -1,40 +1,18 @@
 # PRODUCTION version of docker-compose configuration
+# This file extends docker-compose.base.yml
 version: "3"
 services:
   backend:
-    build:
-      context: .
-      dockerfile: ./deploy/backend.docker
-    restart: always
-    depends_on:
-      - database
-      - proxy
-    env_file:
-      - ./.env
+    volumes:
+      - ../.env:/backend/.env
 
   database:
-    build:
-      context: .
-      dockerfile: ./deploy/database.docker
-    restart: always
-    volumes:
-      - ./migrations/:/backend_migrations/
-    ports:
-      - "47298:5432"
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     env_file:
-      - ./.env
+      - ../.env
 
   proxy:
-    image: nginx:1.15-alpine
-    restart: always
-    volumes:
-      - ./deploy/nginx.conf:/etc/nginx/nginx.conf
-      - ./deploy/nginx/:/etc/nginx/conf.d/
     ports:
-      # Expose port 80 of container to port 8080 of host
+      # Expose port 80  of container to port 80  of host (HTTP)
       - "80:80"
+      # Expose port 443 of container to port 443 of host (HTTPS)
       - "443:443"

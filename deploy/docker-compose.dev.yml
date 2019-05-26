@@ -1,39 +1,19 @@
 # DEVELOPMENT version of docker-compose configuration
+# This file extends docker-compose.base.yml
+#
+# TODO if developing with docker is v slower then this can just 
+# host the database and we can build the backend like normal
 version: "3"
 services:
   backend:
-    build:
-      context: ../
-      dockerfile: ./deploy/backend.docker
-    restart: always
-    depends_on:
-      - database
-      - proxy
-    env_file:
-      - ../.env
+    volumes:
+      - ../.env:/backend/.env
 
   database:
-    build:
-      context: ../
-      dockerfile: ./deploy/database.docker
-    restart: always
-    volumes:
-      - ./migrations/:/backend_migrations/
-    ports:
-      - "47298:5432"
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     env_file:
       - ../.env
 
   proxy:
-    image: nginx:1.15-alpine
-    restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/:/etc/nginx/conf.d/
     ports:
       # Expose port 80 of container to port 8080 of host
       - "8080:80"
