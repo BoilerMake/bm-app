@@ -3,9 +3,6 @@ FROM golang:1.12-alpine AS builder
 WORKDIR /backend
 COPY . .
 
-# We want to use the .env specified by the docker-compose file
-# so, get rid of the current one and move the one specified by docker-compose
-
 # Because alpine containers try to be small they leave out most things, so
 # download the things we need here
 RUN apk add --no-cache git make

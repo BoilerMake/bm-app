@@ -1,20 +1,50 @@
+# See https://circleci.com/docs/2.0/configuration-reference/
 version: 2
 jobs:
-  build:
+  run_tests:
     machine:
+      # Because we're using docker-compose we won't run the tests on another
+      # docker container (yo dawg).  Instead we'll just use a normal VM.
       image: ubuntu-1604:201903-01
     steps:
-    - checkout
-    - run:
-        name: "get versions"
-        command: |
-          docker version
-          docker-compose --version
-    - run:
-        name: "docker-compose up"
-        command: |
-          docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml up -d
-    - run:
-        name: "run tests"
-        command: |
-          docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml exec backend go test -v ./...
+      - checkout # pulls our code
+      - run:
+          name: "get versions"
+          command: |
+            docker version
+            docker-compose --version
+      - run:
+          name: "docker-compose up"
+          command: |
+            docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml up -d
+      - run:
+          name: "run tests"
+          command: |
+            docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml exec backend go test -v ./...
+  deploy_prod:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: "deploy production using ssh"
+          command: |
+            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh ~/backend/deploy/deploy_prod.sh
+
+workflows:
+  version: 2
+  # This will run tests on every commit onto pull requests.  Usually it would
+  # run tests on EVERY commit, but there's a setting on CircleCI that we turned
+  # on to only do PRs.
+  test:
+    jobs:
+      - run_tests
+
+  # This will run the deploy script whenever someone commits to master.
+  # Don't go breaking the build!
+  production:
+    jobs:
+      - deploy_prod:
+          filters:
+            branches:
+              only: master
+

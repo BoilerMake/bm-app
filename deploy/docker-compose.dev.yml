@@ -2,7 +2,7 @@
 # This file extends docker-compose.base.yml
 #
 # TODO if developing with docker is v slower then this can just 
-# host the database and we can build the backend like normal
+# host the database with docker and build the backend like normal
 version: "3"
 services:
   backend:

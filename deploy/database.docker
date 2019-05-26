@@ -3,7 +3,7 @@ FROM postgres:11.3-alpine
 # Move migrations to temporary directory
 COPY ./migrations/ /backend_migrations/
 
-# Strip "goose down" bits from migrations so they can run automatically
+# Strip the "goose down" bits from migrations so they can run automatically
 # Then, move them into docker-entrypoint-initdb.d which automatically runs any
 # .sql or .sh files inside it
 WORKDIR /
