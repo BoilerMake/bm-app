@@ -33,6 +33,13 @@ const (
 	RoleExec
 )
 
+// TODO this kinda goes with config as mentioned in cmd/server/main.go.  Having
+// Package globals like this just doesn't sit right with me right now.
+var (
+	JWTSigningKey []byte
+	JWTIssuer     string
+)
+
 // A User is an account stored in the database.
 type User struct {
 	ID   int `json:"id"`   // NOT NULL
@@ -54,13 +61,12 @@ type User struct {
 	TeamMembers []string `json:"teamMembers"`
 }
 
-// GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
-// JWTSigningKey must be an array of bytes, not a string.
-func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString string, err error) {
+// GetJWT creates a JWT from a User.
+func (u *User) GetJWT() (tokenString string, err error) {
 	// TODO make sure our claims are up to par, check out:
 	// https://tools.ietf.org/html/rfc7519#section-4.1
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss":   jwtIssuer,
+		"iss":   JWTIssuer,
 		"iat":   time.Now().Unix(),
 		"exp":   time.Now().Add(time.Hour * 72).Unix(),
 		"id":    u.ID,
@@ -68,7 +74,7 @@ func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString strin
 		"email": u.Email,
 	})
 
-	tokenString, err = token.SignedString(jwtSigningKey)
+	tokenString, err = token.SignedString(JWTSigningKey)
 	if err != nil {
 		return tokenString, err
 	}
