@@ -9,8 +9,6 @@ import (
 	"os/signal"
 	"strings"
 	"time"
-
-	"golang.org/x/crypto/acme/autocert"
 )
 
 // A Server wraps an http.Server and provides some additional functionality.
@@ -32,57 +30,20 @@ func NewServer(address string, h *Handler) (s *Server) {
 	}
 }
 
-// Start begins listening for HTTP or HTTPS requests, depending on the
-// environment mode. It will attempt to gracefully shutdown on SIGINT.
-// TODO Maybe this shouldn't block like it does right now.  If we go for that
-// approach then we'll have to block execution some other way in main.go.
+// Start begins listening for HTTP It will attempt to gracefully shutdown on
+// SIGINT.
 func (s *Server) Start() (err error) {
 	mode, ok := os.LookupEnv("ENV_MODE")
 	if !ok {
 		return fmt.Errorf("environment variable not set: %v", "ENV_MODE")
 	}
 
-	if mode == "production" {
-		certsDir, ok := os.LookupEnv("CERTS_DIR")
-		if !ok {
-			return fmt.Errorf("environment variable not set: %v", "CERTS_DIR")
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatalf("could not listen on %s: %v\n", s.Addr, err)
 		}
-
-		allowedHosts, ok := os.LookupEnv("ALLOWED_HOSTS")
-		if !ok {
-			return fmt.Errorf("environment variable not set: %v", "ALLOWED_HOSTS")
-		}
-		splitHosts := strings.Split(allowedHosts, ", ")
-
-		m := autocert.Manager{
-			Cache:      autocert.DirCache(certsDir),
-			Prompt:     autocert.AcceptTOS,
-			HostPolicy: autocert.HostWhitelist(splitHosts...),
-		}
-
-		s.TLSConfig = m.TLSConfig()
-
-		// Redirects all http traffic to https
-		go http.ListenAndServe(":80", m.HTTPHandler(nil))
-
-		go func() {
-			err := s.ListenAndServeTLS("", "")
-			if err != nil && err != http.ErrServerClosed {
-				log.Fatalf("could not listen on %s: %v\n", s.Addr, err)
-			}
-		}()
-	} else if mode == "development" {
-		// Not using HTTPS in development.  Dealing with self signed certs is
-		// kinda dog trash
-		go func() {
-			err := s.ListenAndServe()
-			if err != nil && err != http.ErrServerClosed {
-				log.Fatalf("could not listen on %s: %v\n", s.Addr, err)
-			}
-		}()
-	} else {
-		return fmt.Errorf("uknown environment mode: %s", mode)
-	}
+	}()
 
 	log.Printf("started server in %s mode at %s", strings.ToUpper(mode), s.Addr)
 
