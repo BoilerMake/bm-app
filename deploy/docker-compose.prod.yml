@@ -13,6 +13,15 @@ services:
   proxy:
     ports:
       # Expose port 80  of container to port 80  of host (HTTP)
-      - "80:80"
+      - 80:80
       # Expose port 443 of container to port 443 of host (HTTPS)
-      - "443:443"
+      - 443:443
+    env_file:
+      - ../.env
+    command:
+      - --acme.email=${TRAEFIK_EMAIL}
+      - --acme.storage=/etc/traefik/acme/acme.json
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.prod.toml:/etc/traefik/traefik.toml
+      - ./traefik/acme.json:/etc/traefik/acme/acme.json

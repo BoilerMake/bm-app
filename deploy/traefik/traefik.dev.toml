@@ -1,0 +1,19 @@
+# DEVELOPMENT version of traefik's config.  It doesn't enable HTTPS.
+logLevel = "ERROR"
+
+defaultEntryPoints = ["http"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+
+[api]
+	dashboard = true
+
+[file]
+  watch = true
+	filename = "/etc/traefik/traefik.toml"
+
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+exposedByDefault = false

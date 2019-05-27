@@ -1,0 +1,26 @@
+# PRODUCTION version of traefik's config.  It enables HTTPS through let's encrypt.
+logLevel = "ERROR"
+
+defaultEntryPoints = ["http", "https"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+		# Force redirect to HTTPS
+		[entryPoints.http.redirect]
+		entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[api]
+	dashboard = true
+
+[acme]
+entryPoint = "https"
+OnHostRule = true
+	[acme.httpChallenge]
+	entryPoint = "http"
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+exposedByDefault = false

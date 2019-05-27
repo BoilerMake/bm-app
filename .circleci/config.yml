@@ -28,7 +28,7 @@ jobs:
       - run:
           name: "deploy production using ssh"
           command: |
-            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh ~/backend/deploy/deploy_prod.sh
+            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh ~/backend/deploy/scripts/deploy_prod.sh
 
 workflows:
   version: 2

@@ -16,4 +16,9 @@ services:
   proxy:
     ports:
       # Expose port 80 of container to port 8080 of host
-      - "8080:80"
+      - 80:80
+    env_file:
+      - ../.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.dev.toml:/etc/traefik/traefik.toml
