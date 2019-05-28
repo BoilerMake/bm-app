@@ -20,8 +20,7 @@ services:
       - ../.env
     command:
       - --acme.email=${TRAEFIK_EMAIL}
-      - --acme.storage=/etc/traefik/acme/acme.json
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.prod.toml:/etc/traefik/traefik.toml
-      - ./traefik/acme.json:/etc/traefik/acme/acme.json
+      - /opt/traefik/acme.json:/acme.json

@@ -3,24 +3,26 @@ logLevel = "ERROR"
 
 defaultEntryPoints = ["http", "https"]
 [entryPoints]
-  [entryPoints.http]
-  address = ":80"
-		# Force redirect to HTTPS
+	[entryPoints.http]
+	address = ":80"
+		# Force HTTP to redirect to HTTPS
 		[entryPoints.http.redirect]
 		entryPoint = "https"
-  [entryPoints.https]
-  address = ":443"
-    [entryPoints.https.tls]
+	[entryPoints.https]
+	address = ":443"
+		[entryPoints.https.tls]
 
 [api]
 	dashboard = true
 
 [acme]
-entryPoint = "https"
-OnHostRule = true
+	storage = "storage.json"
+	entryPoint = "https"
+	OnHostRule = true
+	OnDemand = false
 	[acme.httpChallenge]
 	entryPoint = "http"
 
 [docker]
-endpoint = "unix:///var/run/docker.sock"
-exposedByDefault = false
+	endpoint = "unix:///var/run/docker.sock"
+	exposedByDefault = false
