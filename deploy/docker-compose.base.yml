@@ -41,5 +41,5 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=8080
-      - traefik.frontend.rule=Host:traefik.${DOMAIN_NAME}
+      - traefik.frontend.rule=Host:dashboard.${DOMAIN_NAME}
       - traefik.frontend.auth.basic=${TRAEFIK_DASHBOARD_LOGIN}

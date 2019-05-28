@@ -11,6 +11,3 @@ bin/
 
 # Configs we don't want pushed
 .env
-
-# This file is only created in production (which doesn't have write access), but you can never be too safe
-deploy/traefik/acme.json
