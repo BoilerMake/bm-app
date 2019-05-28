@@ -16,7 +16,7 @@ defaultEntryPoints = ["http", "https"]
 	dashboard = true
 
 [acme]
-	storage = "storage.json"
+	storage = "acme.json"
 	entryPoint = "https"
 	OnHostRule = true
 	OnDemand = false
