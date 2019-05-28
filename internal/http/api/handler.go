@@ -56,6 +56,8 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
+	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
@@ -76,7 +78,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 		u.ID = id
 
-		jwt, err := u.GetJWT()
+		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -95,6 +97,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
+	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Convert JSON user details in request to a user struct
 		var u models.User
@@ -113,7 +117,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT()
+		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -156,6 +160,23 @@ func (h *Handler) getSelf() http.HandlerFunc {
 		json.NewEncoder(w).Encode(u)
 		return
 	}
+}
+
+// mustGetJWTConfig tries to get JWT configuration variables from the
+// environment. It will panic if those variables are not set.
+func mustGetJWTConfig() (string, []byte) {
+	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
+	}
+
+	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
+	}
+	jwtSigningKey := []byte(jwtSigningKeyString)
+
+	return jwtIssuer, jwtSigningKey
 }
 
 // getClaimsFromCtx returns the claims of a Context's JWT or an error.
