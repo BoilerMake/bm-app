@@ -9,6 +9,9 @@ services:
   database:
     env_file:
       - ../.env
+    volumes:
+      - /var/lib/pgsql/data:/var/lib/postgresql/data
+      - ./migrations/:/backend_migrations/
 
   proxy:
     ports:
