@@ -1,0 +1,24 @@
+{{ define "login" }}
+{{ template "header" . }}
+
+<form action="" method="post">
+	<h1>Sign Up</h1>
+	<hr>
+
+	<div>
+		<label for="email"><b>Email</b></label>
+		<input type="text" placeholder="Email" name="email" required>
+	</div>
+
+	<div>
+		<label for="password"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" name="password" required>
+	</div>
+
+	<div>
+		<button type="submit" class="signupbtn">Sign Up</button>
+	</div>
+</form> 
+
+{{ template "footer" . }}
+{{ end }}

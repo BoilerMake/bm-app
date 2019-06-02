@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
@@ -74,6 +75,23 @@ func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString strin
 	}
 
 	return tokenString, err
+}
+
+func (u *User) FromFormData(r *http.Request) {
+	u.Email = r.FormValue("email")
+
+	u.Password = r.FormValue("password")
+	u.PasswordConfirm = r.FormValue("password-confirm")
+
+	u.FirstName = r.FormValue("first-name")
+	u.LastName = r.FormValue("last-name")
+
+	u.Phone = r.FormValue("phone")
+
+	u.Phone = r.FormValue("phone")
+	// TODO Figure out arrays in forms, or more likely, have 3 separate fields
+	// and handle combining them here
+	//u.TeamMembers[0] = r.FormValue("team-members")
 }
 
 // Validate checks if a User has all the necessary fields.

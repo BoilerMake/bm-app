@@ -14,6 +14,10 @@ import (
 	"github.com/go-chi/chi"
 )
 
+var (
+	jwtCookie string // Name for the JWT's cookie.  TODO Better name?
+)
+
 type Handler struct {
 	*chi.Mux
 
@@ -24,6 +28,13 @@ type Handler struct {
 func NewHandler(us models.UserService) *Handler {
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
+
+	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
+	var ok bool
+	jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
+	}
 
 	// Set up templates
 	mode, ok := os.LookupEnv("ENV_MODE")
@@ -44,10 +55,15 @@ func NewHandler(us models.UserService) *Handler {
 		}
 	}
 
-	// All responses from here will have the Content-Type header be text/html
-	r.Use(middleware.SetContentTypeHTML)
+	r.Use(middleware.SetContentTypeHTML) // All responses from here will be HTML
+	r.Use(middleware.WithJWT)
 
 	r.Get("/", h.getRoot())
+
+	r.Get("/signup", h.getSignup())
+	r.Post("/signup", h.postSignup())
+	r.Get("/login", h.getLogin())
+	r.Post("/login", h.postLogin())
 
 	h.Mux = r
 	return &h
@@ -92,4 +108,101 @@ func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.templates.ExecuteTemplate(w, "index", nil)
 	}
+}
+
+func (h *Handler) getSignup() http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.templates.ExecuteTemplate(w, "signup", nil)
+	}
+}
+
+func (h *Handler) postSignup() http.HandlerFunc {
+	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+	return func(w http.ResponseWriter, r *http.Request) {
+		var u models.User
+		u.FromFormData(r)
+
+		id, err := h.UserService.Signup(&u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		u.ID = id
+
+		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		// TODO right now this is only valid on the domain it's sent from, if we do
+		// subdomains (seems likely) then we'll need to change that.
+		http.SetCookie(w, &http.Cookie{
+			Name:       jwtCookie,
+			Value:      jwt,
+			Path:       "/",
+			RawExpires: "0",
+		})
+
+		h.templates.ExecuteTemplate(w, "index", nil)
+	}
+}
+
+func (h *Handler) getLogin() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.templates.ExecuteTemplate(w, "login", nil)
+	}
+}
+
+// postLogin tries to log in a user.
+func (h *Handler) postLogin() http.HandlerFunc {
+	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		var u models.User
+		u.FromFormData(r)
+
+		err := h.UserService.Login(&u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		// TODO Right now this is only valid on the domain it's sent from, if we do
+		// subdomains (seems likely) then we'll need to change that.
+		http.SetCookie(w, &http.Cookie{
+			Name:       jwtCookie,
+			Value:      jwt,
+			Path:       "/",
+			RawExpires: "0",
+		})
+
+		h.templates.ExecuteTemplate(w, "index", nil)
+	}
+}
+
+// mustGetJWTConfig tries to get JWT configuration variables from the
+// environment. It will panic if those variables are not set.
+func mustGetJWTConfig() (string, []byte) {
+	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
+	}
+
+	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
+	}
+	jwtSigningKey := []byte(jwtSigningKeyString)
+
+	return jwtIssuer, jwtSigningKey
 }
