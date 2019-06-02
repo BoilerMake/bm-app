@@ -1,0 +1,22 @@
+{{ define "account" }}
+{{ template "header" . }}
+
+<div>
+	<h1>Your Account</h1>
+	<hr>
+
+	<div>
+		<strong>Email: </strong><span>{{ .Email }}</span>
+	</div>
+
+	<div>
+		<strong>First Name: </strong><span>{{ .FirstName }}</span>
+	</div>
+
+	<div>
+		<strong>Last Name: </strong><span>{{ .LastName }}</span>
+	</div>
+</div> 
+
+{{ template "footer" . }}
+{{ end }}
