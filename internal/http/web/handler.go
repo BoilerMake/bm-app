@@ -212,12 +212,15 @@ func (h *Handler) getAccount() http.HandlerFunc {
 		}
 
 		data := map[string]interface{}{
-			"Email":     u.Email,
-			"FirstName": u.FirstName,
-			"LastName":  u.LastName,
+			"Email":       u.Email,
+			"FirstName":   u.FirstName,
+			"LastName":    u.LastName,
+			"Phone":       u.Phone,
+			"ProjectIdea": u.ProjectIdea,
+			"TeamMembers": u.TeamMembers,
 		}
 
-		h.templates.ExecuteTemplate(w, "account", data)
+		err = h.templates.ExecuteTemplate(w, "account", data)
 	}
 }
 

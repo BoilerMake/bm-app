@@ -16,6 +16,20 @@
 	<div>
 		<strong>Last Name: </strong><span>{{ .LastName }}</span>
 	</div>
+
+	<div>
+		<strong>Phone Number: </strong><span>{{ .Phone }}</span>
+	</div>
+
+	<div>
+		<strong>Project Idea: </strong><span>{{ .ProjectIdea }}</span>
+	</div>
+
+	{{ range $i, $teamMember := .TeamMembers }}
+		<div>
+			<strong>Team Member {{ $i }}: </strong><span>{{ $teamMember }}</span>
+		</div>
+	{{ end }}
 </div> 
 
 {{ template "footer" . }}

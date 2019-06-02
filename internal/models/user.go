@@ -88,10 +88,8 @@ func (u *User) FromFormData(r *http.Request) {
 
 	u.Phone = r.FormValue("phone")
 
-	u.Phone = r.FormValue("phone")
-	// TODO Figure out arrays in forms, or more likely, have 3 separate fields
-	// and handle combining them here
-	//u.TeamMembers[0] = r.FormValue("team-members")
+	u.ProjectIdea = r.FormValue("project-idea")
+	u.TeamMembers = append(u.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 }
 
 // Validate checks if a User has all the necessary fields.
