@@ -74,6 +74,7 @@ func NewHandler(us models.UserService) *Handler {
 func (h *Handler) postSignup() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		session, _ := store.Get(r, "cookie-name")
 
 		// TODO check if login is valid (i.e. account exists), if so log them in
@@ -119,6 +120,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 func (h *Handler) postLogin() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Login page")
 		session, _ := store.Get(r, "cookie-name")
 
 		// Convert JSON user details in request to a user struct
