@@ -113,7 +113,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			RawExpires: "0",
 		})
 
-		h.templates.ExecuteTemplate(w, "index", nil)
+		// Redirect to homepage if signup was successful
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
@@ -153,7 +154,8 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			RawExpires: "0",
 		})
 
-		h.templates.ExecuteTemplate(w, "index", nil)
+		// Redirect to homepage if login was successful
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
