@@ -75,25 +75,29 @@ func NewHandler(us models.UserService) *Handler {
 	r.Post("/signup", h.postSignup())
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
-
 	r.Get("/account", h.getAccount())
+
+	r.Get("/*", h.get404())
 
 	h.Mux = r
 	return &h
 }
 
+// getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.renderTemplate(w, "index", nil)
 	}
 }
 
+// getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.renderTemplate(w, "singup", nil)
 	}
 }
 
+// postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
 	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -128,6 +132,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 }
 
+// getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.renderTemplate(w, "login", nil)
@@ -169,6 +174,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 	}
 }
 
+// getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO redirect to login if they're not logged in
@@ -196,6 +202,14 @@ func (h *Handler) getAccount() http.HandlerFunc {
 		}
 
 		h.renderTemplate(w, "account", data)
+	}
+}
+
+// get404 handles requests that couldn't find a valid route by rendering the
+// 404 template.
+func (h *Handler) get404() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.renderTemplate(w, "404", nil)
 	}
 }
 
