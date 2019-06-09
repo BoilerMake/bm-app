@@ -2,9 +2,11 @@ package api
 
 import (
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"text/template"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -13,14 +15,39 @@ import (
 	// jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
 
+	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 )
 
-var (
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-	key   = []byte("super-secret-key")
-	store = sessions.NewCookieStore(key)
-)
+type User struct {
+	Username      string
+	Authenticated bool
+}
+
+// store will hold all session data
+var store *sessions.CookieStore
+
+// tpl holds all parsed templates
+var tpl *template.Template
+
+func init() {
+	authKeyOne := securecookie.GenerateRandomKey(64)
+	encryptionKeyOne := securecookie.GenerateRandomKey(32)
+
+	store = sessions.NewCookieStore(
+		authKeyOne,
+		encryptionKeyOne,
+	)
+
+	store.Options = &sessions.Options{
+		MaxAge:   60 * 15,
+		HttpOnly: true,
+	}
+
+	gob.Register(User{})
+
+	// tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
+}
 
 // A Handler will route requests to their appropriate HandlerFunc.
 type Handler struct {
@@ -120,44 +147,44 @@ func (h *Handler) postSignup() http.HandlerFunc {
 func (h *Handler) postLogin() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Login page")
-		session, _ := store.Get(r, "cookie-name")
 
-		// Convert JSON user details in request to a user struct
-		var u models.User
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&u)
+		session, err := store.Get(r, "cookie-name")
 		if err != nil {
-			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = h.UserService.Login(&u)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Where authentication could be done
+		if r.FormValue("code") != "code" {
+			if r.FormValue("code") == "" {
+				session.AddFlash("Must enter a code")
+			}
+			session.AddFlash("The code was incorrect")
+			err = session.Save(r, w)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			http.Redirect(w, r, "/forbidden", http.StatusFound)
 			return
 		}
 
-		// jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
-		// if err != nil {
-		// 	// TODO error handling
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
+		username := r.FormValue("username")
 
-		// TODO Right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		// http.SetCookie(w, &http.Cookie{
-		// 	Name:       jwtCookie,
-		// 	Value:      jwt,
-		// 	Path:       "/",
-		// 	RawExpires: "0",
-		// })
+		user := &User{
+			Username:      username,
+			Authenticated: true,
+		}
 
-		// Set user as authenticated
-		session.Values["authenticated"] = true
-		session.Save(r, w)
+		session.Values["user"] = user
+
+		err = session.Save(r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/secret", http.StatusFound)
 	}
 }
 
