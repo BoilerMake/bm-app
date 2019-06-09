@@ -1,11 +1,13 @@
 package web
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"text/template"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
@@ -23,7 +25,9 @@ type Handler struct {
 	*chi.Mux
 
 	UserService models.UserService
-	templates   *template.Template
+
+	templates       *template.Template
+	templateBufPool *sync.Pool
 }
 
 func NewHandler(us models.UserService) *Handler {
@@ -56,7 +60,13 @@ func NewHandler(us models.UserService) *Handler {
 		}
 	}
 
-	r.Use(middleware.SetContentTypeHTML) // All responses from here will be HTML
+	// Set up pool of buffers used for rendering templates
+	h.templateBufPool = &sync.Pool{
+		New: func() interface{} {
+			return new(bytes.Buffer)
+		},
+	}
+
 	r.Use(middleware.WithJWT)
 
 	r.Get("/", h.getRoot())
@@ -74,13 +84,13 @@ func NewHandler(us models.UserService) *Handler {
 
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.templates.ExecuteTemplate(w, "index", nil)
+		h.renderTemplate(w, "index", nil)
 	}
 }
 
 func (h *Handler) getSignup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.templates.ExecuteTemplate(w, "signup", nil)
+		h.renderTemplate(w, "singup", nil)
 	}
 }
 
@@ -120,7 +130,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 func (h *Handler) getLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.templates.ExecuteTemplate(w, "login", nil)
+		h.renderTemplate(w, "login", nil)
 	}
 }
 
@@ -185,7 +195,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			"TeamMembers": u.TeamMembers,
 		}
 
-		err = h.templates.ExecuteTemplate(w, "account", data)
+		h.renderTemplate(w, "account", data)
 	}
 }
 

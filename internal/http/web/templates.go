@@ -1,6 +1,7 @@
 package web
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 	"os"
@@ -29,7 +30,7 @@ func (h *Handler) loadTemplates() (err error) {
 	return err
 }
 
-// reloadTemplates is a middleware that calls loadTemplates on every request.
+// reloadTemplates is a hacky middleware that calls loadTemplates on every request.
 // It's useful to live reload templates in development but shouldn't be used in
 // production.
 func (h *Handler) reloadTemplates(next http.Handler) http.Handler {
@@ -42,4 +43,21 @@ func (h *Handler) reloadTemplates(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
+}
+
+// renderTemplate calls ExecuteTemplate on the passed template name.  If the
+// template fails to render then render the status code 500 page
+func (h *Handler) renderTemplate(w http.ResponseWriter, name string, data interface{}) {
+	buf := h.templateBufPool.Get().(*bytes.Buffer)
+	defer h.templateBufPool.Put(buf)
+
+	err := h.templates.ExecuteTemplate(buf, name, data)
+	if err != nil {
+		h.templates.ExecuteTemplate(w, "500", nil)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+	buf.WriteTo(w)
+	return
 }
