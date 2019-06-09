@@ -1,17 +1,26 @@
+/* Define a single root size (rem) and have everything else base their sizes
+ * off of that.  Gets rid of media queries for the most part and makes things
+ * more responsive by default.
+ * see: https://css-tricks.com/rems-ems/ 
+*/
+html {
+	font-size: 100%;
+}
+
 nav {
 	display: flex;
 	align-items: center;
-	padding: 16px 8px;
+	padding: 1rem 0.5rem;
 }
 
 .nav-logo {
-	height: 50px;
+	height: 3rem;
 	width: auto;
 }
 
 nav a {
 	text-decoration: none;
-	margin: 8px;
+	margin: 0.5rem;
 }
 
 
