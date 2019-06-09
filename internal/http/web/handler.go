@@ -116,6 +116,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// TODO right now this is only valid on the domain it's sent from, if we do
@@ -158,6 +159,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// TODO Right now this is only valid on the domain it's sent from, if we do
@@ -177,11 +179,11 @@ func (h *Handler) postLogin() http.HandlerFunc {
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO redirect to login if they're not logged in
 		claims, err := getClaimsFromCtx(r.Context())
 		if err != nil {
 			// TODO error handling
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusUnauthorized)
+			return
 		}
 
 		u, err := h.UserService.GetByEmail(claims["email"].(string))
@@ -190,6 +192,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			// This can fail either because the DB is messed up or nothing is found
 			// So be sure to deal with that
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
 		}
 
 		data := map[string]interface{}{

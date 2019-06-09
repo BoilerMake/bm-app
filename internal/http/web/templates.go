@@ -14,9 +14,14 @@ import (
 // Loads templates (files ending in .tmpl) from web/templates/ and all its
 // subdirectories.
 func (h *Handler) loadTemplates() (err error) {
+	webPath, ok := os.LookupEnv("WEB_PATH")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "WEB_PATH")
+	}
+
 	h.templates = template.New("")
 
-	err = filepath.Walk("web/templates/", func(path string, _ os.FileInfo, err error) error {
+	err = filepath.Walk(webPath+"/templates", func(path string, _ os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
