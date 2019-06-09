@@ -77,7 +77,7 @@ func NewHandler(us models.UserService) *Handler {
 	r.Post("/login", h.postLogin())
 	r.Get("/account", h.getAccount())
 
-	r.Get("/*", h.get404())
+	r.NotFound(h.get404())
 
 	h.Mux = r
 	return &h
@@ -93,7 +93,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "singup", nil)
+		h.renderTemplate(w, "signup", nil)
 	}
 }
 

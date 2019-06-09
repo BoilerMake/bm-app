@@ -2,6 +2,7 @@ package web
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +54,7 @@ func (h *Handler) renderTemplate(w http.ResponseWriter, name string, data interf
 
 	err := h.templates.ExecuteTemplate(buf, name, data)
 	if err != nil {
+		fmt.Println(err)
 		h.templates.ExecuteTemplate(w, "500", nil)
 		return
 	}
