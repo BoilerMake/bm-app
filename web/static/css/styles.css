@@ -54,11 +54,18 @@ nav {
 }
 
 .nav__link {
-
 	margin: 0.5rem;
 
 	text-decoration: none;
 	color: #222;
+}
+
+.nav__link--call-to-action {
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+
+	background: #222;
+	color: #ebebeb;
 }
 
 .nav__pages {
@@ -80,13 +87,6 @@ nav {
 	align-items: center;
 }
 
-.nav__auth--signup {
-	padding: 0.5rem;
-	border-radius: 0.5rem;
-
-	background: #222;
-	color: #ebebeb;
-}
 
 
 
@@ -95,6 +95,42 @@ main {
 
 	display: flex;
 	justify-content: center;
+}
+
+.input-text {
+	margin: 1rem 0;
+}
+
+.input-text__label {
+	display: block;
+	color: #7a7a7a;
+	font-size: 0.75rem;
+}
+
+.input-text__input {
+	border: none;
+	border-bottom: 1px solid #7a7a7a;
+	width: 100%;
+	background: transparent;
+}
+
+.input-text__input:active {
+	border: none;
+	border-bottom: 1px solid #222;
+	width: 100%;
+	background: transparent;
+}
+
+.form-button__button {
+	width: 100%;
+	padding: 0.5rem;
+	border: none;
+	border-radius: 0.5rem;
+
+	cursor: pointer;
+
+	background: #222;
+	color: #ebebeb;
 }
 
 
