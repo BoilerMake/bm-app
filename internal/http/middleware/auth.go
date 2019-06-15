@@ -46,6 +46,19 @@ func WithJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
+// // DecodeAndModify provides a way to
+// func Decode(w http.ResponseWriter, r *http.Request) http.Handler {
+//     //get reference to cookie if set
+//     if cookie, err := r.Cookie("session-cookie-name"); err == nil {
+//
+//         value := make(map[string]string)
+//         //use Decode to get the value from the cookie
+//         if err = s.Decode("session-cookie-name", cookie.Value, &value); err == nil {
+//             //modify the value in some way
+//
+//         }
+//     }
+// }
 // getToken decodes a JWT.  This func is separated not only to shorten the
 // WithJWT func but more importantly to make the whole "return token, err"
 // process more clear.
