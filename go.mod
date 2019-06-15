@@ -4,6 +4,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
+	github.com/gorilla/sessions v1.1.3
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/pkg/errors v0.8.1 // indirect

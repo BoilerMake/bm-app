@@ -13,6 +13,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
+	"github.com/gorilla/sessions"
 )
 
 var (
@@ -56,10 +57,17 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
+
+		//TODO replace with env variable
+		session, sess_err := store.Get(r, "session-cookie-name")
+		if sess_err != nil {
+			// TODO error handling
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
@@ -78,33 +86,36 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 		u.ID = id
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+		// No other errors
+		session.Values["ID"] = u.ID
+		err = session.Save(r, w) // TODO error checking
 
-		// TODO right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
 	}
 }
 
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO replace cookie name with an environment variable
+		session, sess_err := store.Get(r, "session-cookie-name")
+
+		if sess_err != nil {
+			// TODO error handling
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// Convert JSON user details in request to a user struct
 		var u models.User
+
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
+
 		if err != nil {
+
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -117,20 +128,9 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		// TODO Right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
+		// No other errors
+		session.Values["ID"] = u.ID
+		err = session.Save(r, w) // TODO error checking
 	}
 }
 
