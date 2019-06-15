@@ -1,3 +1,14 @@
+/* Variables TODO actually static ones should be replaced with sass variables */
+:root {
+	--color-black: #222;
+	--color-white: #EEE;
+
+	--max-width-global: 80rem;
+
+	--border-thin: 0.15rem solid var(--color-black);
+	--box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
+}
+
 /* CSS reset. TODO when/if we go with sass, this can be brought in with that */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -39,7 +50,6 @@ body {
 		"footer"; /* auto -> whatever it needs          */
 
 	min-height: 100vh;
-	background-size: cover;
 }
 
 button {
@@ -49,8 +59,8 @@ button {
 
 	cursor: pointer;
 
-	background: #222;
-	color: #ebebeb;
+	background: var(--color-black);
+	color: var(--color-white);
 }
 
 
@@ -63,7 +73,7 @@ nav {
 	display: flex;
 	flex: 1;
 
-	max-width: 80rem;
+	max-width: var(--max-width-global);
 
 	margin: 0 auto;
 	padding: 1rem 1.5rem;
@@ -73,15 +83,15 @@ nav {
 	margin: 0.5rem;
 
 	text-decoration: none;
-	color: #222;
+	color: var(--color-black);
 }
 
 .nav__link--call-to-action {
 	padding: 0.5rem;
 	border-radius: 0.5rem;
 
-	background: #222;
-	color: #ebebeb;
+	background: var(--color-black);
+	color: var(--color-white);
 }
 
 .nav__pages {
@@ -128,7 +138,7 @@ nav {
 	margin-bottom: 0.25rem;
 	border-radius: 1rem;
 
-	background: #222;
+	background: var(--color-black);
 }
 
 .nav__dropdown--menu {
@@ -142,8 +152,8 @@ nav {
 	font-size: 1.15rem;
 	list-style: none;
 
-	background: #FFF;
-	border: 0.15rem solid #222;
+	background: var(--color-white);
+	border: var(--border-thin);
 	border-radius: 0.25rem;
 }
 
@@ -151,7 +161,7 @@ nav {
 
 footer {
 	grid-area: footer;
-	background: #222;
+	background: var(--color-black);
 }
 
 .footer__container {
@@ -159,11 +169,11 @@ footer {
 	justify-content: center;
 	flex: 1;
 
-	max-width: 80rem;
+	max-width: var(--max-width-global);
 
 	margin: 0 auto;
 	padding: 1rem 1.5rem;
-	color: #ebebeb;
+	color: var(--color-white);
 }
 
 .footer__section {
@@ -176,12 +186,12 @@ footer {
 }
 
 .footer__link {
-	color: #ebebeb;
+	color: var(--color-white);
 	text-decoration: none;
 }
 
 .footer__link:hover {
-	color: #ebebeb;
+	color: var(--color-white);
 	text-decoration: underline;
 }
 
@@ -198,8 +208,9 @@ main {
 .main__container {
 	display: flex;
 	flex: 1;
+	justify-content: center;
 
-	max-width: 80rem;
+	max-width: var(--max-width-global);
 
 	margin: 0 auto;
 	padding: 1rem 1.5rem;
@@ -220,15 +231,17 @@ main {
 }
 
 .form__input--text {
-	border: none;
-	border-bottom: 1px solid #7a7a7a;
-	border-radius: 0;
 	width: 100%;
+
+	border: none;
+	border-bottom: 0.15rem solid #7a7a7a;
+	border-radius: 0;
+	box-sizing: border-box;
 }
 
-.form__input--text:active {
+.form__input--text:focus {
 	border: none;
-	border-bottom: 1px solid #222;
+	border-bottom: var(--border-thin);
 }
 
 .form--button {
@@ -276,10 +289,11 @@ main {
 	width: 100%;
 	max-width: 25rem;
 
-	border: 0.15rem solid #222;
+	border: var(--border-thin);
 	border-radius: 0.25rem;
-	box-sizing: border-box;
-	box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
 
-	padding: 1rem;
+	box-sizing: border-box;
+	box-shadow: var(--box-shadow);
+
+	padding: 1rem 1.5rem;
 }
