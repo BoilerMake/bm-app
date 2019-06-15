@@ -1,24 +1,27 @@
 {{ define "login" }}
 {{ template "header" . }}
 
-<form action="" method="post">
-	<h1>Login</h1>
-	<hr>
+<div class="cards">
+	<div class="card">
+		<form class="form__auth" action="" method="post">
+			<h1>Login</h1>
 
-	<div>
-		<label class="input-text__label" for="email"><b>Email</b></label>
-		<input class="input-text__input" type="text" name="email" required>
-	</div>
+			<div class="form__input">
+				<label class="form__input--label" for="email"><b>Email</b></label>
+				<input class="form__input--text " type="text" name="email" required>
+			</div>
 
-	<div>
-		<label class="input-text__label" for="password"><b>Password</b></label>
-		<input class="input-text__input" type="password" name="password" required>
-	</div>
+			<div class="form__input">
+				<label class="form__input--label" for="password"><b>Password</b></label>
+				<input class="form__input--text" type="password" name="password" required>
+			</div>
 
-	<div>
-		<button type="submit">Sign Up</button>
+			<div>
+				<button class="form--button" type="submit">Login</button>
+			</div>
+		</form> 
 	</div>
-</form> 
+</div>
 
 {{ template "footer" . }}
 {{ end }}
