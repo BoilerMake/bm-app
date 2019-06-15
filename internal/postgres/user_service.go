@@ -11,6 +11,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	"math/rand"
+
 	"github.com/lib/pq"
 )
 
@@ -34,27 +35,27 @@ type dbUser struct {
 	ProjectIdea sql.NullString
 	TeamMembers []string
 
-	IsActive	bool
-	ConfirmationCode string
+	IsActive         sql.NullBool
+	ConfirmationCode sql.NullString
 }
 
 // toModel converts a database specific dbUser to the more generic User struct.
 func (u *dbUser) toModel() *models.User {
 	// TODO test to see what happens if u is nil
 	return &models.User{
-		ID:           	int(u.ID.Int64),
-		Role:         	int(u.Role.Int64),
-		Email:        	u.Email.String,
-		PasswordHash: 	u.PasswordHash.String,
-		FirstName:    	u.first_name.String,
-		LastName:     	u.last_name.String,
-		Phone:        	u.Phone.String,
+		ID:           int(u.ID.Int64),
+		Role:         int(u.Role.Int64),
+		Email:        u.Email.String,
+		PasswordHash: u.PasswordHash.String,
+		FirstName:    u.first_name.String,
+		LastName:     u.last_name.String,
+		Phone:        u.Phone.String,
 
-		ProjectIdea:	u.ProjectIdea.String,
-		TeamMembers: 	u.TeamMembers,
+		ProjectIdea: u.ProjectIdea.String,
+		TeamMembers: u.TeamMembers,
 
-		IsActive:		u.IsActive,
-		ConfirmationCode:u.ConfirmationCode,
+		IsActive:         u.IsActive.Bool,
+		ConfirmationCode: u.ConfirmationCode.String,
 	}
 }
 
@@ -65,7 +66,7 @@ func (u *dbUser) toModel() *models.User {
 // - nil user
 func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	// Generate confirmation code
-	code = GenerateConfirmationCode(32);
+	code = GenerateConfirmationCode(32)
 
 	err = u.Validate()
 	if err != nil {
@@ -113,7 +114,6 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			return id, code, pgerr
 		}
 	}
-
 
 	return id, code, err
 }
@@ -214,7 +214,9 @@ func (s *UserService) GetByCode(code string) (*models.User, error) {
 	FROM users
 	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
 
-	if err != nil { return nil, err }
+	if err != nil {
+		return nil, err
+	}
 
 	return dbu.toModel(), err
 }
@@ -297,11 +299,7 @@ func GenerateConfirmationCode(len int) string {
 	const charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-"
 	code := ""
 	for i := 0; i < len; i++ {
-		if i == 0 {
-			code += string(charset[10 + rand.Intn(54)])
-		} else {
-			code += string(charset[rand.Intn(64)])
-		}
+		code += string(charset[rand.Intn(64)])
 	}
 	return code
 }

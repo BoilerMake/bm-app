@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-    "time"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -16,7 +16,6 @@ import (
 	"github.com/go-chi/chi"
 
 	"github.com/mailgun/mailgun-go/v3"
-	// "gopkg.in/gomail.v2"
 )
 
 var (
@@ -34,11 +33,11 @@ type Handler struct {
 
 // NewHandler creates a handler for API requests.
 func NewHandler(us models.UserService) *Handler {
+	jwtCookie = getEnv("JWT_COOKIE_NAME")
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
 	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-	jwtCookie = getEnv("JWT_COOKIE_NAME")
 
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
 	r.Use(middleware.WithJWT)
@@ -57,9 +56,13 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
+	// Get necessary environment variables for mailgun
+	sender := getEnv("EMAIL_ADDRESS")
+	domain := getEnv("DOMAIN_NAME")
+	private_key := getEnv("MAILGUN_KEY")
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
-
 
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
@@ -78,52 +81,27 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 		u.ID = id
 
-		// Get necessary environment variables
-		sender := getEnv("EMAIL_ADDRESS")
-		domain := getEnv("DOMAIN_NAME")
-		private_key := getEnv("MAILGUN_KEY")
-
 		// Create an instance of the Mailgun Client
-	    mg := mailgun.NewMailgun(domain, private_key)
+		mg := mailgun.NewMailgun(domain, private_key)
 
 		// Build confirmation email
 		subject := "Confirm your email"
-		link := "localhost:8080/activate/" + string(confirmationCode)
-		body := "Please click the following link to confirm your email address: " + link;
-	    recipient := u.Email
-	    message := mg.NewMessage(sender, subject, body, recipient)
+		link := "localhost:8080/api/activate/" + string(confirmationCode)
+		body := "Please click the following link to confirm your email address: " + link
+		recipient := u.Email
+		message := mg.NewMessage(sender, subject, body, recipient)
 
-	    ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	    defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
 
-	    // Send the message	with a 10 second timeout
-	    resp, mid, err := mg.Send(ctx, message)
+		// Send the message	with a 10 second timeout
+		resp, mid, err := mg.Send(ctx, message)
 
-	    if err != nil {
-	        log.Fatal(err)
-	    }
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	    fmt.Printf("ID: %s Resp: %s\n", mid, resp)
-		// message := gomail.NewMessage()
-		// message.SetHeader("From", "romilrh@gmail.com")
-		// message.SetHeader("To", u.Email)
-		// message.SetHeader("Subject", "Confirm your email")
-		// message.SetBody("text/html", body)
-		//
-		// email, ok := os.LookupEnv("EMAIL_ADDRESS")
-		// if !ok {
-		// 	log.Fatalf("environment variable not set: %v", "EMAIL_ADDRESS")
-		// }
-		// password, ok := os.LookupEnv("EMAIL_PASSWORD")
-		// if !ok {
-		// 	log.Fatalf("environment variable not set: %v", "EMAIL_PASSWORD")
-		// }
-		// d := gomail.NewDialer("smtp.gmail.com", 587, email, password)
-		//
-		// if err := d.DialAndSend(message); err != nil {
-		// 	// log.Println("message sending went wrong.\n")
-		// 	log.Fatalf("Error sending message: %s\n", err)
-		// }
+		log.Printf("ID: %s Resp: %s\n", mid, resp)
 
 		jwt, err := u.GetJWT()
 		if err != nil {
@@ -207,15 +185,15 @@ func (h *Handler) getSelf() http.HandlerFunc {
 	}
 }
 
-func (h *Handler)postActivate() http.HandlerFunc {
+func (h *Handler) postActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		claims, err := getClaimsFromCtx(r.Context())
+		// Temporarily ignoring claims returned from getClaimsFromCtx
+		_, err := getClaimsFromCtx(r.Context())
 		if err != nil {
 			// TODO error handling
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
-		claims = claims
 
 		code := chi.URLParam(r, "code")
 
@@ -262,7 +240,7 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 func getEnv(var_name string) (value string) {
 	value, ok := os.LookupEnv(var_name)
 	if !ok {
-		log.Fatalf("environment variable not set: %v", "EMAIL_ADDRESS")
+		log.Fatalf("environment variable not set: %v", var_name)
 	}
 	return value
 }

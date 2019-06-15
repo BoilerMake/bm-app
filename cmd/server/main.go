@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http"
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -15,6 +17,8 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	rand.Seed(time.Now().UnixNano())
 
 	// TODO I *really* don't think this is the ideal way to configure things, plz help ;(
 	// Maybe we could have a config package that exports all the configs we need
