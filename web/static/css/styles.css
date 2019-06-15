@@ -38,10 +38,8 @@ body {
 		"main"    /* 1fr  -> whatever else is available */
 		"footer"; /* auto -> whatever it needs          */
 
-	max-width: 80rem;
 	min-height: 100vh;
-
-	margin: 0 auto;
+	background-size: cover;
 }
 
 button {
@@ -59,9 +57,16 @@ button {
 
 nav {
 	grid-area: nav;
+}
 
+.nav__container {
 	display: flex;
-	margin: 1rem 1.5rem;
+	flex: 1;
+
+	max-width: 80rem;
+
+	margin: 0 auto;
+	padding: 1rem 1.5rem;
 }
 
 .nav__link {
@@ -146,16 +151,22 @@ nav {
 
 footer {
 	grid-area: footer;
-
-	display: flex;
-	justify-content: center;
-
-	padding: 1.5rem 2rem;
 	background: #222;
-	color: #ebebeb;
 }
 
 .footer__container {
+	display: flex;
+	justify-content: center;
+	flex: 1;
+
+	max-width: 80rem;
+
+	margin: 0 auto;
+	padding: 1rem 1.5rem;
+	color: #ebebeb;
+}
+
+.footer__section {
 	padding: 0 2rem;
 	list-style: none;
 }
@@ -182,6 +193,16 @@ main {
 
 	display: flex;
 	justify-content: center;
+}
+
+.main__container {
+	display: flex;
+	flex: 1;
+
+	max-width: 80rem;
+
+	margin: 0 auto;
+	padding: 1rem 1.5rem;
 }
 
 .form__auth {
@@ -258,7 +279,7 @@ main {
 	border: 0.15rem solid #222;
 	border-radius: 0.25rem;
 	box-sizing: border-box;
+	box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
 
 	padding: 1rem;
 }
-
