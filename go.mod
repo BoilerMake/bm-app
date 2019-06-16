@@ -1,6 +1,7 @@
 module github.com/BoilerMake/new-backend
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect

@@ -1,9 +1,7 @@
 package api
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +9,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
 )
@@ -55,6 +53,8 @@ func NewHandler(us models.UserService) *Handler {
 	return &h
 }
 
+var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 
@@ -72,6 +72,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
+
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -79,21 +80,20 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 
 		id, err := h.UserService.Signup(&u)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		// if err != nil {
+		// 	// TODO error handling
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+		//
+		// 	return
+		// }
 		u.ID = id
-
 		// No other errors
 		session.Values["ID"] = u.ID
+		println(session.Values["ID"])
 		err = session.Save(r, w) // TODO error checking
 
 	}
 }
-
-var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
@@ -141,62 +141,14 @@ func (h *Handler) postLogin() http.HandlerFunc {
 // TODO Same as above, but for passwordConfirm
 func (h *Handler) getSelf() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		claims, err := getClaimsFromCtx(r.Context())
+		// TODO replace cookie name with env name
+		session, err := store.Get(r, "session-cookie-name")
 		if err != nil {
-			// TODO error handling
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		u, err := h.UserService.GetByEmail(claims["email"].(string))
-		if err != nil {
-			// TODO error handling
-			// This can fail either because the DB is messed up or nothing is found
-			// So be sure to deal with that
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
-
-		json.NewEncoder(w).Encode(u)
+		spew.Dump(session)
+		json.NewEncoder(w).Encode(session)
 		return
 	}
-}
-
-// mustGetJWTConfig tries to get JWT configuration variables from the
-// environment. It will panic if those variables are not set.
-func mustGetJWTConfig() (string, []byte) {
-	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
-	}
-
-	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	}
-	jwtSigningKey := []byte(jwtSigningKeyString)
-
-	return jwtIssuer, jwtSigningKey
-}
-
-// getClaimsFromCtx returns the claims of a Context's JWT or an error.
-func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
-	// Always make sure the error field is nil
-	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
-	if err != nil {
-		return nil, err
-	}
-
-	// Make sure the token is not nil
-	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
-	if !ok {
-		return nil, fmt.Errorf("missing jwt in context")
-	}
-
-	claims = token.Claims.(jwt.MapClaims)
-	if err = claims.Valid(); err != nil {
-		return nil, err
-	}
-
-	return claims, err
 }
