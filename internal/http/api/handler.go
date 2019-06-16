@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 
@@ -12,10 +11,6 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
-)
-
-var (
-	jwtCookie string // Name for the JWT's cookie.  TODO Better name?
 )
 
 // A Handler will route requests to their appropriate HandlerFunc.
@@ -32,13 +27,7 @@ func NewHandler(us models.UserService) *Handler {
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
-	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-	var ok bool
-	jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
-	}
-
+	// Need to configure this better
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
 	r.Use(middleware.WithJWT)
 
