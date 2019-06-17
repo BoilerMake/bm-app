@@ -19,6 +19,8 @@ import (
 
 var (
 	jwtCookie string // Name for the JWT's cookie.  TODO Better name?
+	mgDomain  string
+	mgAPIKey  string
 )
 
 // A Handler will route requests to their appropriate HandlerFunc.
@@ -40,6 +42,14 @@ func NewHandler(us models.UserService) *Handler {
 	jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
 	if !ok {
 		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
+	}
+	mgDomain, ok = os.LookupEnv("MAILGUN_DOMAIN")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "MAILGUN_DOMAIN")
+	}
+	mgAPIKey, ok = os.LookupEnv("MAILGUN_API_KEY")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "MAILGUN_API_KEY")
 	}
 
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
@@ -141,20 +151,17 @@ func (h *Handler) postLogin() http.HandlerFunc {
 // postForgotPassword sends the password reset email
 func (h *Handler) postForgotPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		type Message struct {
-			Email string
-		}
 		// Get info from body
-		var e Message
+		var emailModel models.EmailModel
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&e)
+		err := decoder.Decode(&emailModel)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		token, err := h.UserService.GetPasswordReset(e.Email)
+		token, err := h.UserService.GetPasswordReset(emailModel.Email)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -162,18 +169,9 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		}
 
 		// This will be formatted better once the front end is setup for the link
-		recipient := e.Email
+		recipient := emailModel.Email
 		subject := "Password Reset"
 		body := "Your reset token is: " + token
-
-		mgDomain, ok := os.LookupEnv("MAILGUN_DOMAIN")
-		if !ok {
-			log.Fatalf("environment variable not set: %v", "MAILGUN_DOMAIN")
-		}
-		mgAPIKey, ok := os.LookupEnv("MAILGUN_API_KEY")
-		if !ok {
-			log.Fatalf("environment variable not set: %v", "MAILGUN_API_KEY")
-		}
 
 		// Sending the email (can be made into a method)
 		mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
@@ -196,20 +194,16 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		type Message struct {
-			UserToken   string
-			NewPassword string
-		}
 		// Get info from body
-		var m Message
+		var passwordResetInfo models.PasswordResetPayload
 		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&m)
+		err := decoder.Decode(&passwordResetInfo)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		err = h.UserService.ResetPassword(m.UserToken, m.NewPassword)
+		err = h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)

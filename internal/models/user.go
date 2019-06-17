@@ -29,8 +29,8 @@ var (
 
 // Password Reset errors
 var (
-	ErrInvalidToken = errors.New("token is invalid")
-	ErrExpiredToken = errors.New("token has expired")
+	ErrInvalidToken = errors.New("password reset token is invalid")
+	ErrExpiredToken = errors.New("password reset token has expired")
 )
 
 const (
@@ -58,6 +58,17 @@ type User struct {
 
 	ProjectIdea string   `json:"projectIdea"`
 	TeamMembers []string `json:"teamMembers"`
+}
+
+// EmailModel struct for password reset emails
+type EmailModel struct {
+	Email string
+}
+
+// PasswordResetPayload struct for resetting passwords
+type PasswordResetPayload struct {
+	UserToken   string
+	NewPassword string
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The

@@ -8,7 +8,6 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -132,9 +131,6 @@ func (s *UserService) Login(u *models.User) error {
 	} else {
 		return models.ErrIncorrectLogin
 	}
-
-	// UNREACHABLE CODE
-	//return err
 }
 
 // GetById returns a single user with the given id.
@@ -258,6 +254,9 @@ func (s *UserService) Update(u *models.User) error {
 
 // Creates the user's token for a password reset
 func (s *UserService) GetPasswordReset(email string) (string, error) {
+	if email {
+		return "", models.ErrEmptyEmail
+	}
 	token, err := GenerateRandomString(passwordResetTokenLength)
 	if err != nil {
 		return "", err
@@ -277,16 +276,11 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	VALUES
 		((SELECT id FROM users WHERE email = $1), $2, $3);`, email, tokenID, hashedToken)
 
-	// Not sure what error to return
 	// User should not know if the email exists
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
-		// User not in db (log internally)
-		// No error should be returned to user
 		case "not_null_violation":
 			return "", nil
-		default:
-			return "", pgerr
 		}
 	}
 
@@ -295,7 +289,7 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	return userToken, nil
 }
 
-// Resets the user's password
+// ResetPassword resets the user's password
 func (s *UserService) ResetPassword(token string, password string) error {
 	if len(token) < userIDTokenLength+passwordResetTokenLength {
 		return models.ErrInvalidToken
@@ -306,10 +300,17 @@ func (s *UserService) ResetPassword(token string, password string) error {
 	id := -1
 	var uid int
 	var hashedToken string
-	row := s.DB.QueryRow(`SELECT id, uid, hashedToken FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
-	err := row.Scan(&id, &uid, &hashedToken)
-	if err != nil && err != sql.ErrNoRows {
-		log.Fatal(err)
+	var createdAt time.Time
+	var now time.Time
+	// TODO check all rows with the same tokenID
+	// Multiple people can have the same tokenID
+	row := s.DB.QueryRow(`SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
+	err := row.Scan(&id, &uid, &hashedToken, &createdAt, &now)
+	elapsed := now.Sub(createdAt).Minutes()
+
+	// Check if token is expired
+	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
+		return models.ErrExpiredToken
 	}
 
 	// Not sure what error to return
@@ -327,18 +328,8 @@ func (s *UserService) ResetPassword(token string, password string) error {
 
 	// TODO output useful errors
 	if argon2.CheckPassword(userToken, hashedToken) {
-		fmt.Println("Correct token!")
-		unexpired, err := s.IsUnexpiredToken(id)
-		if err != nil {
-			return err
-		}
-		if unexpired {
-			s.TokenChangePassword(id, uid, password)
-			fmt.Println("Password changed!")
-			return nil
-		} else {
-			return models.ErrExpiredToken
-		}
+		s.TokenChangePassword(id, uid, password)
+		return nil
 	}
 
 	return models.ErrInvalidToken
@@ -360,23 +351,6 @@ func (s *UserService) TokenChangePassword(id int, uid int, password string) erro
 	// TODO make sure when an exec fails it doesn't have an effect on the db
 
 	return err
-}
-
-// IsUnexpiredToken Checks if the password token is not expired
-func (s *UserService) IsUnexpiredToken(id int) (bool, error) {
-	var createdAt time.Time
-	var now time.Time
-	err := s.DB.QueryRow(`SELECT created_at, current_timestamp FROM password_reset_tokens WHERE id = $1`, id).Scan(&createdAt, &now)
-	if err != nil {
-		return false, err
-	}
-	elapsed := now.Sub(createdAt).Minutes()
-
-	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
-		return false, models.ErrExpiredToken
-	}
-
-	return true, nil
 }
 
 // GenerateRandomBytes returns securely generated random bytes.
