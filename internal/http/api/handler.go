@@ -98,7 +98,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		resp, mid, err := mg.Send(ctx, message)
 
 		if err != nil {
-			log.Fatal(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
 		log.Printf("ID: %s Resp: %s\n", mid, resp)
