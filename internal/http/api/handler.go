@@ -33,7 +33,7 @@ type Handler struct {
 
 // NewHandler creates a handler for API requests.
 func NewHandler(us models.UserService) *Handler {
-	jwtCookie = getEnv("JWT_COOKIE_NAME")
+	jwtCookie = mustGetEnv("JWT_COOKIE_NAME")
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
@@ -57,9 +57,9 @@ func NewHandler(us models.UserService) *Handler {
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 	// Get necessary environment variables for mailgun
-	sender := getEnv("EMAIL_ADDRESS")
-	domain := getEnv("DOMAIN_NAME")
-	private_key := getEnv("MAILGUN_KEY")
+	sender := mustGetEnv("EMAIL_ADDRESS")
+	domain := mustGetEnv("DOMAIN_NAME")
+	private_key := mustGetEnv("MAILGUN_KEY")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
@@ -86,7 +86,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		// Build confirmation email
 		subject := "Confirm your email"
-		link := "localhost:8080/api/activate/" + string(confirmationCode)
+		link := domain + "/api/activate/" + string(confirmationCode)
 		body := "Please click the following link to confirm your email address: " + link
 		recipient := u.Email
 		message := mg.NewMessage(sender, subject, body, recipient)
@@ -236,8 +236,8 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 	return claims, err
 }
 
-// getEnv looks up and sets an environment variable
-func getEnv(var_name string) (value string) {
+// mustmustGetEnv looks up and sets an environment variable
+func mustGetEnv(var_name string) (value string) {
 	value, ok := os.LookupEnv(var_name)
 	if !ok {
 		log.Fatalf("environment variable not set: %v", var_name)
