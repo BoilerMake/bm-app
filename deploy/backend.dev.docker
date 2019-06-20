@@ -1,0 +1,17 @@
+# TESTING version of backend.docker
+# This version will automatically rebuild on changes to *.go files
+FROM golang:1.12-alpine
+
+WORKDIR /backend
+
+# Because alpine containers try to be small they leave out most things, so
+# download the things we need here
+RUN apk add --no-cache git make
+
+# Used to rebuild when on file changes
+RUN go get github.com/githubnemo/CompileDaemon
+
+ENV GO111MODULE=on
+ENV CGO_ENABLED=0
+
+ENTRYPOINT CompileDaemon -include=".env" -build="make build" -command="/backend/bin/server"

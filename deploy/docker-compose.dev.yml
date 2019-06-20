@@ -6,17 +6,24 @@
 version: "3"
 services:
   backend:
-    volumes:
-      - ../.env:/backend/.env
+    build:
+      context: ../
+      dockerfile: ./deploy/backend.dev.docker
 
   database:
     env_file:
       - ../.env
+    ports:
+      # Expose port 5432 of container to port 5432 of host
+      # Exposed differently in prod to avoid some port scanners
+      - "5432:5432"
+    volumes:
+      - ../working/pgsql/data:/var/lib/postgresql/data
 
   proxy:
     ports:
-      # Expose port 80 of container to port 8080 of host
-      - 80:80
+      # Expose port 8080 of container to port 8080 of host
+      - 8080:80
     env_file:
       - ../.env
     volumes:

@@ -11,3 +11,6 @@ bin/
 
 # Configs we don't want pushed
 .env
+
+# Folder for temporary or development things
+working/

@@ -5,8 +5,10 @@ services:
   backend:
     build:
       context: ../
-      dockerfile: ./deploy/backend.docker
+      dockerfile: ./deploy/backend.base.docker
     restart: always
+    volumes:
+      - ../:/backend
     depends_on:
       - database
       - proxy
@@ -21,8 +23,6 @@ services:
       context: ../
       dockerfile: ./deploy/database.docker
     restart: always
-    volumes:
-      - ./migrations/:/backend_migrations/
     labels:
       - traefik.enable=false
     ports:
@@ -33,7 +33,6 @@ services:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-    # TODO volume for pg data for all modes
 
   proxy:
     image: traefik:1.7-alpine

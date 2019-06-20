@@ -1,3 +1,5 @@
+# PRODUCTION and TESTING version of backend.docker
+# Unlike the DEVELOPMENT version, this file does not auto reloading
 FROM golang:1.12-alpine AS builder
 
 WORKDIR /backend

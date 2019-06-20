@@ -10,20 +10,17 @@ jobs:
       - checkout # pulls our code
       - run:
           name: "Enforce Go Formatted Code"
-          command: "! go fmt ./... 2>&1 | read"
+          command: |
+            ! go fmt ./... 2>&1 | read
       - run:
           name: "Get Versions"
           command: |
             docker version
             docker-compose --version
       - run:
-          name: "docker-compose up"
-          command: |
-            docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml up -d
-      - run:
           name: "Run Tests"
           command: |
-            docker-compose -f deploy/docker-compose.base.yml -f deploy/docker-compose.testing.yml exec backend go test -v ./...
+            make test
   deploy_prod:
     machine:
       enabled: true
