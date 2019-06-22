@@ -1,6 +1,6 @@
 #! /bin/sh
 
-cd ~/bm-app
+cd ~/backend
 
 # Update our repo
 git pull
@@ -17,4 +17,4 @@ sudo touch /opt/traefik/acme.json && sudo chmod 600 /opt/traefik/acme.json
 
 # This will rebuild our serivces *then* replace the current ones with them.
 # Avoiding downtime is cool
-sudo docker-compose -f ~/bm-app/deploy/docker-compose.default.yml -f ~/bm-app/deploy/docker-compose.prod.yml up -d --build
+sudo docker-compose -f ~/backend/deploy/docker-compose.default.yml -f ~/backend/deploy/docker-compose.prod.yml up -d --build
