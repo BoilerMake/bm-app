@@ -3,6 +3,7 @@ logLevel = "ERROR"
 
 # Entrypoints are the front line of traefik, they define at which locations
 # we accept requests.
+defaultEntryPoints = ["http", "https"]
 [entryPoints]
 	[entryPoints.http]
 	address = ":80"
@@ -12,8 +13,6 @@ logLevel = "ERROR"
 	[entryPoints.https]
 	address = ":443"
 	[entryPoints.https.tls]
-
-defaultEntryPoints = ["http", "https"]
 
 # Enable dashboard that has some neat stats
 [api]
