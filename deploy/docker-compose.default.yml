@@ -11,8 +11,6 @@ services:
       context: ../
       dockerfile: ./deploy/bm-app.default.docker
     restart: always
-    volumes:
-      - ../:/bm-app
     depends_on:
       - database
       - proxy
