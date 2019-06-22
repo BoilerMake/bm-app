@@ -1,31 +1,23 @@
 # DEVELOPMENT version of docker-compose configuration
-# This file extends docker-compose.base.yml
-#
-# TODO if developing with docker is v slower then this can just 
-# host the database with docker and build the backend like normal
+# This file extends docker-compose.default.yml
 version: "3"
 services:
-  backend:
+  bm-app:
     build:
       context: ../
-      dockerfile: ./deploy/backend.dev.docker
+      # Use the bm-app dev Dockerfile so code auto reloads
+      dockerfile: ./deploy/bm-app.dev.docker
 
   database:
-    env_file:
-      - ../.env
-    ports:
-      # Expose port 5432 of container to port 5432 of host
-      # Exposed differently in prod to avoid some port scanners
-      - "5432:5432"
     volumes:
       - ../working/pgsql/data:/var/lib/postgresql/data
 
   proxy:
     ports:
-      # Expose port 8080 of container to port 8080 of host
+      # Running locally we can use whatever port we want
+      # Expose port 80 of container to port 8000 of host
       - 8080:80
-    env_file:
-      - ../.env
     volumes:
+      # So traefik can pay attention to docker activities
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.dev.toml:/etc/traefik/traefik.toml

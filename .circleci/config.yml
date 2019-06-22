@@ -1,6 +1,7 @@
 # See https://circleci.com/docs/2.0/configuration-reference/
 version: 2
 jobs:
+  # Runs our test suite.
   run_tests:
     machine:
       # Because we're using docker-compose we won't run the tests on another
@@ -21,30 +22,31 @@ jobs:
           name: "Run Tests"
           command: |
             make test
+
+  # SSHs into our server and runs deploy_prod.sh
   deploy_prod:
     machine:
       enabled: true
     steps:
       - run:
-          name: "deploy production using ssh"
+          name: "Deploy Production Over SSH"
           command: |
             ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh ~/backend/deploy/scripts/deploy_prod.sh
 
 workflows:
   version: 2
-  # This will run tests on every commit onto pull requests.  Usually it would
-  # run tests on EVERY commit, but there's a setting on CircleCI that we turned
-  # on to only do PRs.
+  # This will run run_tests on every commit onto open pull requests.  Usually
+  # it would run run_tests on EVERY commit, but there's a setting on CircleCI
+  # that we turned on to only do PRs.
   test:
     jobs:
       - run_tests
 
   # This will run the deploy script whenever someone commits to master.
-  # Don't go breaking the build!
+  # Remember what Gustavo says about breaking the build!
   production:
     jobs:
       - deploy_prod:
           filters:
             branches:
               only: master
-
