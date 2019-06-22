@@ -11,6 +11,8 @@ bin/
 
 # Configs we don't want pushed
 .env
+# But allow deploy/test/.env
+!/deploy/test/.env
 
 # Folder for temporary or development things
 working/
