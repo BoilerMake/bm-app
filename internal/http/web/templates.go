@@ -98,6 +98,7 @@ func (h *Handler) renderTemplate(w http.ResponseWriter, name string, data interf
 	// Grab a buffer from the buffer pool
 	buf := h.templateBufPool.Get().(*bytes.Buffer)
 	defer h.templateBufPool.Put(buf)
+	defer buf.Reset()
 
 	// Try rendering the template
 	err := h.templates.ExecuteTemplate(buf, name, data)

@@ -13,13 +13,3 @@ func SetContentTypeJSON(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(fn)
 }
-
-// SetContentTypeHTML sets the Content-Type for a response to text/html
-func SetContentTypeHTML(next http.Handler) http.Handler {
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r)
-		w.Header().Set("Content-Type", "text/html")
-	}
-
-	return http.HandlerFunc(fn)
-}
