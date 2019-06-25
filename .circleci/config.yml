@@ -31,7 +31,7 @@ jobs:
       - run:
           name: "Deploy Production Over SSH"
           command: |
-            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh ~/backend/deploy/scripts/deploy_prod.sh
+            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh $BACKEND_PATH/deploy/scripts/deploy_prod.sh
 
 workflows:
   version: 2
