@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/BoilerMake/new-backend/internal/http"
-	"github.com/BoilerMake/new-backend/internal/models"
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/pkg/env"
 )
@@ -16,22 +15,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	// TODO I *really* don't think this is the ideal way to configure things, plz help ;(
-	// Maybe we could have a config package that exports all the configs we need
-	// and it has an init that loads env and sets those exported fields?
-	// JWT configuring
-	signingString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	}
-	models.JWTSigningKey = []byte(signingString)
-
-	issuer, ok := os.LookupEnv("JWT_ISSUER")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
-	}
-	models.JWTIssuer = issuer
 
 	// Initialize databse
 	dbHost, ok := os.LookupEnv("DB_HOST")
