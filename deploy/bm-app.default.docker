@@ -1,0 +1,23 @@
+# PRODUCTION and TESTING version of bm-app.docker
+# Unlike the DEVELOPMENT version, this file does not auto reload on changes.
+FROM golang:1.12-alpine AS builder
+
+WORKDIR /bm-app
+# Copy over entire working directory (minus things listed in .dockerignore).
+# Even though we also volume in our working directory, volumes are not
+# mounted until the container is run, and we need the files in order to build.
+COPY . .
+
+# Because alpine containers try to be small they leave out most tools, so
+# download the things we need here.
+RUN apk add --no-cache git make
+
+# Enable modules
+ENV GO111MODULE=on
+# We don't use cgo and it can requires some extra dependencies, so just let go
+# know we don't care.
+ENV CGO_ENABLED=0
+
+RUN make build
+
+ENTRYPOINT ["/bm-app/bin/server"]

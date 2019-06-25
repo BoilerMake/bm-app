@@ -1,0 +1,24 @@
+# TEST version of docker-compose configuration
+# This file extends docker-compose.default.yml
+version: "3"
+services:
+  bm-app:
+    volumes:
+      # Use testing config that should have useful defaults
+      - ./test/.env:/bm-app/.env
+
+  database:
+    # When docker-compose is run in the directory of this file (deploy/test),
+    # it will use the .env it finds here, and will replace the variables in
+    # deploy/docker-compose.default.yml (assuming you ran docker-compse 
+    # specifying both this file and the default file like it is in the 
+    # Makefile).
+
+  proxy:
+    ports:
+      # Expose port 80 of container to port 8080 of host
+      - 8080:80
+    volumes:
+      # So traefik can pay attention to docker activities
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.dev.toml:/etc/traefik/traefik.toml

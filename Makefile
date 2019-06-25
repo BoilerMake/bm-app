@@ -1,30 +1,42 @@
-# TODO this should be replaced with make.go which you can run with `go run make.go`
-# I know we've got some windows bois (🤮 it's 2018, use unix 😡), and this should solve their woes
-# ^ That doesn't mean we shouldn't have a Makefile though! running `make` is still faster than `go run make.go`
-
 # Add any other binaries to build here, seperated by a space
 TARGETS := server
 
 INFO_STR=[INFO]
 
-all: test build server
-run: build server
+dev:
+	@echo $(INFO_STR) starting dev environment...
+	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up
+
+test:
+	@echo $(INFO_STR) starting test environment...
+	@# Because of how docker handles .env files (different than env_files‽), we
+	@# need to run the docker-compose command inside the directory with our
+	@# test .env file.
+	@#
+	@# Why is this one big command? Make runs separate commands in their own
+	@# subshell (oof @252), so if they weren't together then the following command
+	@# would no longer in the correct directory after cding.
+	@cd deploy/test && \
+		docker-compose -f ../docker-compose.default.yml -f docker-compose.test.yml up -d && \
+		docker-compose -f ../docker-compose.default.yml -f docker-compose.test.yml exec bm-app go test -v /bm-app/...
+	@# Also, see comment above for why we don't need to cd out
+
 build:
 	@for target in $(TARGETS); do \
 		echo $(INFO_STR) building binary \"$$target\"; \
 		go build -o bin/$$target ./cmd/$$target; \
 	done
 
-test: 
-	@echo $(INFO_STR) running tests
-	@go test -v ./...
+dev-force-rebuild:
+	@echo $(INFO_STR) rebuilding dev environment...
+	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up --build --force-recreate
+
+dev-cleanup:
+	@echo $(INFO_STR) removing dev environment...
+	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml rm --stop
 
 clean:
-	@echo $(INFO_STR) cleaning dependencies and removing binaries
+	@echo $(INFO_STR) cleaning dependencies and removing binaries...
 	@go clean
 	@go mod tidy
 	@rm -rf ./bin
-
-server:
-	@echo $(INFO_STR) running bin/server
-	@./bin/server

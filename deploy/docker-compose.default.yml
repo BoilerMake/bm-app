@@ -1,0 +1,57 @@
+# DEFAULT version of docker-compose configuration
+# Dev, prod, and test will build off of this file
+#
+# ${VAR} is how docker-compose does env var expansion.
+# NOTE specifying an env_file will only give you accesss to those variables
+# inside the container, NOT inside the docker-compose.yml file.
+version: "3"
+services:
+  bm-app:
+    build:
+      context: ../
+      dockerfile: ./deploy/bm-app.default.docker
+    restart: always
+    depends_on:
+      - database
+      - proxy
+    labels:
+      - traefik.enable=true
+      # Request locations to route to backend app
+      - traefik.frontend.rule=Host:www.${DOMAIN},${DOMAIN} 
+      # Name of backend to handle requests from above
+      - traefik.backend=bm-app
+      - traefik.port=8080
+
+  database:
+    build:
+      context: ../
+      dockerfile: ./deploy/database.docker
+    restart: always
+    labels:
+      # Don't route external traffic from our domain to our db
+      - traefik.enable=false 
+    ports:
+      # Expose port 5432 of container to port 47298 of host
+      # Useful for using Sequel Pro or pgweb to inspect the db
+      # Exposed at random port to reduce potential port scanners
+      - "47298:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  proxy:
+    image: traefik:1.7-alpine
+    restart: always
+    ports:
+      # Expose port 80 of container to port 80 of host (HTTP)
+      - 80:80
+      # Expose port 443 of container to port 443 of host (HTTPS)
+      - 443:443
+    labels:
+      - traefik.enable=true
+      - traefik.port=8080
+      # Request locations to route to dashboard
+      - traefik.frontend.rule=Host:dashboard.${DOMAIN} 
+      # Login for dashboard
+      - traefik.frontend.auth.basic.users=${TRAEFIK_DASHBOARD_LOGIN} 
