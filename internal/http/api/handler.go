@@ -7,16 +7,15 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
-)
 
-var (
-	jwtCookie string // Name for the JWT's cookie.  TODO Better name?
+	"github.com/mailgun/mailgun-go/v3"
 )
 
 // A Handler will route requests to their appropriate HandlerFunc.
@@ -34,17 +33,13 @@ func NewHandler(us models.UserService) *Handler {
 	r := chi.NewRouter()
 
 	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-	var ok bool
-	jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
-	}
 
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
 	r.Use(middleware.WithJWT)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
+	r.Post("/activate/{code}", h.postActivate())
 
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/", h.getSelf())
@@ -56,7 +51,14 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+	jwtIssuer := mustGetEnv("JWT_ISSUER")
+	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
+	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
+
+	// Get necessary environment variables for mailgun
+	sender := mustGetEnv("EMAIL_ADDRESS")
+	domain := mustGetEnv("DOMAIN")
+	privateKey := mustGetEnv("MAILGUN_KEY")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
@@ -70,13 +72,35 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		id, err := h.UserService.Signup(&u)
+		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		u.ID = id
+
+		// Create an instance of the Mailgun Client
+		mg := mailgun.NewMailgun(domain, privateKey)
+
+		// Build confirmation email
+		subject := "Confirm your email"
+		link := "localhost:8080/api/activate/" + string(confirmationCode)
+		body := "Please click the following link to confirm your email address: " + link
+		recipient := u.Email
+		message := mg.NewMessage(sender, subject, body, recipient)
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+
+		// Send the message	with a 10 second timeout
+		resp, mid, err := mg.Send(ctx, message)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Printf("ID: %s Resp: %s\n", mid, resp)
 
 		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
@@ -97,7 +121,9 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+	jwtIssuer := mustGetEnv("JWT_ISSUER")
+	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
+	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Convert JSON user details in request to a user struct
@@ -162,21 +188,33 @@ func (h *Handler) getSelf() http.HandlerFunc {
 	}
 }
 
-// mustGetJWTConfig tries to get JWT configuration variables from the
-// environment. It will panic if those variables are not set.
-func mustGetJWTConfig() (string, []byte) {
-	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
-	}
+func (h *Handler) postActivate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Temporarily ignoring claims returned from getClaimsFromCtx
+		_, err := getClaimsFromCtx(r.Context())
+		if err != nil {
+			// TODO error handling
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
 
-	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	}
-	jwtSigningKey := []byte(jwtSigningKeyString)
+		code := chi.URLParam(r, "code")
 
-	return jwtIssuer, jwtSigningKey
+		u, err := h.UserService.GetByCode(code)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		u.IsActive = true
+		u.ConfirmationCode = ""
+		err = h.UserService.Update(u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
 }
 
 // getClaimsFromCtx returns the claims of a Context's JWT or an error.
@@ -199,4 +237,14 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 	}
 
 	return claims, err
+}
+
+// mustGetEnv looks up and sets an environment variable.  If the environment
+// variable is not found, it panics.
+func mustGetEnv(var_name string) (value string) {
+	value, ok := os.LookupEnv(var_name)
+	if !ok {
+		log.Fatalf("environment variable not set: %v", var_name)
+	}
+	return value
 }
