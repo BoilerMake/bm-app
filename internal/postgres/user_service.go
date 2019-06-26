@@ -5,15 +5,22 @@
 package postgres
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/models"
-
-	"math/rand"
+	"github.com/BoilerMake/new-backend/pkg/argon2"
 
 	"github.com/lib/pq"
 )
+
+const passwordResetTokenLength int = 32
+const userIDTokenLength int = 5
+
+// Time in minutes
+const tokenExpiryTime int = 15
 
 // UserService is a PostgreSQL implementation of models.UserService
 type UserService struct {
@@ -66,7 +73,10 @@ func (u *dbUser) toModel() *models.User {
 // - nil user
 func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	// Generate confirmation code
-	code = GenerateConfirmationCode(32)
+	code, err = GenerateRandomString(32)
+	if err != nil {
+		return id, code, err
+	}
 
 	err = u.Validate()
 	if err != nil {
@@ -137,8 +147,6 @@ func (s *UserService) Login(u *models.User) error {
 	} else {
 		return models.ErrIncorrectLogin
 	}
-
-	return err
 }
 
 // GetById returns a single user with the given id.
@@ -294,12 +302,134 @@ func (s *UserService) Update(u *models.User) error {
 	return err
 }
 
-// Generates a base64 code of specified length
-func GenerateConfirmationCode(len int) string {
-	const charset = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-"
-	code := ""
-	for i := 0; i < len; i++ {
-		code += string(charset[rand.Intn(64)])
+// Creates the user's token for a password reset
+func (s *UserService) GetPasswordReset(email string) (string, error) {
+	if email == "" {
+		return "", models.ErrEmptyEmail
 	}
-	return code
+	token, err := GenerateRandomString(passwordResetTokenLength)
+	if err != nil {
+		return "", err
+	}
+	hashedToken, err := argon2.DefaultParameters.HashPassword(token)
+	if err != nil {
+		return "", err
+	}
+	tokenID, err := GenerateRandomString(userIDTokenLength)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = s.DB.Exec(`
+	INSERT INTO
+		password_reset_tokens (uid, tokenID, hashedToken)
+	VALUES
+		((SELECT id FROM users WHERE email = $1), $2, $3);`, email, tokenID, hashedToken)
+
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "not_null_violation":
+			return "", nil
+		}
+	}
+
+	userToken := tokenID + token
+
+	return userToken, nil
+}
+
+// ResetPassword resets the user's password
+func (s *UserService) ResetPassword(token string, password string) error {
+	if len(token) < userIDTokenLength+passwordResetTokenLength {
+		return models.ErrInvalidToken
+	}
+	tokenID := token[:userIDTokenLength]
+	userToken := token[userIDTokenLength:]
+
+	id := -1
+	var uid int
+	var hashedToken string
+	var createdAt time.Time
+	var now time.Time
+	// TODO check all rows with the same tokenID
+	// Multiple people can have the same tokenID
+	row := s.DB.QueryRow(`SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
+	err := row.Scan(&id, &uid, &hashedToken, &createdAt, &now)
+	elapsed := now.Sub(createdAt).Minutes()
+
+	// Check if token is expired
+	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
+		return models.ErrExpiredToken
+	}
+
+	// Not sure what error to return
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		// User not in db (log internally)
+		// No error should be returned to user
+		case "not_null_violation":
+			return nil
+		default:
+			return pgerr
+		}
+	}
+
+	// TODO output useful errors
+	if argon2.CheckPassword(userToken, hashedToken) {
+		s.TokenChangePassword(id, uid, password)
+		return nil
+	}
+
+	return models.ErrInvalidToken
+}
+
+// TokenChangePassword changes password then deletes the token used
+// TODO error checking on failed change
+func (s *UserService) TokenChangePassword(id int, uid int, password string) error {
+	passwordHash, err := argon2.DefaultParameters.HashPassword(password)
+	if err != nil {
+		return err
+	}
+
+	// Remove any trace of unhashed password (can never be too safe)
+	password = ""
+
+	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
+	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
+	// TODO make sure when an exec fails it doesn't have an effect on the db
+
+	return err
+}
+
+// GenerateRandomBytes returns securely generated random bytes.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	// Note that err == nil only if we read len(b) bytes.
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// GenerateRandomString returns a securely generated random string.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomString(n int) (string, error) {
+	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	bytes, err := GenerateRandomBytes(n)
+	if err != nil {
+		return "", err
+	}
+	for i, b := range bytes {
+		bytes[i] = letters[b%byte(len(letters))]
+	}
+	return string(bytes), nil
 }

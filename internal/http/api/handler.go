@@ -14,7 +14,6 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
-
 	"github.com/mailgun/mailgun-go/v3"
 )
 
@@ -32,14 +31,14 @@ func NewHandler(us models.UserService) *Handler {
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
-	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
 	r.Use(middleware.WithJWT)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
 	r.Post("/activate/{code}", h.postActivate())
+	r.Post("/forgot", h.postForgotPassword())
+	r.Post("/reset-password", h.postResetPassword())
 
 	r.Route("/users", func(r chi.Router) {
 		r.Get("/", h.getSelf())
@@ -51,14 +50,21 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
+	domain := mustGetEnv("DOMAIN")
+
+	mode := mustGetEnv("ENV_MODE")
+	if mode == "development" {
+		domain += ":" + mustGetEnv("PORT")
+	}
+
 	jwtIssuer := mustGetEnv("JWT_ISSUER")
 	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
 	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
 
 	// Get necessary environment variables for mailgun
-	sender := mustGetEnv("EMAIL_ADDRESS")
-	domain := mustGetEnv("DOMAIN")
-	privateKey := mustGetEnv("MAILGUN_KEY")
+	mgSender := mustGetEnv("MAILGUN_ADDRESS")
+	mgDomain := mustGetEnv("MAILGUN_DOMAIN")
+	mgAPIKey := mustGetEnv("MAILGUN_API_KEY")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO check if login is valid (i.e. account exists), if so log them in
@@ -68,6 +74,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		err := decoder.Decode(&u)
 		if err != nil {
 			// TODO error handling
+			fmt.Println(1)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -75,29 +82,31 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO error handling
+			fmt.Println(2)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		u.ID = id
 
 		// Create an instance of the Mailgun Client
-		mg := mailgun.NewMailgun(domain, privateKey)
+		mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
 
 		// Build confirmation email
 		subject := "Confirm your email"
-		link := "localhost:8080/api/activate/" + string(confirmationCode)
+		link := domain + "/api/activate/" + confirmationCode
 		body := "Please click the following link to confirm your email address: " + link
 		recipient := u.Email
-		message := mg.NewMessage(sender, subject, body, recipient)
+		message := mg.NewMessage(mgSender, subject, body, recipient)
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 
 		// Send the message	with a 10 second timeout
 		resp, mid, err := mg.Send(ctx, message)
-
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(link)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		log.Printf("ID: %s Resp: %s\n", mid, resp)
@@ -106,6 +115,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// TODO right now this is only valid on the domain it's sent from, if we do
@@ -147,6 +157,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// TODO Right now this is only valid on the domain it's sent from, if we do
@@ -157,6 +168,76 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			Path:       "/",
 			RawExpires: "0",
 		})
+	}
+}
+
+// postForgotPassword sends the password reset email
+func (h *Handler) postForgotPassword() http.HandlerFunc {
+	// Get necessary environment variables for mailgun
+	mgSender := mustGetEnv("MAILGUN_ADDRESS")
+	mgDomain := mustGetEnv("MAILGUN_DOMAIN")
+	mgAPIKey := mustGetEnv("MAILGUN_API_KEY")
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get info from body
+		var emailModel models.EmailModel
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&emailModel)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		token, err := h.UserService.GetPasswordReset(emailModel.Email)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// This will be formatted better once the front end is setup for the link
+		recipient := emailModel.Email
+		subject := "Password Reset"
+		body := "Your reset token is: " + token
+
+		// Sending the email (can be made into a method)
+		mg := mailgun.NewMailgun(mgDomain, mgAPIKey)
+		message := mg.NewMessage(mgSender, subject, body, recipient)
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
+		// Send the message	with a 10 second timeout
+		resp, id, err := mg.Send(ctx, message)
+
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Printf("ID: %s Resp: %s\n", id, resp)
+	}
+}
+
+// postResetPassword resets the password with a valid token
+func (h *Handler) postResetPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get info from body
+		var passwordResetInfo models.PasswordResetPayload
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&passwordResetInfo)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 

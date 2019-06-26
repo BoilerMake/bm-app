@@ -3,9 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
-	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http"
 	"github.com/BoilerMake/new-backend/internal/postgres"
@@ -17,8 +15,6 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	rand.Seed(time.Now().UnixNano())
 
 	// Initialize databse
 	dbHost, ok := os.LookupEnv("DB_HOST")
