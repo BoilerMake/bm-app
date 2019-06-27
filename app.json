@@ -1,7 +1,7 @@
 {
 	"name": "new-backend",
 	"scripts": {
-		"postdeploy": "make test"
+		"postdeploy": "cp deploy/test/.env .env && make dev"
 	},
 	"env": {},
 	"formation": {},
