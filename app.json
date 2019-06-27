@@ -7,5 +7,5 @@
 	"formation": {},
 	"addons": [],
 	"buildpacks": [],
-	"stack": "heroku-18"
+	"stack": "container"
 }
