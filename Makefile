@@ -35,6 +35,10 @@ dev-cleanup:
 	@echo $(INFO_STR) removing dev environment...
 	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml rm --stop
 
+review-app:
+	@echo $(INFO_STR) starting dev environment...
+	@dh -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up
+
 clean:
 	@echo $(INFO_STR) cleaning dependencies and removing binaries...
 	@go clean

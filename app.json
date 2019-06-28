@@ -1,11 +1,11 @@
 {
 	"name": "new-backend",
 	"scripts": {
-		"postdeploy": "make test"
+		"postdeploy": "make review-app"
 	},
 	"env": {},
 	"formation": {},
-	"addons": [],
+	"addons": ["dockhero:hobby"],
 	"buildpacks": [],
 	"stack": "container"
 }
