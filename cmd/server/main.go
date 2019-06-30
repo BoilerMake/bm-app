@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/BoilerMake/new-backend/internal/http"
+	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/pkg/env"
 )
@@ -44,7 +45,8 @@ func main() {
 	defer db.Close()
 
 	us := &postgres.UserService{db}
-	h := http.NewHandler(us)
+	mailer := mail.NewMailer()
+	h := http.NewHandler(us, mailer)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {

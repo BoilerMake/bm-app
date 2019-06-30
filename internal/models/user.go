@@ -27,6 +27,12 @@ var (
 	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
 )
 
+// Password Reset errors
+var (
+	ErrInvalidToken = errors.New("password reset token is invalid")
+	ErrExpiredToken = errors.New("password reset token has expired")
+)
+
 const (
 	RoleHacker = iota
 	RoleSponsor
@@ -52,6 +58,20 @@ type User struct {
 
 	ProjectIdea string   `json:"projectIdea"`
 	TeamMembers []string `json:"teamMembers"`
+
+	IsActive         bool   `json:"isActive"`
+	ConfirmationCode string `json:"confirmationCode"`
+}
+
+// EmailModel struct for password reset emails
+type EmailModel struct {
+	Email string
+}
+
+// PasswordResetPayload struct for resetting passwords
+type PasswordResetPayload struct {
+	UserToken   string
+	NewPassword string
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
@@ -120,10 +140,13 @@ func (u *User) CheckPassword(password string) bool {
 // and its representation in our database.  Abstracting it to an interface
 // makes it database independent, which helps with testing.
 type UserService interface {
-	Signup(u *User) (int, error)
+	Signup(u *User) (int, string, error)
 	Login(u *User) error
 	GetById(id string) (*User, error)
-	GetByEmail(id string) (*User, error)
+	GetByEmail(email string) (*User, error)
+	GetByCode(code string) (*User, error)
 	GetAll() (*[]User, error)
 	Update(u *User) error
+	GetPasswordReset(email string) (string, error)
+	ResetPassword(token string, newPassword string) error
 }

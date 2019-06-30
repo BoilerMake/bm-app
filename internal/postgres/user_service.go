@@ -5,13 +5,22 @@
 package postgres
 
 import (
+	"crypto/rand"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/argon2"
 
 	"github.com/lib/pq"
 )
+
+const passwordResetTokenLength int = 32
+const userIDTokenLength int = 5
+
+// Time in minutes
+const tokenExpiryTime int = 15
 
 // UserService is a PostgreSQL implementation of models.UserService
 type UserService struct {
@@ -32,6 +41,9 @@ type dbUser struct {
 
 	ProjectIdea sql.NullString
 	TeamMembers []string
+
+	IsActive         sql.NullBool
+	ConfirmationCode sql.NullString
 }
 
 // toModel converts a database specific dbUser to the more generic User struct.
@@ -48,6 +60,9 @@ func (u *dbUser) toModel() *models.User {
 
 		ProjectIdea: u.ProjectIdea.String,
 		TeamMembers: u.TeamMembers,
+
+		IsActive:         u.IsActive.Bool,
+		ConfirmationCode: u.ConfirmationCode.String,
 	}
 }
 
@@ -56,27 +71,35 @@ func (u *dbUser) toModel() *models.User {
 // - Empty fields
 // - Same email
 // - nil user
-func (s *UserService) Signup(u *models.User) (id int, err error) {
+func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
+	// Generate confirmation code
+	code, err = GenerateRandomString(32)
+	if err != nil {
+		return id, code, err
+	}
+
 	err = u.Validate()
 	if err != nil {
-		return id, err
+		return id, code, err
 	}
 
 	err = u.HashPassword()
 	if err != nil {
-		return id, err
+		return id, code, err
 	}
 
 	err = s.DB.QueryRow(`INSERT INTO users (
-			role, 
-			email, 
-			password_hash, 
-			first_name, 
-			last_name, 
-			phone, 
-			project_idea, 
-			team_members
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+			role,
+			email,
+			password_hash,
+			first_name,
+			last_name,
+			phone,
+			project_idea,
+			team_members,
+			is_active,
+			confirmation_code
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id;`,
 		u.Role,
 		u.Email,
@@ -86,21 +109,23 @@ func (s *UserService) Signup(u *models.User) (id int, err error) {
 		u.Phone,
 		u.ProjectIdea,
 		pq.Array(u.TeamMembers),
+		false,
+		code,
 	).Scan(&id)
 
 	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "unique_violation":
-			return id, models.ErrEmailInUse
+			return id, code, models.ErrEmailInUse
 		case "not_null_violation":
-			return id, models.ErrRequiredField
+			return id, code, models.ErrRequiredField
 		default:
-			return id, pgerr
+			return id, code, pgerr
 		}
 	}
 
-	return id, err
+	return id, code, err
 }
 
 // Login checks to see if a passed user's password matches the one recorded in
@@ -122,26 +147,26 @@ func (s *UserService) Login(u *models.User) error {
 	} else {
 		return models.ErrIncorrectLogin
 	}
-
-	return err
 }
 
 // GetById returns a single user with the given id.
 func (s *UserService) GetById(id string) (*models.User, error) {
 	var dbu dbUser
 
-	err := s.DB.QueryRow(`SELECT 
-		id, 
-		role, 
-		email, 
-		password_hash, 
-		first_name, 
-		last_name, 
-		phone, 
-		project_idea, 
-		team_members
-	FROM users 
-	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers))
+	err := s.DB.QueryRow(`SELECT
+		id,
+		role,
+		email,
+		password_hash,
+		first_name,
+		last_name,
+		phone,
+		project_idea,
+		team_members,
+		is_active,
+		confirmation_code
+	FROM users
+	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
 
 	// TODO if there's an err dbu will likely be nil so toModel will panic.
 	// Seems like toModel needs to check for nil and maybe return an err.
@@ -153,18 +178,20 @@ func (s *UserService) GetById(id string) (*models.User, error) {
 func (s *UserService) GetByEmail(email string) (*models.User, error) {
 	var dbu dbUser
 
-	err := s.DB.QueryRow(`SELECT 
-		id, 
-		role, 
-		email, 
-		password_hash, 
-		first_name, 
-		last_name, 
-		phone, 
-		project_idea, 
-		team_members
-	FROM users 
-	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers))
+	err := s.DB.QueryRow(`SELECT
+		id,
+		role,
+		email,
+		password_hash,
+		first_name,
+		last_name,
+		phone,
+		project_idea,
+		team_members,
+		is_active,
+		confirmation_code
+	FROM users
+	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		return nil, err
@@ -176,17 +203,45 @@ func (s *UserService) GetByEmail(email string) (*models.User, error) {
 	return dbu.toModel(), err
 }
 
+// GetByCode returns a single user with the given email confirmation code
+func (s *UserService) GetByCode(code string) (*models.User, error) {
+	var dbu dbUser
+
+	err := s.DB.QueryRow(`SELECT
+		id,
+		role,
+		email,
+		password_hash,
+		first_name,
+		last_name,
+		phone,
+		project_idea,
+		team_members,
+		is_active,
+		confirmation_code
+	FROM users
+	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return dbu.toModel(), err
+}
+
 // GetAll finds and returns all user in the database.
 func (s *UserService) GetAll() (u *[]models.User, err error) {
-	rows, err := s.DB.Query(`SELECT 
-		id, 
-		role, 
-		email, 
-		first_name, 
-		last_name, 
-		phone, 
-		project_idea, 
-		team_members 
+	rows, err := s.DB.Query(`SELECT
+		id,
+		role,
+		email,
+		first_name,
+		last_name,
+		phone,
+		project_idea,
+		team_members,
+		is_active,
+		confirmation_code
 	FROM users`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all users: %v", err)
@@ -195,7 +250,7 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 
 	for rows.Next() {
 		var dbu dbUser
-		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMembers)
+		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMembers, &dbu.IsActive, &dbu.ConfirmationCode)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get all users: %v", err)
 		}
@@ -218,16 +273,18 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 // - Obvious answer seems to just not allow changing email (what we've always done)
 func (s *UserService) Update(u *models.User) error {
 	_, err := s.DB.Exec(`UPDATE users
-	SET 
-		role = $1, 
-		email = $2, 
-		password_hash = $3, 
-		first_name = $3, 
-		last_name = $5, 
-		phone = $6, 
-		project_idea = $7, 
-		team_members = $8, 
-	WHERE id = $11`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, pq.Array(u.TeamMembers), u.ID)
+	SET
+		role = $1,
+		email = $2,
+		password_hash = $3,
+		first_name = $4,
+		last_name = $5,
+		phone = $6,
+		project_idea = $7,
+		team_members = $8,
+		is_active = $9,
+		confirmation_code = $10
+	WHERE id = $11`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, pq.Array(u.TeamMembers), u.IsActive, u.ConfirmationCode, u.ID)
 
 	// TODO make sure when an exec fails it doesn't have an effect on the db
 	// Check postgres specific error
@@ -243,4 +300,136 @@ func (s *UserService) Update(u *models.User) error {
 	}
 
 	return err
+}
+
+// Creates the user's token for a password reset
+func (s *UserService) GetPasswordReset(email string) (string, error) {
+	if email == "" {
+		return "", models.ErrEmptyEmail
+	}
+	token, err := GenerateRandomString(passwordResetTokenLength)
+	if err != nil {
+		return "", err
+	}
+	hashedToken, err := argon2.DefaultParameters.HashPassword(token)
+	if err != nil {
+		return "", err
+	}
+	tokenID, err := GenerateRandomString(userIDTokenLength)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = s.DB.Exec(`
+	INSERT INTO
+		password_reset_tokens (uid, tokenID, hashedToken)
+	VALUES
+		((SELECT id FROM users WHERE email = $1), $2, $3);`, email, tokenID, hashedToken)
+
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "not_null_violation":
+			return "", nil
+		}
+	}
+
+	userToken := tokenID + token
+
+	return userToken, nil
+}
+
+// ResetPassword resets the user's password
+func (s *UserService) ResetPassword(token string, password string) error {
+	if len(token) < userIDTokenLength+passwordResetTokenLength {
+		return models.ErrInvalidToken
+	}
+	tokenID := token[:userIDTokenLength]
+	userToken := token[userIDTokenLength:]
+
+	id := -1
+	var uid int
+	var hashedToken string
+	var createdAt time.Time
+	var now time.Time
+	// TODO check all rows with the same tokenID
+	// Multiple people can have the same tokenID
+	row := s.DB.QueryRow(`SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
+	err := row.Scan(&id, &uid, &hashedToken, &createdAt, &now)
+	elapsed := now.Sub(createdAt).Minutes()
+
+	// Check if token is expired
+	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
+		return models.ErrExpiredToken
+	}
+
+	// Not sure what error to return
+	// User should not know if the email exists
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		// User not in db (log internally)
+		// No error should be returned to user
+		case "not_null_violation":
+			return nil
+		default:
+			return pgerr
+		}
+	}
+
+	// TODO output useful errors
+	if argon2.CheckPassword(userToken, hashedToken) {
+		s.TokenChangePassword(id, uid, password)
+		return nil
+	}
+
+	return models.ErrInvalidToken
+}
+
+// TokenChangePassword changes password then deletes the token used
+// TODO error checking on failed change
+func (s *UserService) TokenChangePassword(id int, uid int, password string) error {
+	passwordHash, err := argon2.DefaultParameters.HashPassword(password)
+	if err != nil {
+		return err
+	}
+
+	// Remove any trace of unhashed password (can never be too safe)
+	password = ""
+
+	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
+	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
+	// TODO make sure when an exec fails it doesn't have an effect on the db
+
+	return err
+}
+
+// GenerateRandomBytes returns securely generated random bytes.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomBytes(n int) ([]byte, error) {
+	b := make([]byte, n)
+	_, err := rand.Read(b)
+	// Note that err == nil only if we read len(b) bytes.
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+// GenerateRandomString returns a securely generated random string.
+// It will return an error if the system's secure random
+// number generator fails to function correctly, in which
+// case the caller should not continue.
+func GenerateRandomString(n int) (string, error) {
+	const letters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	bytes, err := GenerateRandomBytes(n)
+	if err != nil {
+		return "", err
+	}
+	for i, b := range bytes {
+		bytes[i] = letters[b%byte(len(letters))]
+	}
+	return string(bytes), nil
 }
