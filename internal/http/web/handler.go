@@ -11,35 +11,36 @@ import (
 	"text/template"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
+	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
 )
 
-var (
-	jwtCookie string // Name for the JWT's cookie.  TODO Better name?
-)
-
+// A Handler will route requests to their appropriate HandlerFunc.
 type Handler struct {
+	// A Mux handles all routing and middleware.
 	*chi.Mux
 
+	// A UserService is the interface with the database.
 	UserService models.UserService
+
+	// A Mailer is used to send emails
+	Mailer mail.Mailer
 
 	templates       *template.Template
 	templateBufPool *sync.Pool
 }
 
-func NewHandler(us models.UserService) *Handler {
-	h := Handler{UserService: us}
-	r := chi.NewRouter()
-
-	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-	var ok bool
-	jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
+// NewHandler creates a handler for web requests.
+func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
+	h := Handler{
+		UserService: us,
+		Mailer:      mailer,
 	}
+
+	r := chi.NewRouter()
 
 	// Set up templates
 	mode, ok := os.LookupEnv("ENV_MODE")
@@ -51,7 +52,7 @@ func NewHandler(us models.UserService) *Handler {
 		// In development mode, reload templates on every request
 		r.Use(h.reloadTemplates)
 	} else {
-		// In prod only load them once
+		// In prod only load templates once
 		err := h.loadTemplates()
 
 		// And fail if they can't be loaded
@@ -60,7 +61,7 @@ func NewHandler(us models.UserService) *Handler {
 		}
 	}
 
-	// Set up pool of buffers used for rendering templates
+	// Set up pool of buffers used for rendering templates.
 	h.templateBufPool = &sync.Pool{
 		New: func() interface{} {
 			return new(bytes.Buffer)
@@ -73,8 +74,15 @@ func NewHandler(us models.UserService) *Handler {
 
 	r.Get("/signup", h.getSignup())
 	r.Post("/signup", h.postSignup())
+
+	r.Get("/activate/{code}", h.getActivate())
+
+	r.Post("/forgot", h.postForgotPassword())
+	r.Post("/reset-password/{token}", h.postResetPassword())
+
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
+
 	r.Get("/account", h.getAccount())
 
 	r.NotFound(h.get404())
@@ -99,18 +107,42 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+	domain := mustGetEnv("DOMAIN")
+
+	mode := mustGetEnv("ENV_MODE")
+	if mode == "development" {
+		domain += ":" + mustGetEnv("PORT")
+	}
+
+	jwtIssuer := mustGetEnv("JWT_ISSUER")
+	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
+	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		// TODO check if login is valid (i.e. account exists), if so log them in
 		var u models.User
 		u.FromFormData(r)
 
-		id, err := h.UserService.Signup(&u)
+		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		u.ID = id
+
+		// Build confirmation email
+		to := u.Email
+		subject := "Confirm your email"
+		link := domain + "/activate/" + confirmationCode
+		body := "Please click the following link to confirm your email address: " + link
+
+		err = h.Mailer.Send(to, subject, body)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
@@ -133,6 +165,84 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 }
 
+// getActivate activates the account that corresponds to the activation code
+// if there is such an account.
+func (h *Handler) getActivate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Temporarily ignoring claims returned from getClaimsFromCtx
+		_, err := getClaimsFromCtx(r.Context())
+		if err != nil {
+			// TODO error handling
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		code := chi.URLParam(r, "code")
+
+		u, err := h.UserService.GetByCode(code)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		u.IsActive = true
+		u.ConfirmationCode = ""
+		err = h.UserService.Update(u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		// TODO should this redirect to an "activate successful" page?
+		// Redirect to homepage if activation was successful
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+// postForgotPassword sends the password reset email.
+func (h *Handler) postForgotPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var u models.User
+		u.FromFormData(r)
+
+		token, err := h.UserService.GetPasswordReset(u.Email)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// TODO This will need to be formatted better once the front end is setup for the link
+		to := u.Email
+		subject := "Password Reset"
+		body := "Your reset token is: " + token
+
+		err = h.Mailer.Send(to, subject, body)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+// postResetPassword resets the password with a valid token
+func (h *Handler) postResetPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var passwordResetInfo models.PasswordResetPayload
+		passwordResetInfo.UserToken = chi.URLParam(r, "code")
+		passwordResetInfo.NewPassword = r.FormValue("new-password")
+
+		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -142,7 +252,9 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	jwtIssuer, jwtSigningKey := mustGetJWTConfig()
+	jwtIssuer := mustGetEnv("JWT_ISSUER")
+	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
+	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
@@ -216,23 +328,6 @@ func (h *Handler) get404() http.HandlerFunc {
 	}
 }
 
-// mustGetJWTConfig tries to get JWT configuration variables from the
-// environment. It will panic if those variables are not set.
-func mustGetJWTConfig() (string, []byte) {
-	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
-	}
-
-	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	}
-	jwtSigningKey := []byte(jwtSigningKeyString)
-
-	return jwtIssuer, jwtSigningKey
-}
-
 // getClaimsFromCtx returns the claims of a Context's JWT or an error.
 func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 	// Always make sure the error field is nil
@@ -253,4 +348,14 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 	}
 
 	return claims, err
+}
+
+// mustGetEnv looks up and sets an environment variable.  If the environment
+// variable is not found, it panics.
+func mustGetEnv(var_name string) (value string) {
+	value, ok := os.LookupEnv(var_name)
+	if !ok {
+		log.Fatalf("environment variable not set: %v", var_name)
+	}
+	return value
 }

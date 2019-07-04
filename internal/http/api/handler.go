@@ -75,7 +75,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		err := decoder.Decode(&u)
 		if err != nil {
 			// TODO error handling
-			fmt.Println(1)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -83,7 +82,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO error handling
-			fmt.Println(2)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -245,6 +243,8 @@ func (h *Handler) getSelf() http.HandlerFunc {
 	}
 }
 
+// postActivate activates the account that corresponds to the activation code
+// if there is such an account.
 func (h *Handler) postActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Temporarily ignoring claims returned from getClaimsFromCtx

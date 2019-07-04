@@ -23,7 +23,7 @@ type Handler struct {
 func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	h := Handler{
 		APIHandler: api.NewHandler(us, mailer),
-		WebHandler: web.NewHandler(us),
+		WebHandler: web.NewHandler(us, mailer),
 	}
 	r := chi.NewRouter()
 

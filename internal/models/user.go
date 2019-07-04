@@ -66,13 +66,13 @@ type User struct {
 
 // EmailModel struct for password reset emails
 type EmailModel struct {
-	Email string
+	Email string `json:"email"`
 }
 
 // PasswordResetPayload struct for resetting passwords
 type PasswordResetPayload struct {
-	UserToken   string
-	NewPassword string
+	UserToken   string `json:"token"`
+	NewPassword string `json:"newPassword"`
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
