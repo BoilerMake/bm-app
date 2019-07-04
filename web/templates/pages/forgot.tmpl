@@ -1,25 +1,18 @@
-{{ define "login" }}
+{{ define "forgot" }}
 {{ template "header" . }}
 
 <div class="cards">
 	<div class="card">
 		<form class="form__auth" action="" method="post">
-			<h1>Login</h1>
+			<h1>Reset Password</h1>
 
 			<div class="form__input">
 				<label class="form__input--label" for="email"><b>Email</b></label>
 				<input class="form__input--text" type="text" name="email" required>
 			</div>
 
-			<div class="form__input">
-				<label class="form__input--label" for="password"><b>Password</b></label>
-				<input class="form__input--text" type="password" name="password" required>
-			</div>
-
-			<a class="form__link" href="/forgot">Forgot Password</a>
-
 			<div>
-				<button class="form--button" type="submit">Login</button>
+				<button class="form--button" type="submit">Reset</button>
 			</div>
 		</form> 
 	</div>

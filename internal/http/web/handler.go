@@ -77,8 +77,11 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	r.Get("/activate/{code}", h.getActivate())
 
+	r.Get("/forgot", h.getForgotPassword())
 	r.Post("/forgot", h.postForgotPassword())
-	r.Post("/reset-password/{token}", h.postResetPassword())
+	r.Get("/reset", h.getResetPassword())
+	r.Get("/reset/{token}", h.getResetPasswordWithToken())
+	r.Post("/reset/{token}", h.postResetPassword())
 
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
@@ -194,14 +197,28 @@ func (h *Handler) getActivate() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		// TODO should this redirect to an "activate successful" page?
+		// TODO once session tokens are updated this should show a success flash
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 
+// getForgotPassword renders the forgot password page.
+func (h *Handler) getForgotPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.renderTemplate(w, "forgot", nil)
+	}
+}
+
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
+	domain := mustGetEnv("DOMAIN")
+
+	mode := mustGetEnv("ENV_MODE")
+	if mode == "development" {
+		domain += ":" + mustGetEnv("PORT")
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -216,7 +233,8 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		// TODO This will need to be formatted better once the front end is setup for the link
 		to := u.Email
 		subject := "Password Reset"
-		body := "Your reset token is: " + token
+		link := domain + "/reset/" + token
+		body := "Reset password here: " + link
 
 		err = h.Mailer.Send(to, subject, body)
 		if err != nil {
@@ -224,6 +242,25 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// TODO once session tokens are updated this should show a success flash
+		// Redirect to homepage if activation was successful
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
+// getResetPassword renders the reset password template.
+func (h *Handler) getResetPassword() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.renderTemplate(w, "reset", nil)
+	}
+}
+
+// getResetPasswordWithToken renders the reset password template with the token filled in.
+func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		token := chi.URLParam(r, "token")
+		h.renderTemplate(w, "reset", token)
 	}
 }
 
@@ -231,7 +268,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 func (h *Handler) postResetPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var passwordResetInfo models.PasswordResetPayload
-		passwordResetInfo.UserToken = chi.URLParam(r, "code")
+		passwordResetInfo.UserToken = r.FormValue("token")
 		passwordResetInfo.NewPassword = r.FormValue("new-password")
 
 		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
@@ -240,6 +277,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// TODO once session tokens are updated this should show a success flash
+		// Redirect to homepage if activation was successful
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 }
 

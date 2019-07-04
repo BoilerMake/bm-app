@@ -14,17 +14,20 @@ import (
 // makes sure they do not error.
 func TestWalkRoutesTemplates(t *testing.T) {
 	// Set up env config vars
+	os.Setenv("JWT_ISSUER", "test")
 	os.Setenv("JWT_COOKIE_NAME", "test")
 	os.Setenv("JWT_SIGNING_KEY", "test")
 	os.Setenv("ENV_MODE", "test")
+	os.Setenv("DOMAIN", "testhost")
 	os.Setenv("WEB_PATH", "../../../web")
 
-	handler := NewHandler(nil)
+	handler := NewHandler(nil, nil)
 
 	// This func will be called at every end point in the handler
 	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {
 		// Only GET handlers render templates, so only check those
-		if method == "GET" {
+		// Also ignore pages that use a {URL param}
+		if method == "GET" && !strings.ContainsAny(route, "{}") {
 			t.Run(strings.TrimPrefix(route, "/"), func(t *testing.T) {
 				// Let tests run in parallel
 				t.Parallel()
