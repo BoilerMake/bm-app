@@ -1,0 +1,25 @@
+# DEVELOPMENT version of docker-compose configuration
+# This file extends docker-compose.default.yml
+version: "3"
+services:
+  bm-app:
+    build:
+      context: ../
+      # Use the bm-app dev Dockerfile so code auto reloads
+      dockerfile: ./deploy/bm-app.dev.docker
+    volumes:
+      - ../:/bm-app
+
+  database:
+    volumes:
+      - ../working/pgsql/data:/var/lib/postgresql/data
+
+  proxy:
+    ports:
+      # Running locally we can use whatever port we want
+      # Expose port 80 of container to port 8000 of host
+      - 8080:80
+    volumes:
+      # So traefik can pay attention to docker activities
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.dev.toml:/etc/traefik/traefik.toml

@@ -1,0 +1,25 @@
+# DEVELOPMENT version of bm-app.docker
+# This version will automatically rebuild on changes to *.go files.
+FROM golang:1.12-alpine
+
+WORKDIR /bm-app
+# Copy over entire working directory (minus things listed in .dockerignore).
+# Even though we also volume in our working directory, volumes are not
+# mounted until the container is run, and we need the files in order to build.
+COPY . .
+
+# Because alpine containers try to be small they leave out most tools, so
+# download the things we need here
+RUN apk add --no-cache git make
+
+# Used to rebuild when on file changes
+RUN go get github.com/githubnemo/CompileDaemon
+
+# Enable modules
+ENV GO111MODULE=on
+# We don't use cgo and it can requires some extra dependencies, so just let go
+# know we don't care.
+ENV CGO_ENABLED=0
+
+# Watch for changes to .go and .env files
+ENTRYPOINT CompileDaemon -include=".env" -build="make build" -command="/bm-app/bin/server"

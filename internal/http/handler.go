@@ -5,6 +5,7 @@ import (
 
 	"github.com/BoilerMake/new-backend/internal/http/api"
 	"github.com/BoilerMake/new-backend/internal/http/web"
+	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	"github.com/go-chi/chi"
@@ -19,9 +20,9 @@ type Handler struct {
 }
 
 // NewHandler creates a handler that wraps the subhandlers for the entire app.
-func NewHandler(us models.UserService) *Handler {
+func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	h := Handler{
-		APIHandler: api.NewHandler(us),
+		APIHandler: api.NewHandler(us, mailer),
 		WebHandler: web.NewHandler(us),
 	}
 	r := chi.NewRouter()

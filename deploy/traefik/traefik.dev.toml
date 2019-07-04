@@ -1,0 +1,25 @@
+# DEVELOPMENT version of traefik's config.  It doesn't enable HTTPS.
+logLevel = "INFO"
+
+# Entrypoints are the front line of traefik, they define at which locations
+# we accept requests.
+defaultEntryPoints = ["http"]
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+
+# Enable dashboard that has some neat stats
+[api]
+dashboard = true
+
+# Reload on config changes
+[file]
+watch = true
+filename = "/etc/traefik/traefik.toml"
+
+# Traefik can watch for docker events and react accordingly.  So, for example,
+# if we scale up our bm-app service traefik can automatically load balance
+# using those new containers.
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+exposedByDefault = false
