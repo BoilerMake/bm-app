@@ -335,7 +335,8 @@ func (h *Handler) getAccount() http.HandlerFunc {
 		claims, err := getClaimsFromCtx(r.Context())
 		if err != nil {
 			// TODO error handling
-			http.Redirect(w, r, "/login", http.StatusUnauthorized)
+			// TODO once session tokens are updated this should show a success flash
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
