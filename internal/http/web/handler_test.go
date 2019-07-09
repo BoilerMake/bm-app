@@ -20,6 +20,7 @@ func TestWalkRoutesTemplates(t *testing.T) {
 	os.Setenv("ENV_MODE", "test")
 	os.Setenv("DOMAIN", "testhost")
 	os.Setenv("WEB_PATH", "../../../web")
+	os.Setenv("TEMPLATES_PATH", "../../../templates")
 
 	handler := NewHandler(nil, nil)
 

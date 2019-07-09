@@ -1,18 +1,16 @@
 package web
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"sync"
-	"text/template"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/template"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
@@ -29,8 +27,7 @@ type Handler struct {
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
 
-	templates       *template.Template
-	templateBufPool *sync.Pool
+	Templates *template.Template
 }
 
 // NewHandler creates a handler for web requests.
@@ -43,6 +40,17 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	r := chi.NewRouter()
 
 	// Set up templates
+	tmplPath, ok := os.LookupEnv("TEMPLATES_PATH")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "TEMPLATES_PATH")
+	}
+
+	tmpls, err := template.NewTemplate(tmplPath)
+	if err != nil {
+		log.Fatalf("failed to load templates: %s", err)
+	}
+	h.Templates = tmpls
+
 	mode, ok := os.LookupEnv("ENV_MODE")
 	if !ok {
 		log.Fatalf("environment variable not set: %v", "ENV_MODE")
@@ -50,24 +58,10 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	if mode == "development" {
 		// In development mode, reload templates on every request
-		r.Use(h.reloadTemplates)
-	} else {
-		// In prod only load templates once
-		err := h.loadTemplates()
-
-		// And fail if they can't be loaded
-		if err != nil {
-			log.Fatalf("failed to load templates: %s", err)
-		}
+		r.Use(h.Templates.ReloadTemplates)
 	}
 
 	// Set up pool of buffers used for rendering templates.
-	h.templateBufPool = &sync.Pool{
-		New: func() interface{} {
-			return new(bytes.Buffer)
-		},
-	}
-
 	r.Use(middleware.WithJWT)
 
 	r.Get("/", h.getRoot())
@@ -97,14 +91,14 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "index", nil)
+		h.Templates.RenderTemplate(w, "index", nil)
 	}
 }
 
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "signup", nil)
+		h.Templates.RenderTemplate(w, "signup", nil)
 	}
 }
 
@@ -114,7 +108,9 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
-		domain += ":" + mustGetEnv("PORT")
+		domain = "http://" + domain + ":" + mustGetEnv("PORT")
+	} else {
+		domain = "https://" + domain
 	}
 
 	jwtIssuer := mustGetEnv("JWT_ISSUER")
@@ -137,10 +133,14 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		// Build confirmation email
 		to := u.Email
 		subject := "Confirm your email"
-		link := domain + "/activate/" + confirmationCode
-		body := "Please click the following link to confirm your email address: " + link
 
-		err = h.Mailer.Send(to, subject, body)
+		link := domain + "/activate/" + confirmationCode
+		data := map[string]interface{}{
+			"Name":        u.FirstName,
+			"ConfirmLink": link,
+		}
+
+		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -206,7 +206,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "forgot", nil)
+		h.Templates.RenderTemplate(w, "forgot", nil)
 	}
 }
 
@@ -216,7 +216,9 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
-		domain += ":" + mustGetEnv("PORT")
+		domain = "http://" + domain + ":" + mustGetEnv("PORT")
+	} else {
+		domain = "https://" + domain
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -230,13 +232,16 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			return
 		}
 
-		// TODO This will need to be formatted better once the front end is setup for the link
 		to := u.Email
 		subject := "Password Reset"
-		link := domain + "/reset/" + token
-		body := "Reset password here: " + link
 
-		err = h.Mailer.Send(to, subject, body)
+		link := domain + "/reset/" + token
+		data := map[string]interface{}{
+			"Name":      u.FirstName,
+			"ResetLink": link,
+		}
+
+		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -252,7 +257,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "reset", nil)
+		h.Templates.RenderTemplate(w, "reset", nil)
 	}
 }
 
@@ -260,7 +265,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		token := chi.URLParam(r, "token")
-		h.renderTemplate(w, "reset", token)
+		h.Templates.RenderTemplate(w, "reset", token)
 	}
 }
 
@@ -287,7 +292,7 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "login", nil)
+		h.Templates.RenderTemplate(w, "login", nil)
 	}
 }
 
@@ -358,7 +363,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			"TeamMembers": u.TeamMembers,
 		}
 
-		h.renderTemplate(w, "account", data)
+		h.Templates.RenderTemplate(w, "account", data)
 	}
 }
 
@@ -366,7 +371,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.renderTemplate(w, "404", nil)
+		h.Templates.RenderTemplate(w, "404", nil)
 	}
 }
 
