@@ -1,0 +1,22 @@
+{{ define "forgot" }}
+{{ template "header" . }}
+
+<div class="cards">
+	<div class="card">
+		<form class="form__auth" action="" method="post">
+			<h1>Reset Password</h1>
+
+			<div class="form__input">
+				<label class="form__input--label" for="email"><b>Email</b></label>
+				<input class="form__input--text" type="text" name="email" required>
+			</div>
+
+			<div>
+				<button class="form--button" type="submit">Reset</button>
+			</div>
+		</form> 
+	</div>
+</div>
+
+{{ template "footer" . }}
+{{ end }}

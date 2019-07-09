@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
@@ -65,13 +66,13 @@ type User struct {
 
 // EmailModel struct for password reset emails
 type EmailModel struct {
-	Email string
+	Email string `json:"email"`
 }
 
 // PasswordResetPayload struct for resetting passwords
 type PasswordResetPayload struct {
-	UserToken   string
-	NewPassword string
+	UserToken   string `json:"token"`
+	NewPassword string `json:"newPassword"`
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
@@ -94,6 +95,21 @@ func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString strin
 	}
 
 	return tokenString, err
+}
+
+func (u *User) FromFormData(r *http.Request) {
+	u.Email = r.FormValue("email")
+
+	u.Password = r.FormValue("password")
+	u.PasswordConfirm = r.FormValue("password-confirm")
+
+	u.FirstName = r.FormValue("first-name")
+	u.LastName = r.FormValue("last-name")
+
+	u.Phone = r.FormValue("phone")
+
+	u.ProjectIdea = r.FormValue("project-idea")
+	u.TeamMembers = append(u.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 }
 
 // Validate checks if a User has all the necessary fields.

@@ -1,0 +1,31 @@
+{{ define "email reset" }}
+{{ template "email header" . }}
+
+<p>Hey there,</p>
+<p>We got a request to reset your BoilerMake account's password.  If you made this request then please click the button below!</p>
+
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn-table">
+	<tbody>
+		<tr>
+			<td><a href="{{ .ResetLink }}" target="_blank" class="btn">Reset Password</a></td>
+		</tr>
+	</tbody>
+</table>
+
+<div class="footer">
+	<table role="presentation" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td class="content-block">
+				<span>BoilerMake</span>
+			</td>
+		</tr>
+		<tr>
+			<td class="content-block">
+				<span>Forge The Future</span>
+			</td>
+		</tr>
+	</table>
+</div>
+
+{{ template "email footer" . }}
+{{ end }}

@@ -17,7 +17,7 @@ test:
 	@# subshell (oof @252), so if they weren't together then the following command
 	@# would no longer in the correct directory after cding.
 	@cd deploy/test && \
-		docker-compose -f ../docker-compose.default.yml -f docker-compose.test.yml up -d && \
+		docker-compose -f ../docker-compose.default.yml -f docker-compose.test.yml up -d --build && \
 		docker-compose -f ../docker-compose.default.yml -f docker-compose.test.yml exec bm-app go test -v /bm-app/...
 	@# Also, see comment above for why we don't need to cd out
 

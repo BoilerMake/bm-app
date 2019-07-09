@@ -1,0 +1,40 @@
+{{ define "navbar" }}
+
+<nav>
+	<div class="nav__container">
+		<a href="/">
+			<img class="nav__logo" src="/static/assets/logo.png" alt="BoilerMake logo">
+		</a>
+
+		<div class="nav__pages is-desktop">
+			<a class="nav__link" href="/hackers">Hackers</a>
+			<a class="nav__link" href="/sponsors">Sponsors</a>
+			<a class="nav__link" href="/faq">FAQ</a>
+			<a class="nav__link" href="/about">About</a>
+		</div>
+
+		<div class="nav__dropdown is-mobile">
+			<input class="nav__dropdown--checkbox" type="checkbox" id="123">
+			<label class="nav__dropdown--hamburger" aria-haspopup="true" for="123">
+				<div class="nav__hamburger">
+					<span class="nav__hamburger--bar"></span>
+					<span class="nav__hamburger--bar"></span>
+					<span class="nav__hamburger--bar"></span>
+				</div>
+			</label>
+			<ul class="nav__dropdown--menu" aria-label="submenu">
+				<li><a class="nav__link" href="/hackers">Hackers</a></li>
+				<li><a class="nav__link" href="/sponsors">Sponsors</a></li>
+				<li><a class="nav__link" href="/faq">FAQ</a></li>
+				<li><a class="nav__link" href="/about">About</a></li>
+			</ul>
+		</div>
+
+		<div class="nav__auth">
+			<a class="nav__link nav__link--call-to-action" href="/signup">Signup</a>
+			<a class="nav__link" href="/login">Login</a>
+		</div>
+	</div>
+</nav>
+
+{{ end }}
