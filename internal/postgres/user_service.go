@@ -39,9 +39,6 @@ type dbUser struct {
 	last_name    sql.NullString
 	Phone        sql.NullString
 
-	ProjectIdea sql.NullString
-	TeamMembers []string
-
 	IsActive         sql.NullBool
 	ConfirmationCode sql.NullString
 }
@@ -57,9 +54,6 @@ func (u *dbUser) toModel() *models.User {
 		FirstName:    u.first_name.String,
 		LastName:     u.last_name.String,
 		Phone:        u.Phone.String,
-
-		ProjectIdea: u.ProjectIdea.String,
-		TeamMembers: u.TeamMembers,
 
 		IsActive:         u.IsActive.Bool,
 		ConfirmationCode: u.ConfirmationCode.String,
@@ -95,8 +89,6 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			first_name,
 			last_name,
 			phone,
-			project_idea,
-			team_members,
 			is_active,
 			confirmation_code
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -107,8 +99,6 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 		u.FirstName,
 		u.LastName,
 		u.Phone,
-		u.ProjectIdea,
-		pq.Array(u.TeamMembers),
 		false,
 		code,
 	).Scan(&id)
@@ -161,12 +151,10 @@ func (s *UserService) GetById(id string) (*models.User, error) {
 		first_name,
 		last_name,
 		phone,
-		project_idea,
-		team_members,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	// TODO if there's an err dbu will likely be nil so toModel will panic.
 	// Seems like toModel needs to check for nil and maybe return an err.
@@ -186,12 +174,10 @@ func (s *UserService) GetByEmail(email string) (*models.User, error) {
 		first_name,
 		last_name,
 		phone,
-		project_idea,
-		team_members,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		return nil, err
@@ -215,12 +201,10 @@ func (s *UserService) GetByCode(code string) (*models.User, error) {
 		first_name,
 		last_name,
 		phone,
-		project_idea,
-		team_members,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, pq.Array(&dbu.TeamMembers), &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		return nil, err
@@ -238,8 +222,6 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 		first_name,
 		last_name,
 		phone,
-		project_idea,
-		team_members,
 		is_active,
 		confirmation_code
 	FROM users`)
@@ -250,7 +232,7 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 
 	for rows.Next() {
 		var dbu dbUser
-		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.ProjectIdea, &dbu.TeamMembers, &dbu.IsActive, &dbu.ConfirmationCode)
+		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get all users: %v", err)
 		}
@@ -280,11 +262,9 @@ func (s *UserService) Update(u *models.User) error {
 		first_name = $4,
 		last_name = $5,
 		phone = $6,
-		project_idea = $7,
-		team_members = $8,
-		is_active = $9,
-		confirmation_code = $10
-	WHERE id = $11`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.ProjectIdea, pq.Array(u.TeamMembers), u.IsActive, u.ConfirmationCode, u.ID)
+		is_active = $7,
+		confirmation_code = $8
+	WHERE id = $9`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.IsActive, u.ConfirmationCode, u.ID)
 
 	// TODO make sure when an exec fails it doesn't have an effect on the db
 	// Check postgres specific error

@@ -57,9 +57,6 @@ type User struct {
 
 	Phone string `json:"phone"`
 
-	ProjectIdea string   `json:"projectIdea"`
-	TeamMembers []string `json:"teamMembers"`
-
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
 }
@@ -107,9 +104,6 @@ func (u *User) FromFormData(r *http.Request) {
 	u.LastName = r.FormValue("last-name")
 
 	u.Phone = r.FormValue("phone")
-
-	u.ProjectIdea = r.FormValue("project-idea")
-	u.TeamMembers = append(u.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 }
 
 // Validate checks if a User has all the necessary fields.
