@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -18,11 +17,6 @@ var (
 	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
 )
 
-// Form parsing errors
-var (
-	ErrUnknownSchool = errors.New("unknown school selected")
-)
-
 const (
 	DecisionAwaiting = iota
 	DecisionRejected
@@ -35,7 +29,7 @@ type Application struct {
 	ID                   int
 	Decision             int
 	UserID               int
-	SchoolID             int
+	School               string
 	Gender               string
 	Major                string
 	GraduationYear       string
@@ -58,7 +52,7 @@ type Application struct {
 
 // Validate checks if an Application has all the necessary fields.
 func (a *Application) Validate() error {
-	if a.SchoolID == 0 {
+	if a.School == "" {
 		return ErrMissingSchool
 	} else if a.Gender == "" {
 		return ErrMissingGender
@@ -80,12 +74,7 @@ func (a *Application) Validate() error {
 // FromFormData converts an application from a request's FormData to a
 // models.Application struct.
 func (a *Application) FromFormData(r *http.Request) error {
-	schoolID, err := strconv.Atoi(r.FormValue("school"))
-	if err != nil {
-		return ErrUnknownSchool
-	}
-	a.SchoolID = schoolID
-
+	a.School = r.FormValue("school")
 	a.Gender = r.FormValue("gender")
 	a.Major = r.FormValue("major")
 	a.GraduationYear = r.FormValue("graduation-year")

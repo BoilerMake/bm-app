@@ -17,11 +17,11 @@ type ApplicationService struct {
 type dbApplication struct {
 	ID                  sql.NullInt64
 	UserID              sql.NullInt64
-	SchoolID            sql.NullInt64
 	Decision            sql.NullInt64
 	EmailedDecision     sql.NullBool
 	CheckedInAt         pq.NullTime
 	RSVP                sql.NullBool
+	School              sql.NullString
 	Gender              sql.NullString
 	Major               sql.NullString
 	GraduationYear      sql.NullString
@@ -45,11 +45,11 @@ func (a *dbApplication) toModel() *models.Application {
 	return &models.Application{
 		ID:                  int(a.ID.Int64),
 		UserID:              int(a.UserID.Int64),
-		SchoolID:            int(a.SchoolID.Int64),
 		Decision:            int(a.Decision.Int64),
 		EmailedDecision:     a.EmailedDecision.Bool,
 		CheckedInAt:         a.CheckedInAt.Time,
 		RSVP:                a.RSVP.Bool,
+		School:              a.School.String,
 		Gender:              a.Gender.String,
 		Major:               a.Major.String,
 		GraduationYear:      a.GraduationYear.String,
@@ -81,7 +81,7 @@ func (s *ApplicationService) CreateOrUpdate(a *models.Application) (err error) {
 	// then we know that user already has an application so we can just update that
 	_, err = s.DB.Exec(`INSERT INTO bm7_applications (
 			user_id,
-			school_id,
+			school,
 			gender,
 			major,
 			graduation_year,
@@ -99,7 +99,7 @@ func (s *ApplicationService) CreateOrUpdate(a *models.Application) (err error) {
 		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
 		ON CONFLICT (user_id) DO UPDATE SET
 			user_id = $1,
-			school_id = $2,
+			school = $2,
 			gender = $3,
 			major = $4,
 			graduation_year = $5,
@@ -115,7 +115,7 @@ func (s *ApplicationService) CreateOrUpdate(a *models.Application) (err error) {
 			tac_mlh_code_of_conduct = $15,
 			tac_mlh_contest_and_privacy = $16;`,
 		a.UserID,
-		a.SchoolID,
+		a.School,
 		a.Gender,
 		a.Major,
 		a.GraduationYear,
@@ -143,9 +143,9 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	err := s.DB.QueryRow(`SELECT
 			id,
 			user_id,
-			school_id,
 			decision,
 			rsvp,
+			school,
 			gender,
 			major,
 			graduation_year,
@@ -164,9 +164,9 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		WHERE user_id = $1`, uid).Scan(
 		&dba.ID,
 		&dba.UserID,
-		&dba.SchoolID,
 		&dba.Decision,
 		&dba.RSVP,
+		&dba.School,
 		&dba.Gender,
 		&dba.Major,
 		&dba.GraduationYear,
