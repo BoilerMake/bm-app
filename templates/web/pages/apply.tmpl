@@ -1,0 +1,130 @@
+{{ define "apply" }}
+{{ template "header" . }}
+
+<div class="cards">
+	<div class="card">
+		<!-- TODO not an auth form, but this is fine for testing -->
+		<form class="form__auth" action="" method="post">
+			<h1>Apply</h1>
+
+			<div class="form__input">
+				<label class="form__label" for="school"><b>School</b></label>
+				<!-- TODO make this a select + other -->
+				<input class="form__input--text" type="text" name="school" value="{{ .SchoolID }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="gender"><b>Gender</b></label>
+				<!-- TODO make this a select + other -->
+				<input class="form__input--text" type="text" name="gender" value="{{ .Gender }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="major"><b>Major</b></label>
+				<input class="form__input--text" type="text" name="major" value="{{ .Major }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="graduation-year"><b>Graduation Year</b></label>
+				<!-- TODO make this a select + other -->
+				<input class="form__input--text" type="text" name="graduation-year" value="{{ .GraduationYear }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="dietary-restrictions"><b>Dietary Restrictions</b></label>
+				<!-- TODO make this a select + other -->
+				<input class="form__input--text" type="text" name="dietary-restrictions" value="{{ .DietaryRestrictions }}">
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="github"><b>Github</b></label>
+				<input class="form__input--text" type="text" name="github" value="{{ .Github }}">
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="linkedin"><b>Linkedin</b></label>
+				<input class="form__input--text" type="text" name="linkedin" value="{{ .Linkedin }}">
+			</div>
+
+			<div class="form__input">
+				{{ if .IsFirstHackathon }}
+				<input class="form__input--checkbox" type="checkbox" name="is-first-hackathon" checked>
+				{{ else }}
+				<input class="form__input--checkbox" type="checkbox" name="is-first-hackathon">
+				{{ end }}
+				<label class="form__label--inline" for="is-first-hackathon"><b>This is my first hackathon</b></label>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="race"><b>Race</b></label>
+				<!-- TODO make this a select + other -->
+				<input class="form__input--text" type="text" name="race" value="{{ .Race }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="shirt-size"><b>Shirt Size</b></label>
+				<input class="form__input--text" type="text" name="shirt-size" value="{{ .ShirtSize }}" required>
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="project-idea"><b>Project Idea</b></label>
+				<input class="form__input--text" type="text" name="project-idea" value="{{ .ProjectIdea }}">
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" id="team-members-label"><b>Team Members</b></label>
+				{{ if gt (len .TeamMembers) 0 }}
+				<input class="form__input--text" type="text" name="team-member-1" aria-labelledby="team-members-label" value="{{ index .TeamMembers 0 }}">
+				{{ else }}
+				<input class="form__input--text" type="text" name="team-member-1" aria-labelledby="team-members-label">
+				{{ end }}
+
+				{{ if gt (len .TeamMembers) 1 }}
+				<input class="form__input--text" type="text" name="team-member-2" aria-labelledby="team-members-label" value="{{ index .TeamMembers 1 }}">
+				{{ else }}
+				<input class="form__input--text" type="text" name="team-member-2" aria-labelledby="team-members-label">
+				{{ end }}
+
+				{{ if gt (len .TeamMembers) 2 }}
+				<input class="form__input--text" type="text" name="team-member-3" aria-labelledby="team-members-label" value="{{ index .TeamMembers 2 }}">
+				{{ else }}
+				<input class="form__input--text" type="text" name="team-member-3" aria-labelledby="team-members-label">
+				{{ end }}
+			</div>
+
+			<div class="form__input">
+				{{ if .Is18OrOlder }}
+				<input class="form__input--checkbox" type="checkbox" name="is-18-or-older" checked required>
+				{{ else }}
+				<input class="form__input--checkbox" type="checkbox" name="is-18-or-older" required>
+				{{ end }}
+				<label class="form__label--inline" for="is-18-or-older"><b>I am 18 years old or older</b></label>
+			</div>
+
+			<div class="form__input">
+				{{ if .MLHCodeOfConduct }}
+				<input class="form__input--checkbox" type="checkbox" name="mlh-code-of-conduct" checked required>
+				{{ else }}
+				<input class="form__input--checkbox" type="checkbox" name="mlh-code-of-conduct" required>
+				{{ end }}
+				<label class="form__label--inline" for="mlh-code-of-conduct"><b>I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of Conduct</a></b></label>
+			</div>
+
+			<div class="form__input">
+				{{ if .MLHContestAndPrivacy }}
+				<input class="form__input--checkbox" type="checkbox" name="mlh-contest-and-privacy" checked required>
+				{{ else }}
+				<input class="form__input--checkbox" type="checkbox" name="mlh-contest-and-privacy" required>
+				{{ end }}
+				<label class="form__label--inline" for="mlh-code-of-conduct"><b>I agree to the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a></b></label>
+			</div>
+
+			<div>
+				<button class="form--button" type="submit">Submit</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+{{ template "footer" . }}
+{{ end }}

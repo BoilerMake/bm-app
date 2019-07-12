@@ -22,7 +22,7 @@ func TestWalkRoutesTemplates(t *testing.T) {
 	os.Setenv("WEB_PATH", "../../../web")
 	os.Setenv("TEMPLATES_PATH", "../../../templates")
 
-	handler := NewHandler(nil, nil)
+	handler := NewHandler(nil, nil, nil)
 
 	// This func will be called at every end point in the handler
 	walkFunc := func(method string, route string, handler http.Handler, middlewares ...func(http.Handler) http.Handler) error {

@@ -45,8 +45,9 @@ func main() {
 	defer db.Close()
 
 	us := &postgres.UserService{db}
+	as := &postgres.ApplicationService{db}
 	mailer := mail.NewMailer()
-	h := http.NewHandler(us, mailer)
+	h := http.NewHandler(us, as, mailer)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {

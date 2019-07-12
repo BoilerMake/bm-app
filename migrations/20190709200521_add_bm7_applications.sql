@@ -9,10 +9,17 @@ CREATE TABLE schools (
 );
 
 CREATE TABLE bm7_applications (
-	id SERIAL UNIQUE PRIMARY KEY NOT NULL,
-	decision SMALLINT NOT NULL,
-	user_id INTEGER REFERENCES users(id),
+	id SERIAL UNIQUE NOT NULL,
+	-- We'll mostly (only?) be getting applications using a user's ID, so make
+	-- that the primary key
+	user_id INTEGER PRIMARY KEY REFERENCES users(id),
 	school_id INTEGER REFERENCES schools(id),
+	decision SMALLINT,
+	emailed_decision BOOLEAN,
+	checked_in_at TIMESTAMP,
+
+	rsvp BOOLEAN,
+
 	gender TEXT,
 	major TEXT,
 	graduation_year TEXT,
@@ -20,11 +27,8 @@ CREATE TABLE bm7_applications (
 	github TEXT,
 	linkedin TEXT,
 	has_resume BOOLEAN,
-	rsvp BOOLEAN,
 	is_first_hackathon BOOLEAN,
 	race TEXT,
-	emailed_decision BOOLEAN,
-	checked_in_at TIMESTAMP,
 	shirt_size TEXT,
 	project_idea TEXT,
 	team_members TEXT[3],

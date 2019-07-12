@@ -91,7 +91,7 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			phone,
 			is_active,
 			confirmation_code
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id;`,
 		u.Role,
 		u.Email,
@@ -140,7 +140,7 @@ func (s *UserService) Login(u *models.User) error {
 }
 
 // GetById returns a single user with the given id.
-func (s *UserService) GetById(id string) (*models.User, error) {
+func (s *UserService) GetById(id int) (*models.User, error) {
 	var dbu dbUser
 
 	err := s.DB.QueryRow(`SELECT
@@ -155,6 +155,10 @@ func (s *UserService) GetById(id string) (*models.User, error) {
 		confirmation_code
 	FROM users
 	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
+
+	if err != nil {
+		return nil, err
+	}
 
 	// TODO if there's an err dbu will likely be nil so toModel will panic.
 	// Seems like toModel needs to check for nil and maybe return an err.
