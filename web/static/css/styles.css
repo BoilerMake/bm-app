@@ -254,6 +254,10 @@ main {
 	vertical-align: middle;
 }
 
+.form__select {
+	width: 100%;
+}
+
 .form__link {
 	display: block;
 	color: #7a7a7a;

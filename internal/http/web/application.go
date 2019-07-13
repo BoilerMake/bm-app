@@ -2,7 +2,6 @@ package web
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -59,7 +58,6 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 		a.UserID = int(claims["id"].(float64))
-		fmt.Println(r.FormValue("is-first-hackathon"))
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {

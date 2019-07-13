@@ -26,8 +26,37 @@
 
 			<div class="form__input">
 				<label class="form__label" for="graduation-year"><b>Graduation Year</b></label>
-				<!-- TODO make this a select + other -->
-				<input class="form__input--text" type="text" name="graduation-year" value="{{ .GraduationYear }}" required>
+				<select name="graduation-year" class="form__select" required>
+					{{ if not .GraduationYear }}
+					<option disabled selected="true">Choose a year</option>
+					{{ else }}
+					<option disabled>Choose a year</option>
+					{{ end }}
+
+					{{ if eq .GraduationYear "2020" }}
+					<option class="form__option" value="2020" selected>2020</option>
+					{{ else }}
+					<option class="form__option" value="2020">2020</option>
+					{{ end }}
+
+					{{ if eq .GraduationYear "2021" }}
+					<option class="form__option" value="2021" selected>2021</option>
+					{{ else }}
+					<option class="form__option" value="2021">2021</option>
+					{{ end }}
+
+					{{ if eq .GraduationYear "2022" }}
+					<option class="form__option" value="2022" selected>2022</option>
+					{{ else }}
+					<option class="form__option" value="2022">2022</option>
+					{{ end }}
+
+					{{ if eq .GraduationYear "2023" }}
+					<option class="form__option" value="2023" selected>2023</option>
+					{{ else }}
+					<option class="form__option" value="2023">2023</option>
+					{{ end }}
+				</select>
 			</div>
 
 			<div class="form__input">
