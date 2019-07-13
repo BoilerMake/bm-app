@@ -63,6 +63,11 @@ button {
 	color: var(--color-white);
 }
 
+/* Prevents mobile devices from auto zooming on inputs */
+input, select, textarea {
+	font-size: max(1rem, 16px);
+}
+
 
 
 nav {

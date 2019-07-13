@@ -9,14 +9,37 @@
 
 			<div class="form__input">
 				<label class="form__label" for="school"><b>School</b></label>
-				<!-- TODO make this a select + other -->
-				<input class="form__input--text" type="text" name="school" value="{{ .School }}" required>
+				<input class="form__input--text" name="school" list="form__datalist--schools" value="{{ .School }}" required>
+				{{ template "school datalist" }}
 			</div>
 
 			<div class="form__input">
 				<label class="form__label" for="gender"><b>Gender</b></label>
-				<!-- TODO make this a select + other -->
-				<input class="form__input--text" type="text" name="gender" value="{{ .Gender }}" required>
+				<select class="form__select" name="gender" autocomplete="off" required>
+					{{ if or (eq .Gender "Female") (not .Gender) }}
+					<option class="form__option" value="Female" selected>Female</option>
+					{{ else }}
+					<option class="form__option" value="Female">Female</option>
+					{{ end }}
+
+					{{ if eq .Gender "Male" }}
+					<option class="form__option" value="Male" selected>Male</option>
+					{{ else }}
+					<option class="form__option" value="Male">Male</option>
+					{{ end }}
+
+					{{ if eq .Gender "Other" }}
+					<option class="form__option" value="Other" selected>Other</option>
+					{{ else }}
+					<option class="form__option" value="Other">Other</option>
+					{{ end }}
+
+					{{ if eq .Gender "Prefer not to say" }}
+					<option class="form__option" value="Prefer not to say" selected>Prefer not to say</option>
+					{{ else }}
+					<option class="form__option" value="Prefer not to say">Prefer not to say</option>
+					{{ end }}
+				</select>
 			</div>
 
 			<div class="form__input">
@@ -26,7 +49,7 @@
 
 			<div class="form__input">
 				<label class="form__label" for="graduation-year"><b>Graduation Year</b></label>
-				<select name="graduation-year" class="form__select" required>
+				<select class="form__select" name="graduation-year" required>
 					{{ if not .GraduationYear }}
 					<option disabled selected="true">Choose a year</option>
 					{{ else }}
@@ -61,7 +84,6 @@
 
 			<div class="form__input">
 				<label class="form__label" for="dietary-restrictions"><b>Dietary Restrictions</b></label>
-				<!-- TODO make this a select + other -->
 				<input class="form__input--text" type="text" name="dietary-restrictions" value="{{ .DietaryRestrictions }}">
 			</div>
 
@@ -86,8 +108,49 @@
 
 			<div class="form__input">
 				<label class="form__label" for="race"><b>Race</b></label>
-				<!-- TODO make this a select + other -->
-				<input class="form__input--text" type="text" name="race" value="{{ .Race }}" required>
+				<select class="form__select" name="race" autocomplete="off" required>
+					{{ if or (eq .Race "Asian or Pacific Islander") (not .Race) }}
+					<option class="form__option" value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
+					{{ else }}
+					<option class="form__option" value="Asian or Pacific Islander">Asian or Pacific Islander</option>
+					{{ end }}
+
+					{{ if eq .Race "Black or African American" }}
+					<option class="form__option" value="Black or African American" selected>Black or African American</option>
+					{{ else }}
+					<option class="form__option" value="Black or African American">Black or African American</option>
+					{{ end }}
+
+					{{ if eq .Race "Hispanic or Latino" }}
+					<option class="form__option" value="Hispanic or Latino" selected>Hispanic or Latino</option>
+					{{ else }}
+					<option class="form__option" value="Hispanic or Latino">Hispanic or Latino</option>
+					{{ end }}
+
+					{{ if eq .Race "Native American or American Indian" }}
+					<option class="form__option" value="Native American or American Indian" selected>Native American or American Indian</option>
+					{{ else }}
+					<option class="form__option" value="Native American or American Indian">Native American or American Indian</option>
+					{{ end }}
+
+					{{ if eq .Race "White, Caucasian, or Middle Eastern" }}
+					<option class="form__option" value="White, Caucasian, or Middle Eastern" selected>White, Caucasian, or Middle Eastern</option>
+					{{ else }}
+					<option class="form__option" value="White, Caucasian, or Middle Eastern">White, Caucasian, or Middle Eastern</option>
+					{{ end }}
+
+					{{ if eq .Race "Other" }}
+					<option class="form__option" value="Other" selected>Other</option>
+					{{ else }}
+					<option class="form__option" value="Other">Other</option>
+					{{ end }}
+
+					{{ if eq .Race "Prefer not to say" }}
+					<option class="form__option" value="Prefer not to say" selected>Prefer not to say</option>
+					{{ else }}
+					<option class="form__option" value="Prefer not to say">Prefer not to say</option>
+					{{ end }}
+				</select>
 			</div>
 
 			<div class="form__input">
