@@ -8,10 +8,6 @@ defaultEntryPoints = ["http"]
   [entryPoints.http]
   address = ":80"
 
-# Enable dashboard that has some neat stats
-[api]
-dashboard = true
-
 # Reload on config changes
 [file]
 watch = true

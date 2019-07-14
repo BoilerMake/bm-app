@@ -14,10 +14,6 @@ defaultEntryPoints = ["http", "https"]
 	address = ":443"
 	[entryPoints.https.tls]
 
-# Enable dashboard that has some neat stats
-[api]
-dashboard = true
-
 # Use acme to get our SSL certs.  Also requires an email for registration, but
 # that's set in deploy/docker-compose.prod.yml (see command in proxy service).
 [acme]
