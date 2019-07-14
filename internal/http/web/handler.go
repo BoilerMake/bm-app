@@ -10,6 +10,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/internal/s3"
 	"github.com/BoilerMake/new-backend/pkg/template"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -30,15 +31,19 @@ type Handler struct {
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
 
+	// An S3 handles uploading files to S3
+	S3 s3.S3
+
 	Templates *template.Template
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, mailer mail.Mailer) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
 		UserService:        us,
 		ApplicationService: as,
 		Mailer:             mailer,
+		S3:                 S3,
 	}
 
 	r := chi.NewRouter()

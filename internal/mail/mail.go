@@ -33,7 +33,7 @@ func NewMailer() (m Mailer) {
 
 	mode, ok := os.LookupEnv("ENV_MODE")
 	if !ok {
-		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "DB_PASSWORD")
+		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "ENV_MODE")
 	}
 
 	if mode == "development" {

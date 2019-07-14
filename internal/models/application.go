@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"mime/multipart"
 	"net/http"
 	"time"
 )
@@ -15,6 +16,10 @@ var (
 	ErrMissingRace           = errors.New("please enter your race")
 	ErrMissingShirtSize      = errors.New("please enter your shirt size")
 	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
+
+	// Validation errors when form paring
+	ErrMissingResume  = errors.New("please upload a resume")
+	ErrResumeTooLarge = errors.New("resume upload is too large")
 )
 
 const (
@@ -22,6 +27,11 @@ const (
 	DecisionRejected
 	DecisionWaitlist
 	DecisionAccepted
+)
+
+const (
+	// 16MiB
+	maxResumeSize = 16 << 20
 )
 
 // An Application is an application.  What do you want from me?
@@ -36,7 +46,8 @@ type Application struct {
 	DietaryRestrictions  string
 	Github               string
 	Linkedin             string
-	HasResume            bool
+	ResumeFile           string
+	Resume               *multipart.FileHeader // Stored in S3, not db
 	RSVP                 bool
 	IsFirstHackathon     bool
 	Race                 string
@@ -50,7 +61,8 @@ type Application struct {
 	MLHContestAndPrivacy bool
 }
 
-// Validate checks if an Application has all the necessary fields.
+// Validate checks if an Application has all the necessary fields. Validation
+// of resume uploads happens in application_service.go.
 func (a *Application) Validate() error {
 	if a.School == "" {
 		return ErrMissingSchool
@@ -81,7 +93,27 @@ func (a *Application) FromFormData(r *http.Request) error {
 	a.DietaryRestrictions = r.FormValue("dietary-restrictions")
 	a.Github = r.FormValue("github")
 	a.Linkedin = r.FormValue("linkedin")
-	//u.HasResume = r.FormValue("has-resume") // TODO resume handling?
+
+	// If no file was uploaded then set ResumeFile to empty string and let
+	// application_service decide what to do.  If there's already a ResumeFile
+	// in the db, then they've already uploaded a resume but just haven't updated
+	// it with this post request.
+	_, header, err := r.FormFile("resume")
+	if err != nil {
+		if err != http.ErrMissingFile {
+			return err
+		}
+	} else {
+		// New file was uploaded
+		a.ResumeFile = header.Filename
+		a.Resume = header
+
+		// Make sure size is reasonable
+		if a.Resume.Size > maxResumeSize {
+			return ErrResumeTooLarge
+		}
+	}
+
 	a.IsFirstHackathon = r.FormValue("is-first-hackathon") == "on"
 	a.Race = r.FormValue("race")
 	a.ShirtSize = r.FormValue("shirt-size")

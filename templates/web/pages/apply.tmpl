@@ -3,8 +3,9 @@
 
 <div class="cards">
 	<div class="card">
-		<!-- TODO not an auth form, but this is fine for testing -->
-		<form class="form__auth" action="" method="post">
+		{{/* TODO not an auth form, but this is fine */}}
+		{{/* naming things is hard :( */}}
+		<form class="form__auth" action="" method="post" enctype="multipart/form-data">
 			<h1>Apply</h1>
 
 			<div class="form__input">
@@ -90,6 +91,16 @@
 			<div class="form__input">
 				<label class="form__label" for="github"><b>Github</b></label>
 				<input class="form__input--text" type="text" name="github" value="{{ .Github }}">
+			</div>
+
+			<div class="form__input">
+				<label class="form__label" for="resume"><b>Resume</b></label>
+				{{ if .ResumeFile }}
+				<p>Current resume on file: {{ .ResumeFile }}</p>
+				<input class="form__input--file" type="file" name="resume" accept=".pdf">
+				{{ else }}
+				<input class="form__input--file" type="file" name="resume"  accept=".pdf" required>
+				{{ end }}
 			</div>
 
 			<div class="form__input">

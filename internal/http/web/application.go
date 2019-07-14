@@ -67,6 +67,18 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 
+		// If creating/saving application worked, upload resume only if a new resume
+		// was sent to us.
+		if a.ResumeFile != "" {
+			err = h.S3.UploadResume(a.UserID, a.Resume)
+			if err != nil {
+				// TODO error handling
+				// TODO once session tokens are updated this should show a failure flash
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
 		// Redirect back to application page if successful
 		// TODO once session tokens are updated this should show success and give a date for when apps are locked
 		http.Redirect(w, r, "/apply", http.StatusSeeOther)

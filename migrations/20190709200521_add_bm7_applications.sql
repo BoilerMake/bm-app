@@ -21,7 +21,7 @@ CREATE TABLE bm7_applications (
 	dietary_restrictions TEXT,
 	github TEXT,
 	linkedin TEXT,
-	has_resume BOOLEAN,
+	resume_file TEXT,
 	is_first_hackathon BOOLEAN,
 	race TEXT,
 	shirt_size TEXT,
