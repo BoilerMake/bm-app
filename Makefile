@@ -1,5 +1,5 @@
 # Add any other binaries to build here, seperated by a space
-TARGETS := server
+TARGETS := server migrate
 
 INFO_STR=[INFO]
 
