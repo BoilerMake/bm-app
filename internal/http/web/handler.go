@@ -2,7 +2,9 @@ package web
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -40,21 +42,17 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	r := chi.NewRouter()
 
 	// Set up templates
-	tmplPath, ok := os.LookupEnv("TEMPLATES_PATH")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "TEMPLATES_PATH")
+	mode := mustGetEnv("ENV_MODE")
+	tmplPath := mustGetEnv("TEMPLATES_PATH")
+	tmplFuncs := map[string]interface{}{
+		"static_path": staticFileReplace(mode),
 	}
 
-	tmpls, err := template.NewTemplate(tmplPath)
+	tmpls, err := template.NewTemplate(tmplPath, tmplFuncs)
 	if err != nil {
 		log.Fatalf("failed to load templates: %s", err)
 	}
 	h.Templates = tmpls
-
-	mode, ok := os.LookupEnv("ENV_MODE")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "ENV_MODE")
-	}
 
 	if mode == "development" {
 		// In development mode, reload templates on every request
@@ -81,6 +79,13 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	r.Post("/login", h.postLogin())
 
 	r.Get("/account", h.getAccount())
+
+	if mode == "development" {
+		// In prod we serve static items through a CDN, in development just serve
+		// out of web/static/ at /static/
+		fs := http.StripPrefix("/static", http.FileServer(http.Dir("web/static")))
+		r.Get("/static/*", fs.ServeHTTP)
+	}
 
 	r.NotFound(h.get404())
 
@@ -405,4 +410,39 @@ func mustGetEnv(var_name string) (value string) {
 		log.Fatalf("environment variable not set: %v", var_name)
 	}
 	return value
+}
+
+// staticFileReplace is a template helper that reads in a manifest file and
+// reroutes requests accordingly.  It's useful when you upload versioned files
+// to a CDN for cache invalidation.  The manifest file used is made by gulp
+// when running the prod config.
+func staticFileReplace(mode string) func(path string) string {
+	if mode == "development" {
+		// No need to change path in development
+		return func(path string) string {
+			return "/static/" + path
+		}
+	} else {
+		// In prod change path to cloudfront
+		cloudfrontURL := mustGetEnv("CLOUDFRONT_URL")
+
+		file, err := ioutil.ReadFile("web/static/rev-manifest.json")
+		if err != nil {
+			log.Fatalf("failed to read static manifest file: %v", err)
+		}
+
+		var manifest map[string]interface{}
+		err = json.Unmarshal(file, &manifest)
+		if err != nil {
+			log.Fatalf("failed to parse static manifest file: %v", err)
+		}
+
+		return func(path string) string {
+			if manifest[path] != nil {
+				return cloudfrontURL + "/" + manifest[path].(string)
+			} else {
+				return "/404"
+			}
+		}
+	}
 }
