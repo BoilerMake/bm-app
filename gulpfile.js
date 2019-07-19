@@ -77,7 +77,6 @@ function publish() {
 	gulp
 		.src("web/static/**")
 		.pipe(publisher.publish(headers))
-		.pipe(publisher.sync())
 		.pipe(awspublish.reporter())
 }
 
