@@ -1,47 +1,15 @@
-/* Variables TODO actually static ones should be replaced with sass variables */
+@import 'vars';
+@import 'grid';
+@import 'util';
+@import 'text';
+
 :root {
-	--color-black: #222;
-	--color-white: #EEE;
-
-	--max-width-global: 80rem;
-
-	--border-thin: 0.15rem solid var(--color-black);
+	--border-thin: 0.15rem solid var($black);
 	--box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
-}
-
-/* CSS reset. TODO when/if we go with sass, this can be brought in with that */
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	vertical-align: baseline;
-}
-
-/* Define a single root size (rem) and have everything else base their sizes
- * off of that.  Gets rid of media queries for the most part and makes things
- * more responsive by default.
- * see: https://css-tricks.com/rems-ems/ 
-*/
-html {
-	font-size: 100%;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
 body {
 	display: grid;
-	grid-gap: 1rem;
 	grid-template-columns: 1fr;
 	grid-template-rows: auto 1fr auto;
 	grid-template-areas:
@@ -52,46 +20,71 @@ body {
 	min-height: 100vh;
 }
 
-button {
-	padding: 0.5rem;
-	border: none;
-	border-radius: 0.5rem;
-
-	cursor: pointer;
-
-	background: var(--color-black);
-	color: var(--color-white);
-}
-
-
-
 nav {
 	grid-area: nav;
 }
 
-.nav__container {
+.nav__container--dark {
 	display: flex;
 	flex: 1;
 
-	max-width: var(--max-width-global);
+	.nav__link {
+		color: $black;
+	}
 
-	margin: 0 auto;
-	padding: 1rem 1.5rem;
+	.nav__link--call-to-action {
+		color: $white;
+		background: $black;
+	}
+
+	.nav__hamburger--bar  {
+		background: $black;
+	}
+
+	.nav__dropdown--menu {
+		background: $black;
+
+		.nav__link--dropdown {
+			color: $white;
+		}
+	}
+}
+
+.nav__container--light {
+	display: flex;
+	flex: 1;
+
+	.nav__link {
+		color: $white;
+	}
+
+	.nav__link--call-to-action {
+		color: $black;
+		background: $white;
+	}
+
+	.nav__hamburger--bar  {
+		background: $white;
+	}
+
+	.nav__dropdown--menu {
+		background: $white;
+
+		.nav__link--dropdown {
+			color: $black;
+		}
+	}
+
 }
 
 .nav__link {
 	margin: 0.5rem;
-
 	text-decoration: none;
-	color: var(--color-black);
 }
 
 .nav__link--call-to-action {
 	padding: 0.5rem;
 	border-radius: 0.5rem;
-
-	background: var(--color-black);
-	color: var(--color-white);
 }
 
 .nav__pages {
@@ -115,7 +108,6 @@ nav {
 
 .nav__dropdown {
 	align-items: center;
-	margin: 0 1rem;
 }
 
 .nav__dropdown--checkbox {
@@ -133,12 +125,10 @@ nav {
 .nav__hamburger--bar {
 	display: block;
 
-	width: 2rem;
+	width: 1.75rem;
 	height: 0.25rem;
 	margin-bottom: 0.25rem;
 	border-radius: 1rem;
-
-	background: var(--color-black);
 }
 
 .nav__dropdown--menu {
@@ -146,22 +136,23 @@ nav {
 	position: absolute;
 	align-items: initial;
 	top: 3.5rem;
-	padding: 1rem;
 
 	line-height: 1.75rem;
 	font-size: 1.15rem;
 	list-style: none;
 
-	background: var(--color-white);
 	border: var(--border-thin);
 	border-radius: 0.25rem;
 }
 
+.nav__link--dropdown {
+	text-decoration: none;
+}
 
 
 footer {
 	grid-area: footer;
-	background: var(--color-black);
+	background: $black;
 }
 
 .footer__container {
@@ -169,15 +160,13 @@ footer {
 	justify-content: center;
 	flex: 1;
 
-	max-width: var(--max-width-global);
+	max-width: $max-width;
 
 	margin: 0 auto;
-	padding: 1rem 1.5rem;
-	color: var(--color-white);
+	color: $white;
 }
 
 .footer__section {
-	padding: 0 2rem;
 	list-style: none;
 }
 
@@ -186,12 +175,12 @@ footer {
 }
 
 .footer__link {
-	color: var(--color-white);
+	color: $white;
 	text-decoration: none;
 }
 
 .footer__link:hover {
-	color: var(--color-white);
+	color: $white;
 	text-decoration: underline;
 }
 
@@ -202,18 +191,9 @@ main {
 	grid-area: main;
 
 	display: flex;
-	justify-content: center;
-}
-
-.main__container {
-	display: flex;
 	flex: 1;
 	justify-content: center;
-
-	max-width: var(--max-width-global);
-
-	margin: 0 auto;
-	padding: 1rem 1.5rem;
+	flex-direction: column;
 }
 
 .form__auth {
@@ -253,39 +233,14 @@ main {
 
 .form--button {
 	width: 100%;
-}
+	padding: 0.5rem;
+	border: none;
+	border-radius: 0.5rem;
 
+	cursor: pointer;
 
-
-
-
-/* Utility */
-
-.is-mobile {
-	display: inherit;
-}
-
-.is-desktop {
-	display: none;
-}
-
-@media (min-width: 750px) {
-	.is-mobile {
-		display: none;
-	}
-
-	.is-desktop {
-		display: inherit;
-	}
-}
-
-.cards {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-	grid-gap: 1rem;
-
-	width: 100%;
-	margin: 1rem;
+	background: $black;
+	color: $white;
 }
 
 .card {
@@ -295,12 +250,37 @@ main {
 
 	width: 100%;
 	max-width: 25rem;
+	padding: $padding;
 
-	border: var(--border-thin);
-	border-radius: 0.25rem;
-
-	box-sizing: border-box;
 	box-shadow: var(--box-shadow);
+	border-radius: 0.5rem;
+}
 
-	padding: 1rem 1.5rem;
+
+.image-header {
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	margin-bottom: 1rem;
+
+	.image-header__content {
+		padding: 10rem 0;
+		text-align: center;
+
+		h1 {
+			font-size: $font-size-hero;
+			color: $white;
+			text-shadow: 0 0 1rem rgba(0,0,0,0.5);
+		}
+
+		h2 {
+			color: $white;
+			font-weight: $font-weight-light;
+			text-shadow: 0 0 1rem rgba(0,0,0,0.5);
+		}
+	}
+}
+
+.column__image {
+	width: 100%;
 }
