@@ -422,27 +422,27 @@ func staticFileReplace(mode string) func(path string) string {
 		return func(path string) string {
 			return "/static/" + path
 		}
-	} else {
-		// In prod change path to cloudfront
-		cloudfrontURL := mustGetEnv("CLOUDFRONT_URL")
+	}
 
-		file, err := ioutil.ReadFile("web/static/rev-manifest.json")
-		if err != nil {
-			log.Fatalf("failed to read static manifest file: %v", err)
-		}
+	// In prod change path to cloudfront
+	cloudfrontURL := mustGetEnv("CLOUDFRONT_URL")
 
-		var manifest map[string]interface{}
-		err = json.Unmarshal(file, &manifest)
-		if err != nil {
-			log.Fatalf("failed to parse static manifest file: %v", err)
-		}
+	file, err := ioutil.ReadFile("web/static/rev-manifest.json")
+	if err != nil {
+		log.Fatalf("failed to read static manifest file: %v", err)
+	}
 
-		return func(path string) string {
-			if manifest[path] != nil {
-				return cloudfrontURL + "/" + manifest[path].(string)
-			} else {
-				return "/404"
-			}
+	var manifest map[string]interface{}
+	err = json.Unmarshal(file, &manifest)
+	if err != nil {
+		log.Fatalf("failed to parse static manifest file: %v", err)
+	}
+
+	return func(path string) string {
+		if manifest[path] != nil {
+			return cloudfrontURL + "/" + manifest[path].(string)
+		} else {
+			return "/404"
 		}
 	}
 }

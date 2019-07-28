@@ -10,8 +10,8 @@ var env = require("dotenv").config()
 
 // Compile sass files
 function styles() {
-	return gulp.
-		src("web/src/styles/**")
+	return gulp
+		.src("web/src/styles/**")
 		// Compile and minify sass
 		.pipe(sass({
 			outputStyle: "compressed",
