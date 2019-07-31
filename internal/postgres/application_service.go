@@ -126,8 +126,6 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			if err != nil {
 				return err
 			}
-		} else {
-			return err
 		}
 	} else {
 		// Application already exists, so update it
