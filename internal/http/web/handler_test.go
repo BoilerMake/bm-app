@@ -17,8 +17,9 @@ func TestWalkRoutesTemplates(t *testing.T) {
 	os.Setenv("JWT_ISSUER", "test")
 	os.Setenv("JWT_COOKIE_NAME", "test")
 	os.Setenv("JWT_SIGNING_KEY", "test")
-	os.Setenv("ENV_MODE", "test")
+	os.Setenv("ENV_MODE", "development")
 	os.Setenv("DOMAIN", "testhost")
+	os.Setenv("PORT", "8080")
 	os.Setenv("WEB_PATH", "../../../web")
 	os.Setenv("TEMPLATES_PATH", "../../../templates")
 

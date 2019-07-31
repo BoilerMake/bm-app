@@ -1,8 +1,6 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/BoilerMake/new-backend/internal/http/api"
 	"github.com/BoilerMake/new-backend/internal/http/web"
 	"github.com/BoilerMake/new-backend/internal/mail"
@@ -26,10 +24,6 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 		WebHandler: web.NewHandler(us, mailer),
 	}
 	r := chi.NewRouter()
-
-	// Static file serving out of web/static/
-	fs := http.StripPrefix("/static", http.FileServer(http.Dir("web/static")))
-	r.Get("/static/*", fs.ServeHTTP)
 
 	// TODO historically we have used subdomains (like api.boilermake.org)
 	r.Mount("/api", h.APIHandler)

@@ -1,22 +1,26 @@
 {{ define "forgot" }}
 {{ template "header" . }}
 
-<div class="cards">
-	<div class="card">
-		<form class="form__auth" action="" method="post">
-			<h1>Reset Password</h1>
+{{ template "navbar dark" }}
 
-			<div class="form__input">
-				<label class="form__input--label" for="email"><b>Email</b></label>
-				<input class="form__input--text" type="text" name="email" required>
-			</div>
+<main>
+	<div class="row">
+		<div class="card col-6 col-center">
+			<form class="form__auth" action="" method="post">
+				<h1>Reset Password</h1>
 
-			<div>
-				<button class="form--button" type="submit">Reset</button>
-			</div>
-		</form> 
+				<div class="form__input">
+					<label class="form__input--label" for="email"><b>Email</b></label>
+					<input class="form__input--text" type="text" name="email" required>
+				</div>
+
+				<div>
+					<button class="form--button" type="submit">Reset</button>
+				</div>
+			</form> 
+		</div>
 	</div>
-</div>
+</main>
 
 {{ template "footer" . }}
 {{ end }}
