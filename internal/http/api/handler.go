@@ -1,30 +1,16 @@
 package api
 
 import (
-<<<<<<< HEAD
+
 	"encoding/json"
-=======
-	"context"
-	"encoding/gob"
-	"encoding/json"
-	"fmt"
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
 	"net/http"
-	"text/template"
+	"os"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/dgrijalva/jwt-go"
 
-<<<<<<< HEAD
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-chi/chi"
-=======
-	// jwt "github.com/dgrijalva/jwt-go"
-	"github.com/go-chi/chi"
-
-	"github.com/gorilla/securecookie"
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
 	"github.com/gorilla/sessions"
 )
 
@@ -85,9 +71,9 @@ func NewHandler(us models.UserService) *Handler {
 	h := Handler{UserService: us}
 	r := chi.NewRouter()
 
-<<<<<<< HEAD
+
 	// Need to configure this better
-=======
+
 	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
 	// var ok bool
 	// jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
@@ -95,9 +81,9 @@ func NewHandler(us models.UserService) *Handler {
 	// 	log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
 	// }
 
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
-	r.Use(middleware.WithJWT)
+	// r.Use(middleware.sessionMiddleware)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
@@ -110,14 +96,14 @@ func NewHandler(us models.UserService) *Handler {
 	return &h
 }
 
-var store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
-<<<<<<< HEAD
+
 		//TODO replace with env variable
 		session, sess_err := store.Get(r, "session-cookie-name")
 		if sess_err != nil {
@@ -126,11 +112,11 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-=======
-		session, _ := store.Get(r, "cookie-name")
+
+
 
 		// TODO check if login is valid (i.e. account exists), if so log them in
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
@@ -154,8 +140,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		println(session.Values["ID"])
 		err = session.Save(r, w) // TODO error checking
 
-<<<<<<< HEAD
-=======
+
+
 		// jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		// if err != nil {
 		// 	// TODO error handling
@@ -174,7 +160,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		// Set user as authenticated
 		session.Values["authenticated"] = true
 		session.Save(r, w)
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+
 	}
 }
 
@@ -182,7 +168,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 func (h *Handler) postLogin() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-<<<<<<< HEAD
+
 		// TODO replace cookie name with an environment variable
 		session, sess_err := store.Get(r, "session-cookie-name")
 
@@ -201,11 +187,11 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		if err != nil {
 
 			// TODO error handling
-=======
+
 
 		session, err := store.Get(r, "cookie-name")
 		if err != nil {
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -226,11 +212,11 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-<<<<<<< HEAD
+
 		// No other errors
 		session.Values["ID"] = u.ID
 		err = session.Save(r, w) // TODO error checking
-=======
+
 		username := r.FormValue("username")
 
 		user := &User{
@@ -246,7 +232,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 		http.Redirect(w, r, "/secret", http.StatusFound)
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+
 	}
 }
 
@@ -268,8 +254,8 @@ func (h *Handler) getSelf() http.HandlerFunc {
 		return
 	}
 }
-<<<<<<< HEAD
-=======
+
+
 
 // mustGetJWTConfig tries to get JWT configuration variables from the
 // environment. It will panic if those variables are not set.
@@ -289,24 +275,23 @@ func (h *Handler) getSelf() http.HandlerFunc {
 // }
 
 // getClaimsFromCtx returns the claims of a Context's JWT or an error.
-func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
-	// Always make sure the error field is nil
-	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
-	if err != nil {
-		return nil, err
-	}
-
-	// Make sure the token is not nil
-	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
-	if !ok {
-		return nil, fmt.Errorf("missing jwt in context")
-	}
-
-	claims = token.Claims.(jwt.MapClaims)
-	if err = claims.Valid(); err != nil {
-		return nil, err
-	}
-
-	return claims, err
-}
->>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
+// func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
+// 	// Always make sure the error field is nil
+// 	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	// Make sure the token is not nil
+// 	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
+// 	if !ok {
+// 		return nil, fmt.Errorf("missing jwt in context")
+// 	}
+//
+// 	claims = token.Claims.(jwt.MapClaims)
+// 	if err = claims.Valid(); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	return claims, err
+// }
