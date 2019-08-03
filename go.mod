@@ -5,6 +5,11 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
+<<<<<<< HEAD
+=======
+	github.com/gomodule/redigo v2.0.0+incompatible // indirect
+	github.com/gorilla/securecookie v1.1.1
+>>>>>>> dd2c837b457dde1c9608bad45d3cf041c8206a50
 	github.com/gorilla/sessions v1.1.3
 	github.com/lib/pq v1.0.0
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
