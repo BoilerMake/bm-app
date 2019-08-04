@@ -14,6 +14,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
+	"github.com/gorilla/sessions"
 )
 
 // A Handler will route requests to their appropriate HandlerFunc.
@@ -39,6 +40,7 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
 	r.Use(middleware.WithJWT)
+	r.Use(middleware.SessionMiddleware)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
@@ -54,6 +56,14 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	return &h
 }
 
+var (
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	// sessionCookie = mustGetEnv("SESSION_COOKIE")
+
+	key   = []byte("SESSION_COOKIE")
+	store = sessions.NewCookieStore(key)
+)
+
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 	domain := mustGetEnv("DOMAIN")
@@ -63,11 +73,15 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		domain += ":" + mustGetEnv("PORT")
 	}
 
-	jwtIssuer := mustGetEnv("JWT_ISSUER")
-	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
-	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
-
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			// TODO error handling
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
 		var u models.User
@@ -100,31 +114,30 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
+		session.Values["ID"] = u.ID
+		err = session.Save(r, w)
 		if err != nil {
-			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
 		}
 
-		// TODO right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
+		// Set user as authenticated
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+
 	}
 }
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	jwtIssuer := mustGetEnv("JWT_ISSUER")
-	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
-	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionCookie := mustGetEnv("SESSION_COOKIE")
+		session, sess_err := store.Get(r, sessionCookie)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		// Convert JSON user details in request to a user struct
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
@@ -142,27 +155,30 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
+		// No other errors
+		session.Values["ID"] = u.ID
+		err = session.Save(r, w) // TODO error checking
+
 		if err != nil {
-			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// TODO Right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
+		session.Values["authenticated"] = true
+		session.Save(r, w)
 	}
 }
 
 // postForgotPassword sends the password reset email
 func (h *Handler) postForgotPassword() http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// Get info from body
 		var emailModel models.EmailModel
 		decoder := json.NewDecoder(r.Body)
@@ -191,12 +207,23 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
 	}
 }
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// Get info from body
 		var passwordResetInfo models.PasswordResetPayload
 		decoder := json.NewDecoder(r.Body)
@@ -212,6 +239,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
 	}
 }
 
@@ -247,8 +278,10 @@ func (h *Handler) getSelf() http.HandlerFunc {
 // if there is such an account.
 func (h *Handler) postActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Temporarily ignoring claims returned from getClaimsFromCtx
-		_, err := getClaimsFromCtx(r.Context())
+
+		sessionCookie := mustGetEnv("SESSION_COOKIE")
+		session, err := store.Get(r, sessionCookie)
+
 		if err != nil {
 			// TODO error handling
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
@@ -271,8 +304,14 @@ func (h *Handler) postActivate() http.HandlerFunc {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
 	}
 }
+
+// Not necessarily needed; remove after code review
 
 // getClaimsFromCtx returns the claims of a Context's JWT or an error.
 func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {

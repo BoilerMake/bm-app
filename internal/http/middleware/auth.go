@@ -8,7 +8,31 @@ import (
 	"os"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/sessions"
 )
+
+var (
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	// sessionCookie = mustGetEnv("SESSION_COOKIE")
+	key   = []byte("SESSION_COOKIE")
+	store = sessions.NewCookieStore(key)
+)
+
+func SessionMiddleware(h http.Handler) http.Handler {
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			// log.WithError(err).Error("bad session")
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
+		r = r.WithContext(context.WithValue(r.Context(), "session", session))
+		h.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
 
 var (
 	JWTCtxKey      = contextKey("JWT")
@@ -71,4 +95,14 @@ func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *j
 		// really matter as long as the resulting token is still valid.
 		return token, err
 	}
+}
+
+// mustGetEnv looks up and sets an environment variable.  If the environment
+// variable is not found, it panics.
+func mustGetEnv(var_name string) (value string) {
+	value, ok := os.LookupEnv(var_name)
+	if !ok {
+		log.Fatalf("environment variable not set: %v", var_name)
+	}
+	return value
 }
