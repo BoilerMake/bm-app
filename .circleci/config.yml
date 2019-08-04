@@ -1,0 +1,52 @@
+# See https://circleci.com/docs/2.0/configuration-reference/
+version: 2
+jobs:
+  # Runs our test suite.
+  run_tests:
+    machine:
+      # Because we're using docker-compose we won't run the tests on another
+      # docker container (yo dawg).  Instead we'll just use a normal VM.
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout # pulls our code
+      - run:
+          name: "Enforce Go Formatted Code"
+          command: |
+            ! go fmt ./... 2>&1 | read
+      - run:
+          name: "Get Versions"
+          command: |
+            docker version
+            docker-compose --version
+      - run:
+          name: "Run Tests"
+          command: |
+            make test
+
+  # SSHs into our server and runs deploy_prod.sh
+  deploy_prod:
+    machine:
+      enabled: true
+    steps:
+      - run:
+          name: "Deploy Production Over SSH"
+          command: |
+            ssh $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST sh $BACKEND_PATH/deploy/scripts/deploy_prod.sh
+
+workflows:
+  version: 2
+  # This will run run_tests on every commit onto open pull requests.  Usually
+  # it would run run_tests on EVERY commit, but there's a setting on CircleCI
+  # that we turned on to only do PRs.
+  test:
+    jobs:
+      - run_tests
+
+  # This will run the deploy script whenever someone commits to master.
+  # Remember what Gustavo says about breaking the build!
+  production:
+    jobs:
+      - deploy_prod:
+          filters:
+            branches:
+              only: master

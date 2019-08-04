@@ -1,0 +1,21 @@
+# PRODUCTION version of docker-compose configuration
+# This file extends docker-compose.default.yml
+version: "3"
+services:
+  bm-app:
+
+  database:
+    volumes:
+      - /var/lib/pgsql/data:/var/lib/postgresql/data
+
+  proxy:
+    # Fun fact, you can specify ANY traefik config through a command line
+    # argument.  We do that here because traefik doesn't have environment
+    # variable expansion in its .toml files.
+    command:
+      - --acme.email=${TRAEFIK_EMAIL}
+    volumes:
+      # So traefik can pay attention to docker activities
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.prod.toml:/etc/traefik/traefik.toml
+      - /opt/traefik/acme.json:/acme.json

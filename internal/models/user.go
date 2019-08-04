@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
@@ -25,6 +26,12 @@ var (
 	ErrEmptyFirstName       = errors.New("first name is empty")
 	ErrEmptyLastName        = errors.New("last name is empty")
 	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
+)
+
+// Password Reset errors
+var (
+	ErrInvalidToken = errors.New("password reset token is invalid")
+	ErrExpiredToken = errors.New("password reset token has expired")
 )
 
 const (
@@ -52,6 +59,20 @@ type User struct {
 
 	ProjectIdea string   `json:"projectIdea"`
 	TeamMembers []string `json:"teamMembers"`
+
+	IsActive         bool   `json:"isActive"`
+	ConfirmationCode string `json:"confirmationCode"`
+}
+
+// EmailModel struct for password reset emails
+type EmailModel struct {
+	Email string `json:"email"`
+}
+
+// PasswordResetPayload struct for resetting passwords
+type PasswordResetPayload struct {
+	UserToken   string `json:"token"`
+	NewPassword string `json:"newPassword"`
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
@@ -74,6 +95,21 @@ func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString strin
 	}
 
 	return tokenString, err
+}
+
+func (u *User) FromFormData(r *http.Request) {
+	u.Email = r.FormValue("email")
+
+	u.Password = r.FormValue("password")
+	u.PasswordConfirm = r.FormValue("password-confirm")
+
+	u.FirstName = r.FormValue("first-name")
+	u.LastName = r.FormValue("last-name")
+
+	u.Phone = r.FormValue("phone")
+
+	u.ProjectIdea = r.FormValue("project-idea")
+	u.TeamMembers = append(u.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 }
 
 // Validate checks if a User has all the necessary fields.
@@ -120,10 +156,13 @@ func (u *User) CheckPassword(password string) bool {
 // and its representation in our database.  Abstracting it to an interface
 // makes it database independent, which helps with testing.
 type UserService interface {
-	Signup(u *User) (int, error)
+	Signup(u *User) (int, string, error)
 	Login(u *User) error
 	GetById(id string) (*User, error)
-	GetByEmail(id string) (*User, error)
+	GetByEmail(email string) (*User, error)
+	GetByCode(code string) (*User, error)
 	GetAll() (*[]User, error)
 	Update(u *User) error
+	GetPasswordReset(email string) (string, error)
+	ResetPassword(token string, newPassword string) error
 }

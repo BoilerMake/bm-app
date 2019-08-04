@@ -11,6 +11,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/gorilla/sessions"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
@@ -38,7 +39,8 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	r := chi.NewRouter()
 
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
-	r.Use(middleware.WithJWT)
+	// r.Use(middleware.WithJWT)
+	r.Use(middleware.SessionMiddleware)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
@@ -54,6 +56,13 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	return &h
 }
 
+var (
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	sessionCookie = mustGetEnv("SESSION_COOKIE")
+	key           = []byte(sessionCookie)
+	store         = sessions.NewCookieStore(key)
+)
+
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 	domain := mustGetEnv("DOMAIN")
@@ -63,15 +72,14 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		domain += ":" + mustGetEnv("PORT")
 	}
 
-	sessionCookie := mustGetEnv("SESSION_COOKIE")
-	session, sess_err := store.Get(r, sessionCookie)
-	if sess_err != nil {
-		// TODO error handling
-		http.Error(w, sess_err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			// TODO error handling
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
 		var u models.User
@@ -105,7 +113,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 
 		session.Values["ID"] = u.ID
-		err = Session.Save(r, w)
+		err = session.Save(r, w)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -119,14 +127,14 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	sessionCookie := mustGetEnv("SESSION_COOKIE")
-	session, err := store.Get(r, sessionCookie)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionCookie := mustGetEnv("SESSION_COOKIE")
+		session, sess_err := store.Get(r, sessionCookie)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// Convert JSON user details in request to a user struct
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
@@ -160,9 +168,14 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email
 func (h *Handler) postForgotPassword() http.HandlerFunc {
-	sessionCookie := mustGetEnv("SESSION_COOKIE")
-	session, err := store.Get(r, sessionCookie)
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// Get info from body
 		var emailModel models.EmailModel
 		decoder := json.NewDecoder(r.Body)
@@ -200,9 +213,14 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
-	sessionCookie := mustGetEnv("SESSION_COOKIE")
-	session, err := store.Get(r, sessionCookie)
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		sessionName := mustGetEnv("SESSION_NAME")
+		session, sess_err := store.Get(r, sessionName)
+		if sess_err != nil {
+			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// Get info from body
 		var passwordResetInfo models.PasswordResetPayload
 		decoder := json.NewDecoder(r.Body)

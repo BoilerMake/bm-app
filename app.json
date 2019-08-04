@@ -1,0 +1,11 @@
+{
+	"name": "new-backend",
+	"scripts": {
+		"postdeploy": "cp deploy/test/.env .env && make dev"
+	},
+	"env": {},
+	"formation": {},
+	"addons": [],
+	"buildpacks": [],
+	"stack": "heroku-18"
+}

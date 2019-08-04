@@ -1,0 +1,35 @@
+# PRODUCTION version of traefik's config.  It enables HTTPS through Let's Encrypt.
+logLevel = "ERROR"
+
+# Entrypoints are the front line of traefik, they define at which locations
+# we accept requests.
+defaultEntryPoints = ["http", "https"]
+[entryPoints]
+	[entryPoints.http]
+	address = ":80"
+		# Redirect all http traffic to https
+		[entryPoints.http.redirect]
+		entryPoint = "https"
+	[entryPoints.https]
+	address = ":443"
+	[entryPoints.https.tls]
+
+# Enable dashboard that has some neat stats
+[api]
+dashboard = true
+
+# Use acme to get our SSL certs.  Also requires an email for registration, but
+# that's set in deploy/docker-compose.prod.yml (see command in proxy service).
+[acme]
+storage = "acme.json"
+entryPoint = "https"
+OnHostRule = true
+	[acme.httpChallenge]
+	entryPoint = "http"
+
+# Traefik can watch for docker events and react accordingly.  So, for example,
+# if we scale up our bm-app service traefik can automatically load balance
+# using those new containers.
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+exposedByDefault = false
