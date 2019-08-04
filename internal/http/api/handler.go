@@ -1,49 +1,20 @@
 package api
 
 import (
-	"encoding/gob"
+	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-	"text/template"
+	"os"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
+	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
-	"github.com/gorilla/securecookie"
-	"github.com/gorilla/sessions"
 )
-
-type User struct {
-	Username      string
-	Authenticated bool
-}
-
-// store will hold all session data
-var store *sessions.CookieStore
-
-// tpl holds all parsed templates
-var tpl *template.Template
-
-func init() {
-	authKeyOne := securecookie.GenerateRandomKey(64)
-	encryptionKeyOne := securecookie.GenerateRandomKey(32)
-
-	store = sessions.NewCookieStore(
-		authKeyOne,
-		encryptionKeyOne,
-	)
-
-	store.Options = &sessions.Options{
-		MaxAge:   60 * 15,
-		HttpOnly: true,
-	}
-
-	gob.Register(User{})
-
-	// tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
-}
 
 // A Handler will route requests to their appropriate HandlerFunc.
 type Handler struct {
@@ -52,43 +23,31 @@ type Handler struct {
 
 	// A UserService is the interface with the database.
 	UserService models.UserService
-}
 
-func secret(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "cookie-name")
-
-	// Check if user is authenticated
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
-		http.Error(w, "Forbidden", http.StatusForbidden)
-		return
-	}
-
-	// Print secret message
-	fmt.Fprintln(w, "The cake is a lie!")
+	// A Mailer is used to send emails
+	Mailer mail.Mailer
 }
 
 // NewHandler creates a handler for API requests.
-func NewHandler(us models.UserService) *Handler {
-	h := Handler{UserService: us}
+func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
+	h := Handler{
+		UserService: us,
+		Mailer:      mailer,
+	}
+
 	r := chi.NewRouter()
 
-	// Need to configure this better
-
-	// TODO See cmd/server/main.go for more about config. This doesn't seem ideal.
-	// var ok bool
-	// jwtCookie, ok = os.LookupEnv("JWT_COOKIE_NAME")
-	// if !ok {
-	// 	log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
-	// }
-
 	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
-	// r.Use(middleware.sessionMiddleware)
+	r.Use(middleware.WithJWT)
 
 	r.Post("/signup", h.postSignup())
 	r.Post("/login", h.postLogin())
+	r.Post("/activate/{code}", h.postActivate())
+	r.Post("/forgot", h.postForgotPassword())
+	r.Post("/reset-password", h.postResetPassword())
 
 	r.Route("/users", func(r chi.Router) {
-		// r.Get("/", h.getSelf())
+		r.Get("/", h.getSelf())
 	})
 
 	h.Mux = r
@@ -97,56 +56,59 @@ func NewHandler(us models.UserService) *Handler {
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
+	domain := mustGetEnv("DOMAIN")
+
+	mode := mustGetEnv("ENV_MODE")
+	if mode == "development" {
+		domain += ":" + mustGetEnv("PORT")
+	}
+
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
+	session, sess_err := store.Get(r, sessionCookie)
+	if sess_err != nil {
+		// TODO error handling
+		http.Error(w, sess_err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-
-		//TODO replace with env variable
-		session, sess_err := store.Get(r, "session-cookie-name")
-		if sess_err != nil {
-			// TODO error handling
-			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
-
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		id, err := h.UserService.Signup(&u)
-		// if err != nil {
-		// 	// TODO error handling
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		//
-		// 	return
-		// }
+		id, confirmationCode, err := h.UserService.Signup(&u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		u.ID = id
-		// No other errors
+
+		// Build confirmation email
+		to := u.Email
+		subject := "Confirm your email"
+		link := domain + "/api/activate/" + confirmationCode
+		body := "Please click the following link to confirm your email address: " + link
+
+		err = h.Mailer.Send(to, subject, body)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		session.Values["ID"] = u.ID
-		println(session.Values["ID"])
-		err = session.Save(r, w) // TODO error checking
-
-		// jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
-		// if err != nil {
-		// 	// TODO error handling
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// }
-
-		// TODO right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		// http.SetCookie(w, &http.Cookie{
-		// 	Name:       jwtCookie,
-		// 	Value:      jwt,
-		// 	Path:       "/",
-		// 	RawExpires: "0",
-		// })
+		err = Session.Save(r, w)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		// Set user as authenticated
 		session.Values["authenticated"] = true
@@ -157,131 +119,207 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		// Convert JSON user details in request to a user struct
-		var u models.User
-
-		decoder := json.NewDecoder(r.Body)
-		err := decoder.Decode(&u)
-
-		if err != nil {
-
-			// TODO error handling
-
-			session, err := store.Get(r, "cookie-name")
-			if err != nil {
-
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			// Where authentication could be done
-			if r.FormValue("code") != "code" {
-				if r.FormValue("code") == "" {
-					session.AddFlash("Must enter a code")
-				}
-				session.AddFlash("The code was incorrect")
-				err = session.Save(r, w)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-
-				http.Redirect(w, r, "/forbidden", http.StatusFound)
-				return
-			}
-
-			// No other errors
-			session.Values["ID"] = u.ID
-			err = session.Save(r, w) // TODO error checking
-
-			username := r.FormValue("username")
-
-			user := &User{
-				Username:      username,
-				Authenticated: true,
-			}
-
-			session.Values["user"] = user
-
-			err = session.Save(r, w)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			http.Redirect(w, r, "/secret", http.StatusFound)
-
-		}
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
+	session, err := store.Get(r, sessionCookie)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	// getSelf returns the user as JSON.  It will redact some fields (like
-	// password).
-	// TODO Right now it sets the password value to blank but keeps the now blank
-	// field in the JSON response.  Consider even removing that field.
-	// TODO Same as above, but for passwordConfirm
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Convert JSON user details in request to a user struct
+		var u models.User
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	// func (h *Handler) getSelf() http.HandlerFunc {
-	// 	return func(w http.ResponseWriter, r *http.Request) {
-	// 		// TODO replace cookie name with env name
-	// 		session, err := store.Get(r, "session-cookie-name")
-	// 		if err != nil {
-	// 			// TODO error handling
-	// 			http.Error(w, "unauthorized", http.StatusUnauthorized)
-	// 			return
-	// 		}
-	//
-	// 		u, err := h.UserService.GetByEmail(claims["email"].(string))
-	// 		if err != nil {
-	// 			// TODO error handling
-	// 			// This can fail either because the DB is messed up or nothing is found
-	// 			// So be sure to deal with that
-	// 			http.Error(w, "unauthorized", http.StatusUnauthorized)
-	// 			return
-	// 		}
-	//
-	// 		json.NewEncoder(w).Encode(u)
-	// 		return
-	// 	}
-	// }
+		err = h.UserService.Login(&u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	// mustGetJWTConfig tries to get JWT configuration variables from the
-	// environment. It will panic if those variables are not set.
-	// func mustGetJWTConfig() (string, []byte) {
-	// 	jwtIssuer, ok := os.LookupEnv("JWT_COOKIE_NAME")
-	// 	if !ok {
-	// 		log.Fatalf("environment variable not set: %v", "JWT_ISSUER")
-	// 	}
-	//
-	// 	jwtSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	// 	if !ok {
-	// 		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	// 	}
-	// 	jwtSigningKey := []byte(jwtSigningKeyString)
-	//
-	// 	return jwtIssuer, jwtSigningKey
-	// }
+		// No other errors
+		session.Values["ID"] = u.ID
+		err = session.Save(r, w) // TODO error checking
 
-	// getClaimsFromCtx returns the claims of a Context's JWT or an error.
-	// func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
-	// 	// Always make sure the error field is nil
-	// 	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	//
-	// 	// Make sure the token is not nil
-	// 	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
-	// 	if !ok {
-	// 		return nil, fmt.Errorf("missing jwt in context")
-	// 	}
-	//
-	// 	claims = token.Claims.(jwt.MapClaims)
-	// 	if err = claims.Valid(); err != nil {
-	// 		return nil, err
-	// 	}
-	//
-	// 	return claims, err
-	// }
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+	}
+}
+
+// postForgotPassword sends the password reset email
+func (h *Handler) postForgotPassword() http.HandlerFunc {
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
+	session, err := store.Get(r, sessionCookie)
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get info from body
+		var emailModel models.EmailModel
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&emailModel)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		token, err := h.UserService.GetPasswordReset(emailModel.Email)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// TODO This will need to be formatted better once the front end is setup for the link
+		to := emailModel.Email
+		subject := "Password Reset"
+		body := "Your reset token is: " + token
+
+		err = h.Mailer.Send(to, subject, body)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+	}
+}
+
+// postResetPassword resets the password with a valid token
+func (h *Handler) postResetPassword() http.HandlerFunc {
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
+	session, err := store.Get(r, sessionCookie)
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get info from body
+		var passwordResetInfo models.PasswordResetPayload
+		decoder := json.NewDecoder(r.Body)
+		err := decoder.Decode(&passwordResetInfo)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+	}
+}
+
+// getSelf returns the user as JSON.  It will redact some fields (like
+// password).
+// TODO Right now it sets the password value to blank but keeps the now blank
+// field in the JSON response.  Consider even removing that field.
+// TODO Same as above, but for passwordConfirm
+func (h *Handler) getSelf() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		claims, err := getClaimsFromCtx(r.Context())
+		if err != nil {
+			// TODO error handling
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		u, err := h.UserService.GetByEmail(claims["email"].(string))
+		if err != nil {
+			// TODO error handling
+			// This can fail either because the DB is messed up or nothing is found
+			// So be sure to deal with that
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		json.NewEncoder(w).Encode(u)
+		return
+	}
+}
+
+// postActivate activates the account that corresponds to the activation code
+// if there is such an account.
+func (h *Handler) postActivate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		sessionCookie := mustGetEnv("SESSION_COOKIE")
+		session, err := store.Get(r, sessionCookie)
+
+		if err != nil {
+			// TODO error handling
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		code := chi.URLParam(r, "code")
+
+		u, err := h.UserService.GetByCode(code)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		u.IsActive = true
+		u.ConfirmationCode = ""
+		err = h.UserService.Update(u)
+		if err != nil {
+			// TODO error handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		// No errors
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+	}
+}
+
+// Not necessarily needed; remove after code review
+
+// getClaimsFromCtx returns the claims of a Context's JWT or an error.
+func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
+	// Always make sure the error field is nil
+	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
+	if err != nil {
+		return nil, err
+	}
+
+	// Make sure the token is not nil
+	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
+	if !ok {
+		return nil, fmt.Errorf("missing jwt in context")
+	}
+
+	claims = token.Claims.(jwt.MapClaims)
+	if err = claims.Valid(); err != nil {
+		return nil, err
+	}
+
+	return claims, err
+}
+
+// mustGetEnv looks up and sets an environment variable.  If the environment
+// variable is not found, it panics.
+func mustGetEnv(var_name string) (value string) {
+	value, ok := os.LookupEnv(var_name)
+	if !ok {
+		log.Fatalf("environment variable not set: %v", var_name)
+	}
+	return value
 }
