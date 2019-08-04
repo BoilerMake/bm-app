@@ -74,7 +74,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
 		if err != nil {
-			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
@@ -12,26 +11,26 @@ import (
 
 // Authentication errors
 var (
-	ErrUserNotFound   = errors.New("user was not found")
-	ErrEmailInUse     = errors.New("email is already in use")
-	ErrRequiredField  = errors.New("required field is missing")
-	ErrIncorrectLogin = errors.New("email or password is incorrect")
+	ErrUserNotFound   = &ModelError{"user was not found"}
+	ErrEmailInUse     = &ModelError{"email is already in use"}
+	ErrRequiredField  = &ModelError{"required field is missing"}
+	ErrIncorrectLogin = &ModelError{"email or password is incorrect"}
 )
 
 // Validation errors
 var (
-	ErrEmptyEmail           = errors.New("email is empty")
-	ErrEmptyPassword        = errors.New("password is empty")
-	ErrEmptyPasswordConfirm = errors.New("password confirmation is empty")
-	ErrEmptyFirstName       = errors.New("first name is empty")
-	ErrEmptyLastName        = errors.New("last name is empty")
-	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
+	ErrEmptyEmail           = &ModelError{"email is empty"}
+	ErrEmptyPassword        = &ModelError{"password is empty"}
+	ErrEmptyPasswordConfirm = &ModelError{"password confirmation is empty"}
+	ErrEmptyFirstName       = &ModelError{"first name is empty"}
+	ErrEmptyLastName        = &ModelError{"last name is empty"}
+	ErrPasswordConfirm      = &ModelError{"password and confirmation password do not match"}
 )
 
 // Password Reset errors
 var (
-	ErrInvalidToken = errors.New("password reset token is invalid")
-	ErrExpiredToken = errors.New("password reset token has expired")
+	ErrInvalidToken = &ModelError{"password reset token is invalid"}
+	ErrExpiredToken = &ModelError{"password reset token has expired"}
 )
 
 const (
