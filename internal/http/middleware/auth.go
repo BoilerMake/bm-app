@@ -19,10 +19,10 @@ var (
 )
 
 func SessionMiddleware(h http.Handler) http.Handler {
-
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		sessionName := mustGetEnv("SESSION_NAME")
-		session, sess_err := store.Get(r, sessionName)
+
+		session, sess_err := store.Get(r, sessionCookie)
 		if sess_err != nil {
 			// log.WithError(err).Error("bad session")
 			http.Error(w, sess_err.Error(), http.StatusInternalServerError)

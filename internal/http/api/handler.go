@@ -38,8 +38,8 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	r := chi.NewRouter()
 
-	r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
-	r.Use(middleware.WithJWT)
+	// r.Use(middleware.SetContentTypeJSON) // All responses from here will be JSON
+	// r.Use(middleware.WithJWT)
 	r.Use(middleware.SessionMiddleware)
 
 	r.Post("/signup", h.postSignup())
@@ -72,12 +72,14 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	if mode == "development" {
 		domain += ":" + mustGetEnv("PORT")
 	}
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionName := mustGetEnv("SESSION_NAME")
-		session, sess_err := store.Get(r, sessionName)
+		session, sess_err := store.Get(r, sessionCookie)
+
 		if sess_err != nil {
 			// TODO error handling
+
 			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -85,21 +87,18 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
 		var u models.User
+
 		decoder := json.NewDecoder(r.Body)
+
 		err := decoder.Decode(&u)
 		if err != nil {
 			// TODO error handling
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		id, confirmationCode, err := h.UserService.Signup(&u)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		u.ID = id
+		_, confirmationCode, _ := h.UserService.Signup(&u)
 
 		// Build confirmation email
 		to := u.Email
@@ -110,6 +109,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		err = h.Mailer.Send(to, subject, body)
 		if err != nil {
 			// TODO error handling
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -124,14 +124,15 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		session.Values["authenticated"] = true
 		session.Save(r, w)
 
+		// b := session.Values["ID"]
+		// println("this is signup b %v", b)
 	}
 }
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionCookie := mustGetEnv("SESSION_COOKIE")
 		session, sess_err := store.Get(r, sessionCookie)
 		if sess_err != nil {
 			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
@@ -148,15 +149,13 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		err = h.UserService.Login(&u)
-		if err != nil {
+		if session.Values["ID"] != u.ID {
 			// TODO error handling
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 		// No other errors
-		session.Values["ID"] = u.ID
 		err = session.Save(r, w) // TODO error checking
 
 		if err != nil {
@@ -171,10 +170,10 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email
 func (h *Handler) postForgotPassword() http.HandlerFunc {
-
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionName := mustGetEnv("SESSION_NAME")
-		session, sess_err := store.Get(r, sessionName)
+
+		session, sess_err := store.Get(r, sessionCookie)
 		if sess_err != nil {
 			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
 			return
@@ -216,10 +215,10 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
-
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	return func(w http.ResponseWriter, r *http.Request) {
-		sessionName := mustGetEnv("SESSION_NAME")
-		session, sess_err := store.Get(r, sessionName)
+
+		session, sess_err := store.Get(r, sessionCookie)
 		if sess_err != nil {
 			http.Error(w, sess_err.Error(), http.StatusInternalServerError)
 			return
@@ -252,15 +251,17 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 // field in the JSON response.  Consider even removing that field.
 // TODO Same as above, but for passwordConfirm
 func (h *Handler) getSelf() http.HandlerFunc {
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	return func(w http.ResponseWriter, r *http.Request) {
-		claims, err := getClaimsFromCtx(r.Context())
-		if err != nil {
+		session, sess_err := store.Get(r, sessionCookie)
+		if sess_err != nil {
 			// TODO error handling
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
+		u, err := h.UserService.GetByEmail(session.Values["ID"].(string))
 
-		u, err := h.UserService.GetByEmail(claims["email"].(string))
+		// u, err := h.UserService.GetByEmail(claims["email"].(string))
 		if err != nil {
 			// TODO error handling
 			// This can fail either because the DB is messed up or nothing is found
@@ -277,9 +278,9 @@ func (h *Handler) getSelf() http.HandlerFunc {
 // postActivate activates the account that corresponds to the activation code
 // if there is such an account.
 func (h *Handler) postActivate() http.HandlerFunc {
+	sessionCookie := mustGetEnv("SESSION_COOKIE")
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		sessionCookie := mustGetEnv("SESSION_COOKIE")
 		session, err := store.Get(r, sessionCookie)
 
 		if err != nil {
@@ -340,6 +341,7 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 func mustGetEnv(var_name string) (value string) {
 	value, ok := os.LookupEnv(var_name)
 	if !ok {
+
 		log.Fatalf("environment variable not set: %v", var_name)
 	}
 	return value
