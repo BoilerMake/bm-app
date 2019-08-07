@@ -14,14 +14,14 @@ import (
 func SessionMiddleware(h http.Handler) http.Handler {
 	var (
 		// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-		sessionCookie = mustGetEnv("SESSION_COOKIE")
-		key           = []byte(sessionCookie)
+		sessionSecret = mustGetEnv("SESSION_SECRET")
+		key           = []byte(sessionSecret)
 		store         = sessions.NewCookieStore(key)
 	)
-	sessionName := mustGetEnv("SESSION_NAME")
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		session, err := store.Get(r, sessionName)
+		session, err := store.Get(r, sessionCookieName)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
