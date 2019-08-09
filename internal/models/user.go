@@ -8,6 +8,7 @@ import (
 	"github.com/BoilerMake/new-backend/pkg/argon2"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/sessions"
 )
 
 // Authentication errors
@@ -73,6 +74,14 @@ type EmailModel struct {
 type PasswordResetPayload struct {
 	UserToken   string `json:"token"`
 	NewPassword string `json:"newPassword"`
+}
+
+func (u *User) SetSession(session *sessions.Session) (err error) {
+	session.Values["ID"] = u.ID
+	session.Values["EMAIL"] = u.Email
+	session.Values["ROLE"] = u.Role
+
+	return err
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The

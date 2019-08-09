@@ -73,11 +73,12 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("session").(*sessions.CookieStore)
-		if !ok {
-			http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-			return
-		}
+		// session, _ := r.Context().Value("session").(*sessions.CookieStore)
+		// // if !ok {
+		// // 	http.Error(w, "Unauthorized.", http.StatusUnauthorized)
+		// // 	return
+		// // }
+
 		session, err := h.CookieStore.Get(r, sessionCookieName)
 
 		if err != nil {
@@ -98,16 +99,18 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		id, confirmationCode, err := h.UserService.Signup(&u)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		id, confirmationCode, _ := h.UserService.Signup(&u)
+		// if err != nil {
+		// 	println("here")
+		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 	return
+		// }
 
 		u.ID = id
 
 		// Build confirmation email
 		to := u.Email
+
 		subject := "Confirm your email"
 		link := domain + "/api/activate/" + confirmationCode
 		body := "Please click the following link to confirm your email address: " + link
@@ -119,9 +122,10 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		session.Values["ID"] = u.ID
-		session.Values["EMAIL"] = u.Email
-		session.Values["ROLE"] = u.Role
+		err = u.SetSession(session)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		err = session.Save(r, w)
 		if err != nil {

@@ -80,11 +80,13 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 
 	err = u.Validate()
 	if err != nil {
+
 		return id, code, err
 	}
 
 	err = u.HashPassword()
 	if err != nil {
+
 		return id, code, err
 	}
 
@@ -121,6 +123,7 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 		case "not_null_violation":
 			return id, code, models.ErrRequiredField
 		default:
+
 			return id, code, pgerr
 		}
 	}
