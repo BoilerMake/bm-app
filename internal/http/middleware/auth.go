@@ -26,14 +26,22 @@ func SessionMiddleware(h http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), SessionKey, session))
+		r = r.WithContext(context.WithValue(r.Context(), SessionCtxKey, session))
 		h.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
 }
 
 var (
-	SessionKey = "session"
+	SessionCtxKey = "session"
+)
+
+var (
+	SessionSecret = "SESSION_SECRET"
+)
+
+var (
+	SessionCookieName = "SESSION_COOKIE_NAME"
 )
 
 var (

@@ -73,8 +73,10 @@ func (u *dbUser) toModel() *models.User {
 // - nil user
 func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	// Generate confirmation code
+
 	code, err = GenerateRandomString(32)
 	if err != nil {
+
 		return id, code, err
 	}
 
@@ -123,7 +125,6 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 		case "not_null_violation":
 			return id, code, models.ErrRequiredField
 		default:
-
 			return id, code, pgerr
 		}
 	}

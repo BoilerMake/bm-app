@@ -76,12 +76,11 @@ type PasswordResetPayload struct {
 	NewPassword string `json:"newPassword"`
 }
 
-func (u *User) SetSession(session *sessions.Session) (err error) {
+func (u *User) SetSession(session *sessions.Session) {
 	session.Values["ID"] = u.ID
 	session.Values["EMAIL"] = u.Email
 	session.Values["ROLE"] = u.Role
 
-	return err
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
