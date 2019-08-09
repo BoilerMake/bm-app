@@ -23,6 +23,7 @@ func SessionMiddleware(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session, err := store.Get(r, sessionCookieName)
 		if err != nil {
+			// TODO Error Handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

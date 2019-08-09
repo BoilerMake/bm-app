@@ -87,7 +87,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		id, confirmationCode, _ := h.UserService.Signup(&u)
+		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO Error Handling
 
