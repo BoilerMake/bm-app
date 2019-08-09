@@ -26,11 +26,15 @@ func SessionMiddleware(h http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		r = r.WithContext(context.WithValue(r.Context(), "session", session))
+		r = r.WithContext(context.WithValue(r.Context(), SessionKey, session))
 		h.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
 }
+
+var (
+	SessionKey = "session"
+)
 
 var (
 	JWTCtxKey      = contextKey("JWT")

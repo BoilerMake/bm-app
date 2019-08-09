@@ -24,9 +24,6 @@ type Handler struct {
 
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
-
-	// CookieStore to store the cookie related to a session
-	CookieStore *sessions.CookieStore
 }
 
 // NewHandler creates a handler for API requests.
@@ -53,58 +50,38 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	})
 
 	h.Mux = r
-	sessionSecret := mustGetEnv("SESSION_SECRET")
 
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-	var key = []byte(sessionSecret)
-	var store = sessions.NewCookieStore(key)
-
-	h.CookieStore = store
 	return &h
 }
 
 // postSignup tries to sign up a user.
 func (h *Handler) postSignup() http.HandlerFunc {
 	domain := mustGetEnv("DOMAIN")
-
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
 		domain += ":" + mustGetEnv("PORT")
 	}
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		// session, _ := r.Context().Value("session").(*sessions.CookieStore)
-		// // if !ok {
-		// // 	http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-		// // 	return
-		// // }
-
-		session, err := h.CookieStore.Get(r, sessionCookieName)
-
-		if err != nil {
-			// TODO error handling
-
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		session, _ := r.Context().Value(middleware.SessionKey).(*sessions.Session)
 
 		// TODO check if login is valid (i.e. account exists), if so log them in
 
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
-		err = decoder.Decode(&u)
+		err := decoder.Decode(&u)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		id, confirmationCode, _ := h.UserService.Signup(&u)
-		// if err != nil {
-		// 	println("here")
-		// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-		// 	return
-		// }
+		id, confirmationCode, err := h.UserService.Signup(&u)
+		if err != nil {
+			// TODO Error Handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		u.ID = id
 
@@ -125,10 +102,12 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		err = u.SetSession(session)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		err = session.Save(r, w)
 		if err != nil {
+			// TODO Error Handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -137,13 +116,10 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("session").(*sessions.CookieStore)
-		if !ok {
-			http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-			return
-		}
+		session, _ := r.Context().Value(middleware.SessionKey).(*sessions.Session)
+
 		var u models.User
 		decoder := json.NewDecoder(r.Body)
 		err := decoder.Decode(&u)
@@ -160,23 +136,18 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		// TODO Right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-
-		session, err := h.CookieStore.Get(r, sessionCookieName)
+		// Setting session values
+		err = u.SetSession(session)
 		if err != nil {
-			// TODO error handling
+			// TODO Error Handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// Setting session values
-		session.Values["ID"] = u.ID
-		session.Values["EMAIL"] = u.Email
-		session.Values["ROLE"] = u.Role
 
 		// Save session
 		err = session.Save(r, w)
 		if err != nil {
+			// TODO Error Handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -188,11 +159,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("session").(*sessions.CookieStore)
-		if !ok {
-			http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-			return
-		}
+
 		// Get info from body
 		var emailModel models.EmailModel
 		decoder := json.NewDecoder(r.Body)
@@ -227,11 +194,6 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("session").(*sessions.CookieStore)
-		if !ok {
-			http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-			return
-		}
 		// Get info from body
 		var passwordResetInfo models.PasswordResetPayload
 		decoder := json.NewDecoder(r.Body)
@@ -257,10 +219,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 // field in the JSON response.  Consider even removing that field.
 // TODO Same as above, but for passwordConfirm
 func (h *Handler) getSelf() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, err := h.CookieStore.Get(r, sessionCookieName)
-		if err != nil {
+		session, ok := r.Context().Value(middleware.SessionKey).(*sessions.Session)
+		if !ok {
 			// TODO error handling
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
@@ -274,8 +236,19 @@ func (h *Handler) getSelf() http.HandlerFunc {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
+		err = u.SetSession(session)
+		if err != nil {
+			// TODO Error Handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		json.NewEncoder(w).Encode(u)
+		err = session.Save(r, w)
+		if err != nil {
+			// TODO Error Handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		return
 	}
 }
@@ -283,21 +256,8 @@ func (h *Handler) getSelf() http.HandlerFunc {
 // postActivate activates the account that corresponds to the activation code
 // if there is such an account.
 func (h *Handler) postActivate() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, ok := r.Context().Value("session").(*sessions.CookieStore)
-		if !ok {
-			http.Error(w, "Unauthorized.", http.StatusUnauthorized)
-			return
-		}
-		session, err := h.CookieStore.Get(r, sessionCookieName)
-
-		if err != nil {
-			// TODO error handling
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
-
 		code := chi.URLParam(r, "code")
 
 		u, err := h.UserService.GetByCode(code)
@@ -316,8 +276,8 @@ func (h *Handler) postActivate() http.HandlerFunc {
 			return
 		}
 
-		// No errors
-		session.Save(r, w)
+		return
+
 	}
 }
 
@@ -326,7 +286,6 @@ func (h *Handler) postActivate() http.HandlerFunc {
 func mustGetEnv(var_name string) (value string) {
 	value, ok := os.LookupEnv(var_name)
 	if !ok {
-
 		log.Fatalf("environment variable not set: %v", var_name)
 	}
 	return value
