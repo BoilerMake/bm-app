@@ -204,8 +204,14 @@ main {
 	margin: 1rem 0;
 }
 
-.form__input--label {
+.form__label {
 	display: block;
+	color: #7a7a7a;
+	font-size: 0.75rem;
+}
+
+.form__label--inline {
+	display: inline;
 	color: #7a7a7a;
 	font-size: 0.75rem;
 }
@@ -222,6 +228,14 @@ main {
 .form__input--text:focus {
 	border: none;
 	border-bottom: var(--border-thin);
+}
+
+.form__input--checkbox {
+	vertical-align: middle;
+}
+
+.form__select {
+	width: 100%;
 }
 
 .form__link {
