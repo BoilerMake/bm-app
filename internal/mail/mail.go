@@ -26,7 +26,7 @@ func NewMailer() (m Mailer) {
 		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "TEMPLATES_PATH")
 	}
 	tmplPath = path.Join(tmplPath, "email")
-	tmpls, err := template.NewTemplate(tmplPath)
+	tmpls, err := template.NewTemplate(tmplPath, nil)
 	if err != nil {
 		log.Fatalf("failed to load templates: %s", err)
 	}

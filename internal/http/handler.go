@@ -1,8 +1,6 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/BoilerMake/new-backend/internal/http/api"
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/http/web"
@@ -31,10 +29,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	// Limit body request size
 	r.Use(middleware.LimitRequestSize)
-
-	// Static file serving out of web/static/
-	fs := http.StripPrefix("/static", http.FileServer(http.Dir("web/static")))
-	r.Get("/static/*", fs.ServeHTTP)
 
 	// TODO historically we have used subdomains (like api.boilermake.org)
 	r.Mount("/api", h.APIHandler)

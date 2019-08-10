@@ -1,10 +1,14 @@
 {{ define "404" }}
 {{ template "header" . }}
 
-<div>
-	<h1 style="text-align: center;">404</h1>
-	<p style="text-align: center;">Page Not Found</p>
-</div>
+{{ template "navbar dark" }}
+
+<main>
+	<div>
+		<h1 style="text-align: center;">404</h1>
+		<p style="text-align: center;">Page Not Found</p>
+	</div>
+</main>
 
 {{ template "footer" . }}
 {{ end }}
