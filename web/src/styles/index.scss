@@ -25,6 +25,11 @@ body {
 	}
 }
 
+// Font size for error pages
+.is-size-error-title {
+	font-size: 10rem;
+}
+
 // Bulma defaults to always showing a scrollbar, no thanks
 $body-overflow-y: auto;
 
