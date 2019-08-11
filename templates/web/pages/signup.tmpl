@@ -3,63 +3,55 @@
 
 {{ template "navbar" }}
 
-<main>
-	<div class="row">
-		<div class="card col-6 col-center">
-			<form class="form__auth" action="" method="post">
-				<h1>Sign Up</h1>
+<section class="section is-flex">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column box is-5-tablet is-4-desktop">
+				<form action="" method="post">
 
-				<div class="form__input">
-					<label class="form__input--label" for="email"><b>Email</b></label>
-					<input class="form__input--text" type="text" name="email" required>
-				</div>
+					<div class="field">
+						<label for="email" class="label">Email</label>
+						<div class="control">
+							<input type="email" name="email" placeholder="you@school.edu" class="input" required>
+						</div>
+					</div>
 
-				<div class="form__input">
-					<label class="form__input--label" for="password"><b>Password</b></label>
-					<input class="form__input--text" type="password" name="password" required>
-				</div>
+					<div class="field">
+						<label for="password" class="label">Password</label>
+						<div class="control">
+							<input type="password" name="password" placeholder="********" class="input" required>
+						</div>
+					</div>
 
-				<div class="form__input">
-					<label class="form__input--label" for="password-confirm"><b>Confirm Password</b></label>
-					<input class="form__input--text" type="password" name="password-confirm" required>
-				</div>
+					<div class="field">
+						<label for="password-confirm" class="label">Confirm Password</label>
+						<div class="control">
+							<input type="password" name="password-confirm" placeholder="********" class="input" required>
+						</div>
+					</div>
 
-				<div class="form__input">
-					<label class="form__input--label" for="first-name"><b>First Name</b></label>
-					<input class="form__input--text" type="text" name="first-name" required>
-				</div>
+					<div class="field">
+						<label for="first-name" class="label">First Name</label>
+						<div class="control">
+							<input type="text" name="first-name" class="input" required>
+						</div>
+					</div>
 
-				<div class="form__input">
-					<label class="form__input--label" for="last-name"><b>last Name</b></label>
-					<input class="form__input--text" type="text" name="last-name" required>
-				</div>
+					<div class="field">
+						<label for="last-name" class="label">Last Name</label>
+						<div class="control">
+							<input type="text" name="last-name" class="input" required>
+						</div>
+					</div>
 
-				<h2>Optional</h2>
-
-				<div class="form__input">
-					<label class="form__input--label" for="phone"><b>Phone Number</b></label>
-					<input class="form__input--text" type="text" name="phone">
-				</div>
-
-				<div class="form__input">
-					<label class="form__input--label" for="project-idea"><b>Project Idea</b></label>
-					<input class="form__input--text" type="text" name="project-idea">
-				</div>
-
-				<div class="form__input">
-					<label class="form__input--label"><b>Team Members</b></label>
-					<input class="form__input--text" type="text" name="team-member-1" aria-labelledby="team-members-label">
-					<input class="form__input--text" type="text" name="team-member-2" aria-labelledby="team-members-label">
-					<input class="form__input--text" type="text" name="team-member-3" aria-labelledby="team-members-label">
-				</div>
-
-				<div>
-					<button class="form--button" type="submit">Sign Up</button>
-				</div>
-			</form> 
+					<div class="field">
+						<button class="button is-fullwidth is-dark" type="submit">Signup</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-</main>
+</section>
 
 {{ template "footer" . }}
 {{ end }}
