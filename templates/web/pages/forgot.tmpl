@@ -3,24 +3,27 @@
 
 {{ template "navbar" }}
 
-<main>
-	<div class="row">
-		<div class="card col-6 col-center">
-			<form class="form__auth" action="" method="post">
-				<h1>Reset Password</h1>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column box is-5-tablet is-4-desktop">
+				<form action="" method="post">
 
-				<div class="form__input">
-					<label class="form__input--label" for="email"><b>Email</b></label>
-					<input class="form__input--text" type="text" name="email" required>
-				</div>
+					<div class="field">
+						<label for="email" class="label">Email</label>
+						<div class="control">
+							<input type="email" name="email" placeholder="you@school.edu" class="input" required>
+						</div>
+					</div>
 
-				<div>
-					<button class="form--button" type="submit">Reset</button>
-				</div>
-			</form> 
+					<div class="field">
+						<button class="button is-fullwidth is-dark" type="submit">Reset</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-</main>
+</section>
 
 {{ template "footer" . }}
 {{ end }}
