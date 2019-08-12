@@ -21,6 +21,7 @@ var (
 // Validation errors
 var (
 	ErrEmptyEmail           = errors.New("email is empty")
+	ErrInvalidEmail         = errors.New("email is invalid")
 	ErrEmptyPassword        = errors.New("password is empty")
 	ErrEmptyPasswordConfirm = errors.New("password confirmation is empty")
 	ErrEmptyFirstName       = errors.New("first name is empty")
