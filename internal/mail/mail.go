@@ -26,14 +26,14 @@ func NewMailer() (m Mailer) {
 		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "TEMPLATES_PATH")
 	}
 	tmplPath = path.Join(tmplPath, "email")
-	tmpls, err := template.NewTemplate(tmplPath)
+	tmpls, err := template.NewTemplate(tmplPath, nil)
 	if err != nil {
 		log.Fatalf("failed to load templates: %s", err)
 	}
 
 	mode, ok := os.LookupEnv("ENV_MODE")
 	if !ok {
-		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "DB_PASSWORD")
+		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "ENV_MODE")
 	}
 
 	if mode == "development" {

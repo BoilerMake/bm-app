@@ -1,9 +1,103 @@
 {{ define "index" }}
 {{ template "header" . }}
 
-<div>
-	<h1 style="text-align: center;">BoilerMake</h1>
+<div class="image-header" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "home_header.jpg" }})'>
+	{{ template "navbar light" }}
+	<div class="image-header__content">
+		<h1>Forge The Future</h1>
+		<h2>BoilerMake | Purdue University</h2>
+	</div>
 </div>
+
+<main>
+	<div class="row max-width">
+		<div class="col-8 col-center-x">
+			<h2>Create, Meet, Learn, & Build</h2>
+			<p>For the past five years, we've brought in 500 students from across the the country to create and collaborate on amazing ideas. This is an event for people who live and love hacking. Everything we do at BoilerMake is for you.</p>
+		</div>
+	</div>
+
+	<div class="row padding-y is-desktop">
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_1.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_2.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_3.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_4.jpg" }}'/>
+		</div>
+	</div>
+
+	<div class="row padding-y is-mobile">
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_1.jpg" }}'/>
+		</div>
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_2.jpg" }}'/>
+		</div>
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_3.jpg" }}'/>
+		</div>
+	</div>
+
+	<div class="row max-width">
+		<div class="col-6 col-center-x padding">
+			<h2 class="text-center">BoilerMake is here to help you grow</h2>
+			<div class="row">
+				<div class="col-4-no-break col-center padding">
+					<img class="column__image" src='{{ static_path "big_b.svg" }}'/>
+				</div>
+				<div class="col-8 col-center">
+					<h3>Create awesome projects</h3>
+					<p>Surround yourself with hundreds of students and sponsors who are all incredibly passionate about building fun, new, or innovative projects.</p>
+					<h3>Learn new things</h3>
+					<p>Not only does BoilerMake encourage building awesome projects, we love being able to provide an atmosphere where you can learn new things.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row padding-y is-desktop">
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_5.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_6.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_7.jpg" }}'/>
+		</div>
+		<div class="col-3-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_8.jpg" }}'/>
+		</div>
+	</div>
+
+	<div class="row padding-y is-mobile">
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_5.jpg" }}'/>
+		</div>
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_6.jpg" }}'/>
+		</div>
+		<div class="col-4-no-break">
+			<img class="column__image" src='{{ static_path "home_gallery_7.jpg" }}'/>
+		</div>
+	</div>
+
+	<div class="row max-width">
+		<div class="col-8 col-center-x">
+			<h2>So what else?</h2>
+			<p>BoilerMake offers a number of perks to make an amazing weekend. To get the weekend started, we provide busses to a number of schools to make travelling a no-brainer. In the past, we’ve sent buses to UIUC, UMich, and others.</p>
+			<p>When you arrive, you will be given a swag bag that usually includes a t-shirt, a watter bottle, and stickers. Each year we have some special swag. BoilerMake 5 saw a fidget spinner. BoilerMake 2 saw a custom designed dev board.</p>
+			<p>Throughout the weekend, we provide amazing catered meals for breakfast, lunch, and dinner. We also have an all you can drink coffee, latte, etc. bar and snacks passed out during the event.</p>
+			<p>At the end we have an awards ceremony where over $10,000 in prizes are given out. Last year winning teams received DJI Phantoms or Nintendo Switches. In addition to BoilerMake prizes, sponsors also usually have prizes for their categories.</p>
+		</div>
+	</div>
+</main>
 
 {{ template "footer" . }}
 {{ end }}

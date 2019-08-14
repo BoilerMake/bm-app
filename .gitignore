@@ -16,9 +16,12 @@ bin/
 
 # Folder for temporary or development things
 working/
-PGDATA/
+
 
 # You can "vendor" your dependencies using "$ go mod vendor" to keep a local
 # copy which can make building docker containers a bit faster.  Some people
 # commit this folder to version control, but we can probably go without that.
 vendor/
+
+node_modules/
+web/static/

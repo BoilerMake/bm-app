@@ -13,11 +13,9 @@
 		<meta property="og:type" content="website">
 		<meta property="og:url" content="https://boilermake.org">
 
-		<link rel="stylesheet" type="text/css" href="/static/css/styles.css">
+		<link rel="stylesheet" type="text/css" href='{{ static_path "index.css" }}'>
+		<script src='{{ static_path "index.js" }}'></script>
 	</head>
 	<body>
-		{{ template "navbar" }}
-		<main>
-			<div class="main__container">
 
 {{ end }}

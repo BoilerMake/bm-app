@@ -21,15 +21,16 @@ type Template struct {
 	Template *template.Template
 	bufPool  *sync.Pool
 	tmplPath string
+	funcs    map[string]interface{}
 }
 
 // NewTemplate creates a new Template object.  It will attempt to parse the
 // templates available (*.tmpl files) in the given path and its subdirectories.
-func NewTemplate(tmplPath string) (t *Template, err error) {
+func NewTemplate(tmplPath string, funcs map[string]interface{}) (t *Template, err error) {
 	// "missingkey=zero" means when you try to substitute a variable that is
 	// nil inside a template, it will default to its zero value instead of the
 	// string "<no value>"
-	tmpl := template.New("").Option("missingkey=zero")
+	tmpl := template.New("").Funcs(funcs).Option("missingkey=zero")
 
 	bufPool := &sync.Pool{
 		New: func() interface{} {
@@ -41,6 +42,7 @@ func NewTemplate(tmplPath string) (t *Template, err error) {
 		Template: tmpl,
 		bufPool:  bufPool,
 		tmplPath: tmplPath,
+		funcs:    funcs,
 	}
 
 	if tmplPath != "" {
@@ -56,7 +58,7 @@ func NewTemplate(tmplPath string) (t *Template, err error) {
 }
 
 // CompileTemplates minifies then parses each file in filenames.
-func CompileTemplates(filenames []string) (*template.Template, error) {
+func CompileTemplates(filenames []string, funcs map[string]interface{}) (*template.Template, error) {
 	minifier := minify.New()
 	minifier.AddFunc("text/html", html.Minify)
 
@@ -65,7 +67,7 @@ func CompileTemplates(filenames []string) (*template.Template, error) {
 	for _, filename := range filenames {
 		name := filepath.Base(filename)
 		if tmpl == nil {
-			tmpl = template.New(name)
+			tmpl = template.New(name).Funcs(funcs).Option("missingkey=zero")
 		} else {
 			tmpl = tmpl.New(name)
 		}
@@ -80,7 +82,10 @@ func CompileTemplates(filenames []string) (*template.Template, error) {
 			return nil, err
 		}
 
-		tmpl.Parse(string(mb))
+		_, err = tmpl.Parse(string(mb))
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return tmpl, nil
@@ -108,7 +113,7 @@ func (t *Template) LoadTemplates() (err error) {
 	}
 
 	// Minify and parse template files
-	t.Template, err = CompileTemplates(fileNames)
+	t.Template, err = CompileTemplates(fileNames, t.funcs)
 	return err
 }
 
@@ -120,7 +125,7 @@ func (t *Template) ReloadTemplates(next http.Handler) http.Handler {
 		// Reload templates
 		err := t.LoadTemplates()
 		if err != nil {
-			log.Fatalf("failed to reload templates: %s", err)
+			log.Printf("failed to reload templates: %s", err)
 			return
 		}
 

@@ -56,9 +56,6 @@ type User struct {
 
 	Phone string `json:"phone"`
 
-	ProjectIdea string   `json:"projectIdea"`
-	TeamMembers []string `json:"teamMembers"`
-
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
 }
@@ -96,6 +93,8 @@ func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString strin
 	return tokenString, err
 }
 
+// FromFormData converts a user from a request's FormData to a models.User
+// struct.
 func (u *User) FromFormData(r *http.Request) {
 	u.Email = r.FormValue("email")
 
@@ -106,9 +105,6 @@ func (u *User) FromFormData(r *http.Request) {
 	u.LastName = r.FormValue("last-name")
 
 	u.Phone = r.FormValue("phone")
-
-	u.ProjectIdea = r.FormValue("project-idea")
-	u.TeamMembers = append(u.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 }
 
 // Validate checks if a User has all the necessary fields.
@@ -157,7 +153,7 @@ func (u *User) CheckPassword(password string) bool {
 type UserService interface {
 	Signup(u *User) (int, string, error)
 	Login(u *User) error
-	GetById(id string) (*User, error)
+	GetById(id int) (*User, error)
 	GetByEmail(email string) (*User, error)
 	GetByCode(code string) (*User, error)
 	GetAll() (*[]User, error)
