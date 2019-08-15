@@ -3,6 +3,7 @@ module github.com/BoilerMake/new-backend
 require (
 	github.com/aws/aws-sdk-go v1.20.20
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/fatih/structs v1.1.0
 	github.com/go-chi/chi v4.0.0+incompatible
 	github.com/lib/pq v1.0.0
 	github.com/mailgun/mailgun-go/v3 v3.3.3

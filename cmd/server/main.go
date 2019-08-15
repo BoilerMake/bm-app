@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -47,22 +46,31 @@ func main() {
 	}
 	defer db.Close()
 
-	// Setup rollbar
-	rollbar.SetToken("cb55bdedcb2042f7a6a3687e1c266e08")
-	rollbar.SetEnvironment("production")                 // defaults to "development"
-	rollbar.SetCodeVersion("v2")                         // optional Git hash/branch/tag (required for GitHub integration)
-	rollbar.SetServerHost("web.1")                       // optional override; defaults to hostname
-	rollbar.SetServerRoot("github.com/heroku/myproject") // path of project (required for GitHub integration and non-project stacktrace collapsing)
-
-	rollbar.Critical(errors.New("Test error"))
-	rollbar.Info("Message body goes here")
-	rollbar.Wait()
-
 	us := &postgres.UserService{db}
 	as := &postgres.ApplicationService{db}
 	mailer := mail.NewMailer()
 	S3 := s3.NewS3()
 	h := http.NewHandler(us, as, mailer, S3)
+
+	// Setup rollbar
+	rollbar_token, ok := os.LookupEnv("ROLLBAR_TOKEN")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "ROLLBAR_TOKEN")
+	}
+	rollbar_env, ok := os.LookupEnv("ROLLBAR_ENVIRONMENT")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "ROLLBAR_ENVIRONMENT")
+	}
+	rollbar_root, ok := os.LookupEnv("ROLLBAR_SERVER_ROOT")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "ROLLBAR_SERVER_ROOT")
+	}
+
+	rollbar.SetToken(rollbar_token)
+	rollbar.SetEnvironment(rollbar_env)
+	rollbar.SetCodeVersion("v2")
+	rollbar.SetServerHost("web.1")
+	rollbar.SetServerRoot(rollbar_root)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
@@ -76,4 +84,5 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 }

@@ -5,7 +5,9 @@ import (
 
 	"github.com/BoilerMake/new-backend/internal/models"
 
+	"github.com/fatih/structs"
 	"github.com/go-chi/chi"
+	"github.com/rollbar/rollbar-go"
 )
 
 // getSignup renders the signup template.
@@ -37,7 +39,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, structs.Map(u))
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -55,14 +58,16 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, to, subject, "email confirm", data)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, " issuer: ", jwtIssuer, ", jwt signing key: ", jwtSigningKey)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -88,7 +93,8 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		// Temporarily ignoring claims returned from getClaimsFromCtx
 		_, err := getClaimsFromCtx(r.Context())
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -97,7 +103,8 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 		u, err := h.UserService.GetByCode(code)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, " code: ", code)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -106,7 +113,8 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		u.ConfirmationCode = ""
 		err = h.UserService.Update(u)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, structs.Map(u))
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -140,7 +148,8 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, structs.Map(u))
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -156,7 +165,8 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, to, subject, "email reset", data)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -191,7 +201,8 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -221,14 +232,16 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 		err := h.UserService.Login(&u)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, structs.Map(u))
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, " issuer: ", jwtIssuer, ", jwt signing key: ", jwtSigningKey)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -252,7 +265,8 @@ func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		claims, err := getClaimsFromCtx(r.Context())
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			// TODO once session tokens are updated this should show a need to login first flash
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
@@ -260,7 +274,8 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 		u, err := h.UserService.GetByEmail(claims["email"].(string))
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			// This can fail either because the DB is messed up or nothing is found
 			// So be sure to deal with that
 			http.Error(w, "unauthorized", http.StatusUnauthorized)

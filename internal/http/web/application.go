@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/rollbar/rollbar-go"
 )
 
 // getApply renders the apply template.
@@ -13,7 +14,8 @@ func (h *Handler) getApply() http.HandlerFunc {
 		// Make sure user is logged in
 		claims, err := getClaimsFromCtx(r.Context())
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			// TODO once session tokens are updated this should show a need to log in first flash
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
@@ -27,7 +29,8 @@ func (h *Handler) getApply() http.HandlerFunc {
 			if err == sql.ErrNoRows {
 				app = &models.Application{}
 			} else {
-				// TODO error handling
+				rollbar.Error(err)
+				rollbar.Wait()
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -44,7 +47,8 @@ func (h *Handler) postApply() http.HandlerFunc {
 		// Make sure user is logged in
 		claims, err := getClaimsFromCtx(r.Context())
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			// TODO once session tokens are updated this should show a need to log in first flash
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
@@ -53,7 +57,8 @@ func (h *Handler) postApply() http.HandlerFunc {
 		var a models.Application
 		err = a.FromFormData(r)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err, r)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -61,7 +66,8 @@ func (h *Handler) postApply() http.HandlerFunc {
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {
-			// TODO error handling
+			rollbar.Error(err)
+			rollbar.Wait()
 			// TODO once session tokens are updated this should show a failure flash
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -72,7 +78,8 @@ func (h *Handler) postApply() http.HandlerFunc {
 		if a.ResumeFile != "" {
 			err = h.S3.UploadResume(a.UserID, a.Resume)
 			if err != nil {
-				// TODO error handling
+				rollbar.Error(err)
+				rollbar.Wait()
 				// TODO once session tokens are updated this should show a failure flash
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
