@@ -11,12 +11,13 @@ bin/
 
 # Configs we don't want pushed
 .env
+PGDATA/
+
 # But allow deploy/test/.env
 !/deploy/test/.env
 
 # Folder for temporary or development things
 working/
-
 
 # You can "vendor" your dependencies using "$ go mod vendor" to keep a local
 # copy which can make building docker containers a bit faster.  Some people
