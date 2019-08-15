@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -9,17 +8,17 @@ import (
 
 // Validation errors
 var (
-	ErrMissingSchool         = errors.New("please enter your school's name")
-	ErrMissingGender         = errors.New("please enter your gender")
-	ErrMissingMajor          = errors.New("please enter your major")
-	ErrMissingGraduationYear = errors.New("please enter your graduation year")
-	ErrMissingRace           = errors.New("please enter your race")
-	ErrMissingShirtSize      = errors.New("please enter your shirt size")
-	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
+	ErrMissingSchool         = &ModelError{"please enter your school's name"}
+	ErrMissingGender         = &ModelError{"please enter your gender"}
+	ErrMissingMajor          = &ModelError{"please enter your major"}
+	ErrMissingGraduationYear = &ModelError{"please enter your graduation year"}
+	ErrMissingRace           = &ModelError{"please enter your race"}
+	ErrMissingShirtSize      = &ModelError{"please enter your shirt size"}
+	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions"}
 
 	// Validation errors when form paring
-	ErrMissingResume  = errors.New("please upload a resume")
-	ErrResumeTooLarge = errors.New("resume upload is too large")
+	ErrMissingResume  = &ModelError{"please upload a resume"}
+	ErrResumeTooLarge = &ModelError{"resume upload is too large"}
 )
 
 const (
