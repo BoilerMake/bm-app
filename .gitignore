@@ -11,6 +11,7 @@ bin/
 
 # Configs we don't want pushed
 .env
+PGDATA/
 # But allow deploy/test/.env
 !/deploy/test/.env
 
