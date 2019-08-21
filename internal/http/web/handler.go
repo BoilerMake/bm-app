@@ -72,8 +72,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Use(middleware.WithJWT)
 
 	r.Get("/", h.getRoot())
-
-	// Not sure where this route goes
 	r.Get("/faq", h.getFaq())
 
 	/* USER ROUTES */
