@@ -74,8 +74,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
-
-	// Not sure where this route goes
 	r.Get("/faq", h.getFaq())
 
 	/* USER ROUTES */
