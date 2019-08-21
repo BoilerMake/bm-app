@@ -2,10 +2,10 @@ package models
 
 import (
 	"errors"
-	"time"
 	"github.com/BoilerMake/new-backend/pkg/argon2"
-	"github.com/ttacon/libphonenumber"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/nyaruka/phonenumbers"
+	"time"
 )
 
 // Authentication errors
@@ -24,8 +24,8 @@ var (
 	ErrEmptyFirstName       = errors.New("first name is empty")
 	ErrEmptyLastName        = errors.New("last name is empty")
 	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
-	ErrEmptyPhoneNum				= errors.New("phone number is empty")
-	ErrInvalidPhoneNum			= errors.New("phone number is in an invalid format")
+	ErrEmptyPhoneNum        = errors.New("phone number is empty")
+	ErrInvalidPhoneNum      = errors.New("phone number is in an invalid format")
 )
 
 const (
@@ -100,11 +100,11 @@ func (u *User) Validate() error {
 	} else if u.Phone == "" {
 		return ErrEmptyPhoneNum
 	} else if u.Phone != "" {
-		num, err := libphonenumber.Parse(u.Phone, "US")
+		num, err := phonenumbers.Parse(u.Phone, "US")
 		if err != nil {
 			return ErrInvalidPhoneNum
 		}
-		if !libphonenumber.IsPossibleNumber(num) {
+		if !phonenumbers.IsPossibleNumber(num) {
 			return ErrInvalidPhoneNum
 		}
 	}
