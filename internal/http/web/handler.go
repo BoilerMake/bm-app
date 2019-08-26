@@ -71,7 +71,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	// Set up pool of buffers used for rendering templates.
 	r.Use(middleware.WithJWT)
 
+	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
+	r.Get("/hackers", h.getHackers())
 
 	/* USER ROUTES */
 	r.Get("/signup", h.getSignup())
@@ -111,6 +113,13 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Templates.RenderTemplate(w, "index", nil)
+	}
+}
+
+// getHackers renders the hackers template.
+func (h *Handler) getHackers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.Templates.RenderTemplate(w, "hackers", nil)
 	}
 }
 

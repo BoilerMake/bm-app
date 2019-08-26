@@ -30,6 +30,10 @@ body {
 	font-size: 10rem;
 }
 
+iframe.full-size {
+	height: 308px !important;
+}
+
 // Bulma defaults to always showing a scrollbar, no thanks
 $body-overflow-y: auto;
 
