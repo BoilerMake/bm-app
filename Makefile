@@ -2,10 +2,24 @@
 TARGETS := server migrate
 
 INFO_STR=[INFO]
+.PHONY: dev dev-force-rebuild dev-cleanup dev-frontend test build clean
 
-dev:
+dev: dev-frontend
 	@echo $(INFO_STR) starting dev environment...
 	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up
+
+dev-force-rebuild: dev-frontend
+	@echo $(INFO_STR) rebuilding dev environment...
+	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up --build --force-recreate
+
+dev-cleanup:
+	@echo $(INFO_STR) removing dev environment...
+	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml rm --stop
+
+dev-frontend:
+	@echo $(INFO_STR) installing frontend dependencies
+	@npm install
+	@gulp dev &
 
 test:
 	@echo $(INFO_STR) starting test environment...
@@ -26,14 +40,6 @@ build:
 		echo $(INFO_STR) building binary \"$$target\"; \
 		go build -o bin/$$target ./cmd/$$target; \
 	done
-
-dev-force-rebuild:
-	@echo $(INFO_STR) rebuilding dev environment...
-	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up --build --force-recreate
-
-dev-cleanup:
-	@echo $(INFO_STR) removing dev environment...
-	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml rm --stop
 
 clean:
 	@echo $(INFO_STR) cleaning dependencies and removing binaries...

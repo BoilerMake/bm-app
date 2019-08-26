@@ -1,36 +1,40 @@
 {{ define "account" }}
 {{ template "header" . }}
 
-<div>
-	<h1>Your Account</h1>
-	<hr>
+{{ template "navbar" }}
 
+<main>
 	<div>
-		<strong>Email: </strong><span>{{ .Email }}</span>
-	</div>
+		<h1>Your Account</h1>
+		<hr>
 
-	<div>
-		<strong>First Name: </strong><span>{{ .FirstName }}</span>
-	</div>
-
-	<div>
-		<strong>Last Name: </strong><span>{{ .LastName }}</span>
-	</div>
-
-	<div>
-		<strong>Phone Number: </strong><span>{{ .Phone }}</span>
-	</div>
-
-	<div>
-		<strong>Project Idea: </strong><span>{{ .ProjectIdea }}</span>
-	</div>
-
-	{{ range $i, $teamMember := .TeamMembers }}
 		<div>
-			<strong>Team Member {{ $i }}: </strong><span>{{ $teamMember }}</span>
+			<strong>Email: </strong><span>{{ .Email }}</span>
 		</div>
-	{{ end }}
-</div> 
+
+		<div>
+			<strong>First Name: </strong><span>{{ .FirstName }}</span>
+		</div>
+
+		<div>
+			<strong>Last Name: </strong><span>{{ .LastName }}</span>
+		</div>
+
+		<div>
+			<strong>Phone Number: </strong><span>{{ .Phone }}</span>
+		</div>
+
+		<div>
+			<strong>Project Idea: </strong><span>{{ .ProjectIdea }}</span>
+		</div>
+
+		{{ range $i, $teamMember := .TeamMembers }}
+			<div>
+				<strong>Team Member {{ $i }}: </strong><span>{{ $teamMember }}</span>
+			</div>
+		{{ end }}
+	</div> 
+</main>
 
 {{ template "footer" . }}
 {{ end }}

@@ -1,0 +1,28 @@
+{
+  "name": "new-backend",
+  "version": "1.0.0",
+  "description": "## Development instructions ### Getting started - [Install docker and docker-compose](https://docs.docker.com/compose/install/) - Copy and setup variables in `.env` \t- `$ cp .env.example .env`   - Then make any env changes you need",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BoilerMake/new-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BoilerMake/new-backend/issues"
+  },
+  "homepage": "https://github.com/BoilerMake/new-backend#readme",
+  "dependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "bulma": "^0.7.5",
+    "del": "^5.0.0",
+    "dotenv": "^8.0.0",
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^6.1.0",
+    "gulp-awspublish": "^4.0.0",
+    "gulp-babel": "^8.0.0",
+    "gulp-imagemin": "^6.0.0",
+    "gulp-rev": "^9.0.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.2"
+  }
+}

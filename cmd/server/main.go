@@ -8,6 +8,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/http"
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/postgres"
+	"github.com/BoilerMake/new-backend/internal/s3"
 	"github.com/BoilerMake/new-backend/pkg/env"
 )
 
@@ -45,8 +46,10 @@ func main() {
 	defer db.Close()
 
 	us := &postgres.UserService{db}
+	as := &postgres.ApplicationService{db}
 	mailer := mail.NewMailer()
-	h := http.NewHandler(us, mailer)
+	S3 := s3.NewS3()
+	h := http.NewHandler(us, as, mailer, S3)
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {

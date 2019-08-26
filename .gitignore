@@ -21,3 +21,6 @@ working/
 # copy which can make building docker containers a bit faster.  Some people
 # commit this folder to version control, but we can probably go without that.
 vendor/
+
+node_modules/
+web/static/

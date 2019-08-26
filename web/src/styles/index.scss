@@ -1,0 +1,37 @@
+// Keeps footer at bottom even on pages with less than a full page of content
+body {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+.section {
+	flex: 1;
+}
+
+
+// Make sure background image fills width and stays centered
+.has-background-image {
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
+
+// Titles in hero elemnts should be B I G
+.hero {
+	.title {
+		font-size: 4rem;
+	}
+}
+
+// Font size for error pages
+.is-size-error-title {
+	font-size: 10rem;
+}
+
+// Bulma defaults to always showing a scrollbar, no thanks
+$body-overflow-y: auto;
+
+// Anything that effects bulma styling needs to come before bulma is imported
+@import "../../../node_modules/bulma/bulma.sass";
