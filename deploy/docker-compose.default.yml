@@ -23,9 +23,7 @@ services:
       - traefik.port=8080
 
   database:
-    build:
-      context: ../
-      dockerfile: ./deploy/database.docker
+    image: postgres:11.3-alpine
     restart: always
     labels:
       # Don't route external traffic from our domain to our db
