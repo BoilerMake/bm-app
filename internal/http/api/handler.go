@@ -245,8 +245,6 @@ func (h *Handler) getSelf() http.HandlerFunc {
 
 		u, err := h.UserService.GetByEmail(claims["email"].(string))
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
 			// This can fail either because the DB is messed up or nothing is found
 			// So be sure to deal with that
 			rollbar.Error(err)

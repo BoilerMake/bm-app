@@ -68,7 +68,7 @@ func main() {
 
 	rollbar.SetToken(rollbar_token)
 	rollbar.SetEnvironment(rollbar_env)
-	rollbar.SetCodeVersion("v2")
+	rollbar.SetCodeVersion("master")
 	rollbar.SetServerHost("web.1")
 	rollbar.SetServerRoot(rollbar_root)
 
