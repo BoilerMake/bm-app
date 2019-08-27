@@ -1,9 +1,7 @@
 package web
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,8 +11,8 @@ import (
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 	"github.com/BoilerMake/new-backend/pkg/template"
+	"github.com/gorilla/sessions"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
 )
 
@@ -30,6 +28,9 @@ type Handler struct {
 	Mailer mail.Mailer
 
 	Templates *template.Template
+
+	// Cookiestore for session
+	CookieStore *sessions.CookieStore
 }
 
 // NewHandler creates a handler for web requests.
@@ -61,6 +62,7 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	// Set up pool of buffers used for rendering templates.
 	r.Use(middleware.WithJWT)
+	r.Use(middleware.SessionMiddleware)
 
 	r.Get("/", h.getRoot())
 
@@ -89,6 +91,16 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 
 	r.NotFound(h.get404())
 
+	sessionSecret := mustGetEnv("SESSION_SECRET")
+
+	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	var (
+		key   = []byte(sessionSecret)
+		store = sessions.NewCookieStore(key)
+	)
+
+	h.CookieStore = store
+
 	h.Mux = r
 	return &h
 }
@@ -109,6 +121,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
+
 	domain := mustGetEnv("DOMAIN")
 
 	mode := mustGetEnv("ENV_MODE")
@@ -118,21 +131,30 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		domain = "https://" + domain
 	}
 
-	jwtIssuer := mustGetEnv("JWT_ISSUER")
-	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
-	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
-
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		// TODO check if login is valid (i.e. account exists), if so log them in
 		var u models.User
 		u.FromFormData(r)
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
+
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+
+		if !ok {
+			session, err = h.CookieStore.Get(r, middleware.SessionCookieName)
+			if err != nil {
+				// TODO error handling
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
 		u.ID = id
 
 		// Build confirmation email
@@ -152,21 +174,14 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
-		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		u.SetSession(session)
 
-		// TODO right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
+		// Saving Session
+		err = session.Save(r, w)
+		if err != nil {
+			// TODO Error Handling
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 
 		// Redirect to homepage if signup was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -178,8 +193,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 func (h *Handler) getActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Temporarily ignoring claims returned from getClaimsFromCtx
-		_, err := getClaimsFromCtx(r.Context())
-		if err != nil {
+		_, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
 			// TODO error handling
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
@@ -303,9 +318,6 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	jwtIssuer := mustGetEnv("JWT_ISSUER")
-	jwtSigningKey := []byte(mustGetEnv("JWT_SIGNING_KEY"))
-	jwtCookie := mustGetEnv("JWT_COOKIE_NAME")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
@@ -318,21 +330,26 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		jwt, err := u.GetJWT(jwtIssuer, jwtSigningKey)
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			session, err = h.CookieStore.Get(r, middleware.SessionCookieName)
+			if err != nil {
+				// TODO error handling
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		// Setting session values
+		u.SetSession(session)
+
+		// Save session
+		err = session.Save(r, w)
 		if err != nil {
-			// TODO error handling
+			// TODO Error Handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		// TODO Right now this is only valid on the domain it's sent from, if we do
-		// subdomains (seems likely) then we'll need to change that.
-		http.SetCookie(w, &http.Cookie{
-			Name:       jwtCookie,
-			Value:      jwt,
-			Path:       "/",
-			RawExpires: "0",
-		})
 
 		// Redirect to homepage if login was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -342,15 +359,16 @@ func (h *Handler) postLogin() http.HandlerFunc {
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		claims, err := getClaimsFromCtx(r.Context())
-		if err != nil {
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
 			// TODO error handling
 			// TODO once session tokens are updated this should show a success flash
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
+			return
 		}
 
-		u, err := h.UserService.GetByEmail(claims["email"].(string))
+		u, err := h.UserService.GetByEmail(session.Values["EMAIL"].(string))
 		if err != nil {
 			// TODO error handling
 			// This can fail either because the DB is messed up or nothing is found
@@ -378,28 +396,6 @@ func (h *Handler) get404() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Templates.RenderTemplate(w, "404", nil)
 	}
-}
-
-// getClaimsFromCtx returns the claims of a Context's JWT or an error.
-func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
-	// Always make sure the error field is nil
-	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
-	if err != nil {
-		return nil, err
-	}
-
-	// Make sure the token is not nil
-	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
-	if !ok {
-		return nil, fmt.Errorf("missing jwt in context")
-	}
-
-	claims = token.Claims.(jwt.MapClaims)
-	if err = claims.Valid(); err != nil {
-		return nil, err
-	}
-
-	return claims, err
 }
 
 // mustGetEnv looks up and sets an environment variable.  If the environment

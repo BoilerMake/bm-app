@@ -23,6 +23,8 @@ func TestWalkRoutesTemplates(t *testing.T) {
 	os.Setenv("WEB_PATH", "../../../web")
 	os.Setenv("TEMPLATES_PATH", "../../../templates")
 
+	os.Setenv("SESSION_SECRET", "secretsssh")
+	os.Setenv("SESSION_COOKIE_NAME", "session_name")
 	handler := NewHandler(nil, nil)
 
 	// This func will be called at every end point in the handler

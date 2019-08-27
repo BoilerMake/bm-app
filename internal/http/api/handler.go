@@ -90,7 +90,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
 			// TODO Error Handling
-
+			println("here")
+			println(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -121,11 +122,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 
 		u.SetSession(session)
-		if err != nil {
-			// TODO Error Handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 
 		err = session.Save(r, w)
 		if err != nil {
