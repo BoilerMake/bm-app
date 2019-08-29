@@ -24,7 +24,6 @@ var (
 	ErrEmptyFirstName       = errors.New("first name is empty")
 	ErrEmptyLastName        = errors.New("last name is empty")
 	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
-	ErrEmptyPhoneNum        = errors.New("phone number is empty")
 	ErrInvalidPhoneNum      = errors.New("phone number is in an invalid format")
 )
 
@@ -97,8 +96,6 @@ func (u *User) Validate() error {
 		return ErrEmptyFirstName
 	} else if u.LastName == "" {
 		return ErrEmptyLastName
-	} else if u.Phone == "" {
-		return ErrEmptyPhoneNum
 	} else if u.Phone != "" {
 		num, err := phonenumbers.Parse(u.Phone, "US")
 		if err != nil {
