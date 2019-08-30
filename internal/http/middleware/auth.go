@@ -22,11 +22,23 @@ func SessionMiddleware(h http.Handler) http.Handler {
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session, err := store.Get(r, sessionCookieName)
+
 		if err != nil {
 			// TODO Error Handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+
+			// Create a new case in case session expired or some error
+			store = sessions.NewCookieStore(key)
+		}
+		session, newErr := store.Get(r, sessionCookieName)
+
+		// If again another unforeseen error occurs, give StatusInternalServerError
+		if newErr != nil {
+			// TODO Error Handling
+
+			http.Error(w, newErr.Error(), http.StatusInternalServerError)
 			return
 		}
+
 		r = r.WithContext(context.WithValue(r.Context(), SessionCtxKey, session))
 		h.ServeHTTP(w, r)
 	}

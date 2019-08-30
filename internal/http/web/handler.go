@@ -363,20 +363,28 @@ func (h *Handler) getAccount() http.HandlerFunc {
 		if !ok {
 			// TODO error handling
 			// TODO once session tokens are updated this should show a success flash
+
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
+
 			return
+		}
+
+		if _, ok := session.Values["EMAIL"]; !ok {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
 		u, err := h.UserService.GetByEmail(session.Values["EMAIL"].(string))
+
 		if err != nil {
 			// TODO error handling
 			// This can fail either because the DB is messed up or nothing is found
 			// So be sure to deal with that
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-
+		println("FOUND 2")
 		data := map[string]interface{}{
 			"Email":       u.Email,
 			"FirstName":   u.FirstName,
