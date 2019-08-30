@@ -50,10 +50,6 @@ var (
 )
 
 var (
-	SessionSecret = "SESSION_SECRET"
-)
-
-var (
 	SessionCookieName = "SESSION_COOKIE_NAME"
 )
 
