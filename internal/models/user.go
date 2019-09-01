@@ -81,6 +81,7 @@ func (u *User) SetSession(session *sessions.Session) {
 	session.Values["EMAIL"] = u.Email
 	session.Values["ROLE"] = u.Role
 
+	session.IsNew = false
 }
 
 // GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The

@@ -61,8 +61,7 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	}
 
 	// Set up pool of buffers used for rendering templates.
-	r.Use(middleware.WithJWT)
-	r.Use(middleware.SessionMiddleware)
+	r.Use(middleware.WithSession)
 
 	r.Get("/", h.getRoot())
 
@@ -80,7 +79,12 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
 
-	r.Get("/account", h.getAccount())
+	// Routes that require auth
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustBeAuthenticated)
+
+		r.Get("/account", h.getAccount())
+	})
 
 	if mode == "development" {
 		// In prod we serve static items through a CDN, in development just serve
@@ -90,16 +94,6 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 	}
 
 	r.NotFound(h.get404())
-
-	sessionSecret := mustGetEnv("SESSION_SECRET")
-
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-	var (
-		key   = []byte(sessionSecret)
-		store = sessions.NewCookieStore(key)
-	)
-
-	h.CookieStore = store
 
 	h.Mux = r
 	return &h
@@ -121,9 +115,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
-
 	domain := mustGetEnv("DOMAIN")
-
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
 		domain = "http://" + domain + ":" + mustGetEnv("PORT")
@@ -132,30 +124,24 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		// TODO check if login is valid (i.e. account exists), if so log them in
 		var u models.User
 		u.FromFormData(r)
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
-
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-
-		if !ok {
-			session, err = h.CookieStore.Get(r, middleware.SessionCookieName)
-			if err != nil {
-				// TODO error handling
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-		}
-
 		u.ID = id
+
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// TODO error handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
 
 		// Build confirmation email
 		to := u.Email
@@ -175,12 +161,11 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 
 		u.SetSession(session)
-
-		// Saving Session
 		err = session.Save(r, w)
 		if err != nil {
-			// TODO Error Handling
+			// TODO Error Handling, this state should never be reached
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		// Redirect to homepage if signup was successful
@@ -192,14 +177,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 // if there is such an account.
 func (h *Handler) getActivate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Temporarily ignoring claims returned from getClaimsFromCtx
-		_, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			// TODO error handling
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
-			return
-		}
-
 		code := chi.URLParam(r, "code")
 
 		u, err := h.UserService.GetByCode(code)
@@ -318,7 +295,6 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -332,21 +308,15 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			session, err = h.CookieStore.Get(r, middleware.SessionCookieName)
-			if err != nil {
-				// TODO error handling
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
+			// TODO error handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
 		}
 
-		// Setting session values
 		u.SetSession(session)
-
-		// Save session
 		err = session.Save(r, w)
 		if err != nil {
-			// TODO Error Handling
+			// TODO Error Handling, this state should never be reached
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -361,30 +331,25 @@ func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			// TODO error handling
-			// TODO once session tokens are updated this should show a success flash
-
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
 
-		if _, ok := session.Values["EMAIL"]; !ok {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		email, ok := session.Values["EMAIL"].(string)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "invalid session value", http.StatusInternalServerError)
 			return
 		}
 
-		u, err := h.UserService.GetByEmail(session.Values["EMAIL"].(string))
-
+		u, err := h.UserService.GetByEmail(email)
 		if err != nil {
 			// TODO error handling
-			// This can fail either because the DB is messed up or nothing is found
-			// So be sure to deal with that
-
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		println("FOUND 2")
+
 		data := map[string]interface{}{
 			"Email":       u.Email,
 			"FirstName":   u.FirstName,

@@ -2,128 +2,67 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/sessions"
 )
 
-func SessionMiddleware(h http.Handler) http.Handler {
-	var (
-		// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-		sessionSecret = mustGetEnv("SESSION_SECRET")
-		key           = []byte(sessionSecret)
-		store         = sessions.NewCookieStore(key)
-	)
+var (
+	SessionCtxKey = contextKey("Session")
+)
+
+// WithSession gets a requests session or makes one if it doesn't exist. It
+// attaches that session to the request's context to be used by handlers later.
+func WithSession(h http.Handler) http.Handler {
+	sessionSecret := mustGetEnv("SESSION_SECRET")
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 
+	key := []byte(sessionSecret)
+	store := sessions.NewCookieStore(key)
+
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		session, err := store.Get(r, sessionCookieName)
+		session, _ := store.Get(r, sessionCookieName)
 
-		if err != nil {
-			// TODO Error Handling
+		ctx := context.WithValue(r.Context(), SessionCtxKey, session)
+		h.ServeHTTP(w, r.WithContext(ctx))
+	}
 
-			// Create a new case in case session expired or some error
-			store = sessions.NewCookieStore(key)
-		}
-		session, newErr := store.Get(r, sessionCookieName)
+	return http.HandlerFunc(fn)
+}
 
-		// If again another unforeseen error occurs, give StatusInternalServerError
-		if newErr != nil {
-			// TODO Error Handling
+// MustBeAuthenticated enforces that a user sending a request is logged in.
+// It checks this by seeing if the IsNew values of the sesison is true. If the
+// session is new (was just created because it didn't exist before) then it
+// redirects the request to the login page.
+func MustBeAuthenticated(h http.Handler) http.Handler {
+	sessionSecret := mustGetEnv("SESSION_SECRET")
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 
-			http.Error(w, newErr.Error(), http.StatusInternalServerError)
+	key := []byte(sessionSecret)
+	store := sessions.NewCookieStore(key)
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		session, _ := store.Get(r, sessionCookieName)
+
+		if session.IsNew {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
-		r = r.WithContext(context.WithValue(r.Context(), SessionCtxKey, session))
 		h.ServeHTTP(w, r)
 	}
+
 	return http.HandlerFunc(fn)
 }
-
-var (
-	SessionCtxKey = "session"
-)
-
-var (
-	SessionCookieName = "SESSION_COOKIE_NAME"
-)
-
-var (
-	JWTCtxKey      = contextKey("JWT")
-	JWTErrorCtxKey = contextKey("JWTError")
-)
 
 // mustGetEnv looks up and sets an environment variable.  If the environment
 // variable is not found, it panics.
-func mustGetEnv(var_name string) (value string) {
-	value, ok := os.LookupEnv(var_name)
+func mustGetEnv(varName string) (value string) {
+	value, ok := os.LookupEnv(varName)
 	if !ok {
-		log.Fatalf("environment variable not set: %v", var_name)
+		log.Fatalf("environment variable not set: %v", varName)
 	}
 	return value
-}
-
-// Will be moved after web things are implemented
-
-// WithJWT provides a middleware that attempts to decode a JWT from a request's
-// cookies.  It sets two fields in the requests context, one with the actual
-// JWT and the other with an error that may have come from decoding that JWT.
-// When checking if a request has a valid JWT you should always check that the
-// error field is nil, and that the token field is not nil (in that order). For
-// an example of that check out getClaimsFromCtx in internal/http/api/handler.go
-func WithJWT(next http.Handler) http.Handler {
-	jwtCookie, ok := os.LookupEnv("JWT_COOKIE_NAME")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_COOKIE_NAME")
-	}
-
-	JWTSigningKeyString, ok := os.LookupEnv("JWT_SIGNING_KEY")
-	if !ok {
-		log.Fatalf("environment variable not set: %v", "JWT_SIGNING_KEY")
-	}
-	JWTSigningKey := []byte(JWTSigningKeyString)
-
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		token, err := getToken(r, jwtCookie, JWTSigningKey)
-
-		ctx := r.Context()
-		ctx = context.WithValue(ctx, JWTCtxKey, token)
-		ctx = context.WithValue(ctx, JWTErrorCtxKey, err)
-
-		next.ServeHTTP(w, r.WithContext(ctx))
-	}
-
-	return http.HandlerFunc(fn)
-}
-
-// getToken decodes a JWT.  This func is separated not only to shorten the
-// WithJWT func but more importantly to make the whole "return token, err"
-// process more clear.
-func getToken(r *http.Request, jwtCookie string, JWTSigningKey []byte) (token *jwt.Token, err error) {
-	cookie, err := r.Cookie(jwtCookie)
-	if err != nil {
-		return nil, err
-	}
-
-	token, err = jwt.Parse(cookie.Value, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-
-		return JWTSigningKey, nil
-	})
-	if err != nil {
-		return nil, err
-	} else {
-		// TODO refresh tokens here and put into request cookies here, keep in mind
-		// they *may* be rewritten later on in the request chain, but that shouldn't
-		// really matter as long as the resulting token is still valid.
-		return token, err
-	}
 }
