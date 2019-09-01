@@ -1,103 +1,111 @@
 {{ define "index" }}
 {{ template "header" . }}
 
-<div class="image-header" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "home_header.jpg" }})'>
-	{{ template "navbar light" }}
-	<div class="image-header__content">
-		<h1>Forge The Future</h1>
-		<h2>BoilerMake | Purdue University</h2>
+<section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "home_header.jpg" }})'>
+	<div class="hero-head" >
+		{{ template "navbar" }}
 	</div>
-</div>
-
-<main>
-	<div class="row max-width">
-		<div class="col-8 col-center-x">
-			<h2>Create, Meet, Learn, & Build</h2>
-			<p>For the past five years, we've brought in 500 students from across the the country to create and collaborate on amazing ideas. This is an event for people who live and love hacking. Everything we do at BoilerMake is for you.</p>
+	<div class="hero-body">
+		<div class="container has-text-centered">
+			<h1 class="title has-text-light">BoilerMake VII</h1>
+			<h2 class="subtitle has-text-light">January 24-26, 2020 | Purdue University</h2>
 		</div>
 	</div>
+</section>
 
-	<div class="row padding-y is-desktop">
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_1.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_2.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_3.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_4.jpg" }}'/>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-7">
+				<h2 class="subtitle">36 Hours of Hacking. And Eating. And much more.</h2>
+				<p>BoilerMake is Purdue University's largest hackathon. 
+				BoilerMake exists to give you, the hackers, tools to bring your ideas to life.
+				This is an event for those who love hacking, those who are new to technology, and everyone in between.
+				Everything we do at BoilerMake is for you.</p>
+				<h3 class="subtitle has-text-centered">We can't wait to see what you make.</h3>
+			</div>
 		</div>
 	</div>
+</section>
 
-	<div class="row padding-y is-mobile">
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_1.jpg" }}'/>
-		</div>
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_2.jpg" }}'/>
-		</div>
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_3.jpg" }}'/>
+<section class="section">
+	<div class="container">
+		<div class="columns is-mobile">
+			<div class="column">
+				<img src='{{ static_path "home_gallery_1.jpg" }}'/>
+			</div>
+			<div class="column">
+				<img src='{{ static_path "home_gallery_2.jpg" }}'/>
+			</div>
+			<div class="column is-hidden-mobile">
+				<img src='{{ static_path "home_gallery_3.jpg" }}'/>
+			</div>
+			<div class="column is-hidden-mobile">
+				<img src='{{ static_path "home_gallery_4.jpg" }}'/>
+			</div>
 		</div>
 	</div>
+</section>
 
-	<div class="row max-width">
-		<div class="col-6 col-center-x padding">
-			<h2 class="text-center">BoilerMake is here to help you grow</h2>
-			<div class="row">
-				<div class="col-4-no-break col-center padding">
-					<img class="column__image" src='{{ static_path "big_b.svg" }}'/>
-				</div>
-				<div class="col-8 col-center">
-					<h3>Create awesome projects</h3>
-					<p>Surround yourself with hundreds of students and sponsors who are all incredibly passionate about building fun, new, or innovative projects.</p>
-					<h3>Learn new things</h3>
-					<p>Not only does BoilerMake encourage building awesome projects, we love being able to provide an atmosphere where you can learn new things.</p>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered">
+			<div class="column is-6">
+				<h2 class="title has-text-centered">Gain experience outside of the classroom.</h2>
+
+				<div class="columns is-mobile is-vcentered content">
+					<div class="column is-one-third is-vcentered">
+						<img src='{{ static_path "big_b.svg" }}'/>
+					</div>
+
+					<div class="column is-two-thirds">
+						<h3 class="subtitle">Create awesome projects</h3>
+						<p>From Friday night to Sunday afternoon, you can hack on a project, learn new skills, and network with engineers from our corporate sponsors.
+						Team up with your friends or make new ones from universities across the United States.
+						</p>
+						<h3 class="subtitle">Win prizes</h3>
+						<p>We hold an awards ceremony at the end of the weekend. Over $10,000 in prizes are given out, such as drones and Nintendo Switches.
+						In addition to BoilerMake prizes, select sponsors also have prizes for their categories.</p>
+						<p>Oh, and by the way - we'll have free food, swag, and activities for you throughout the weekend!</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</section>
 
-	<div class="row padding-y is-desktop">
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_5.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_6.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_7.jpg" }}'/>
-		</div>
-		<div class="col-3-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_8.jpg" }}'/>
+<section class="section">
+	<div class="container">
+		<div class="columns is-mobile">
+			<div class="column">
+				<img src='{{ static_path "home_gallery_5.jpg" }}'/>
+			</div>
+			<div class="column">
+				<img src='{{ static_path "home_gallery_6.jpg" }}'/>
+			</div>
+			<div class="column is-hidden-mobile">
+				<img src='{{ static_path "home_gallery_7.jpg" }}'/>
+			</div>
+			<div class="column is-hidden-mobile">
+				<img src='{{ static_path "home_gallery_8.jpg" }}'/>
+			</div>
 		</div>
 	</div>
+</section>
 
-	<div class="row padding-y is-mobile">
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_5.jpg" }}'/>
-		</div>
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_6.jpg" }}'/>
-		</div>
-		<div class="col-4-no-break">
-			<img class="column__image" src='{{ static_path "home_gallery_7.jpg" }}'/>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered">
+			<div class="column is-7 content">
+				<h2 class="subtitle">What else?</h2>
+				<p>We are proud to be an <a href="https://mlh.io/about">MLH Member Event</a>, which means that hackers have access to resources provided by
+				MLH like the hardware lab and various development credit for students.</p>
+				<p>Head over to our <a href="/hackers">hacker page</a> to see what it's like to attend BoilerMake.
+				If your company is looking to join us, please see our <a href="/sponsors">sponsor page!</a></p>
+			</div>
 		</div>
 	</div>
-
-	<div class="row max-width">
-		<div class="col-8 col-center-x">
-			<h2>So what else?</h2>
-			<p>BoilerMake offers a number of perks to make an amazing weekend. To get the weekend started, we provide busses to a number of schools to make travelling a no-brainer. In the past, we’ve sent buses to UIUC, UMich, and others.</p>
-			<p>When you arrive, you will be given a swag bag that usually includes a t-shirt, a watter bottle, and stickers. Each year we have some special swag. BoilerMake 5 saw a fidget spinner. BoilerMake 2 saw a custom designed dev board.</p>
-			<p>Throughout the weekend, we provide amazing catered meals for breakfast, lunch, and dinner. We also have an all you can drink coffee, latte, etc. bar and snacks passed out during the event.</p>
-			<p>At the end we have an awards ceremony where over $10,000 in prizes are given out. Last year winning teams received DJI Phantoms or Nintendo Switches. In addition to BoilerMake prizes, sponsors also usually have prizes for their categories.</p>
-		</div>
-	</div>
-</main>
+</section>
 
 {{ template "footer" . }}
 {{ end }}

@@ -21,5 +21,11 @@ ENV GO111MODULE=on
 # know we don't care.
 ENV CGO_ENABLED=0
 
-# Watch for changes to .go and .env files
-ENTRYPOINT CompileDaemon -include=".env" -build="make build" -command="/bm-app/bin/server"
+RUN make build
+
+# Wait for databse to be up, then run migrations, then Watch for changes to .go and .env files
+ENTRYPOINT while ! nc -z database:5432; \
+						 do sleep 1; \
+						 done; \
+						 /bm-app/bin/migrate && \
+						 CompileDaemon -include='.env' -build='make build' -command='/bm-app/bin/server'

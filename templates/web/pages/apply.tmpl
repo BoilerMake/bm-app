@@ -1,0 +1,273 @@
+{{ define "apply" }}
+{{ template "header" . }}
+
+{{ template "navbar" }}
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column box is-5-tablet is-4-desktop">
+				<form action="" method="post" enctype="multipart/form-data">
+
+					<div class="field">
+						<label for="school" class="label">School</label>
+						<div class="control">
+							<input type="text" name="school" class="input" value="{{ .School }}" required>
+							{{ template "school datalist" }}
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="gender" class="label">Gender</label>
+						<div class="control">
+							<div class="select is-fullwidth">
+								<select name="gender" required>
+										{{ if or (eq .Gender "Female") (not .Gender) }}
+										<option value="Female" selected>Female</option>
+										{{ else }}
+										<option value="Female">Female</option>
+										{{ end }}
+
+										{{ if eq .Gender "Male" }}
+										<option value="Male" selected>Male</option>
+										{{ else }}
+										<option value="Male">Male</option>
+										{{ end }}
+
+										{{ if eq .Gender "Other" }}
+										<option value="Other" selected>Other</option>
+										{{ else }}
+										<option value="Other">Other</option>
+										{{ end }}
+
+										{{ if eq .Gender "Prefer not to say" }}
+										<option value="Prefer not to say" selected>Prefer not to say</option>
+										{{ else }}
+										<option value="Prefer not to say">Prefer not to say</option>
+										{{ end }}
+									</select>
+								</div>
+							</div>
+					</div>
+
+					<div class="field">
+						<label for="major" class="label">Major</label>
+						<div class="control">
+							<input type="text" name="major" class="input" value="{{ .Major }}" required>
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="graduation-year" class="label">Graduation Year</label>
+						<div class="control">
+							<div class="select is-fullwidth">
+								<select name="graduation-year" required>
+									{{ if not .GraduationYear }}
+									<option disabled selected="true">Choose a year</option>
+									{{ else }}
+									<option disabled>Choose a year</option>
+									{{ end }}
+
+									{{ if eq .GraduationYear "2020" }}
+									<option value="2020" selected>2020</option>
+									{{ else }}
+									<option value="2020">2020</option>
+									{{ end }}
+
+									{{ if eq .GraduationYear "2021" }}
+									<option value="2021" selected>2021</option>
+									{{ else }}
+									<option value="2021">2021</option>
+									{{ end }}
+
+									{{ if eq .GraduationYear "2022" }}
+									<option value="2022" selected>2022</option>
+									{{ else }}
+									<option value="2022">2022</option>
+									{{ end }}
+
+									{{ if eq .GraduationYear "2023" }}
+									<option value="2023" selected>2023</option>
+									{{ else }}
+									<option value="2023">2023</option>
+									{{ end }}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="dietary-restrictions" class="label">Dietary Restrictions</label>
+						<div class="control">
+							<input type="text" name="dietary-restrictions" class="input" value="{{ .DietaryRestrictions }}">
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="github" class="label">GitHub</label>
+						<div class="control">
+							<input type="text" name="github" class="input" value="{{ .Github }}">
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="linkedin" class="label">LinkedIn</label>
+						<div class="control">
+							<input type="text" name="linkedin" class="input" value="{{ .Linkedin }}">
+						</div>
+					</div>
+
+					<div class="file has-name is-fullwidth">
+						<label class="file-label">
+							{{ if .ResumeFile }}
+							<input class="file-input" type="file" accept=".pdf" name="resume">
+							{{ else }}
+							<input class="file-input" type="file" accept=".pdf" name="resume" required>
+							{{ end }}
+							<span class="file-cta">
+								<span class="file-label">Upload…</span>
+							</span>
+							{{ if .ResumeFile }}
+							<span class="file-name">{{ .ResumeFile }}</span>
+							{{ else }}
+							<span class="file-name">No file selected</span>
+							{{ end }}
+						</label>
+					</div>
+
+					<br/>
+					<div class="field">
+						{{ if .IsFirstHackathon }}
+						<input type="checkbox" name="is-first-hackathon" checked>
+						{{ else }}
+						<input type="checkbox" name="is-first-hackathon">
+						{{ end }}
+						<label for="is-first-hackathon" class="checkbox">This is my first hackathon</label>
+					</div>
+				
+					<div class="field">
+						<label for="race" class="label">Race</label>
+						<div class="control">
+							<div class="select is-fullwidth">
+								<select name="race" required>
+									{{ if or (eq .Race "Asian or Pacific Islander") (not .Race) }}
+									<option value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
+									{{ else }}
+									<option value="Asian or Pacific Islander">Asian or Pacific Islander</option>
+									{{ end }}
+
+									{{ if eq .Race "Black or African American" }}
+									<option value="Black or African American" selected>Black or African American</option>
+									{{ else }}
+									<option value="Black or African American">Black or African American</option>
+									{{ end }}
+
+									{{ if eq .Race "Hispanic or Latino" }}
+									<option value="Hispanic or Latino" selected>Hispanic or Latino</option>
+									{{ else }}
+									<option value="Hispanic or Latino">Hispanic or Latino</option>
+									{{ end }}
+
+									{{ if eq .Race "Native American or American Indian" }}
+									<option value="Native American or American Indian" selected>Native American or American Indian</option>
+									{{ else }}
+									<option value="Native American or American Indian">Native American or American Indian</option>
+									{{ end }}
+
+									{{ if eq .Race "White, Caucasian, or Middle Eastern" }}
+									<option value="White, Caucasian, or Middle Eastern" selected>White, Caucasian, or Middle Eastern</option>
+									{{ else }}
+									<option value="White, Caucasian, or Middle Eastern">White, Caucasian, or Middle Eastern</option>
+									{{ end }}
+
+									{{ if eq .Race "Other" }}
+									<option value="Other" selected>Other</option>
+									{{ else }}
+									<option value="Other">Other</option>
+									{{ end }}
+
+									{{ if eq .Race "Prefer not to say" }}
+									<option value="Prefer not to say" selected>Prefer not to say</option>
+									{{ else }}
+									<option value="Prefer not to say">Prefer not to say</option>
+									{{ end }}
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="shirt-size" class="label">Shirt Size</label>
+						<div class="control">
+							<input type="text" name="shirt-size" class="input" value="{{ .ShirtSize }}" required>
+						</div>
+					</div>
+
+					<div class="field">
+						<label for="project-idea" class="label">Project Idea</label>
+						<div class="control">
+							<input type="text" name="project-idea" class="input" value="{{ .ProjectIdea }}">
+						</div>
+					</div>
+
+					<div class="field">
+						<label id="team-members-label" class="label">Team members</label>
+						<div class="control">
+							{{ if gt (len .TeamMembers) 0 }}
+							<input type="text" class="input container" name="team-member-1" aria-labelledby="team-members-label" value="{{ index .TeamMembers 0 }}">
+							{{ else }}
+							<input type="text" class="input" name="team-member-1" aria-labelledby="team-members-label">
+							{{ end }}
+
+							{{ if gt (len .TeamMembers) 1 }}
+							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label" value="{{ index .TeamMembers 1 }}">
+							{{ else }}
+							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label">
+							{{ end }}
+
+							{{ if gt (len .TeamMembers) 2 }}
+							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label" value="{{ index .TeamMembers 2 }}">
+							{{ else }}
+							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label">
+							{{ end }}
+						</div>
+					</div>
+
+					<div class="field">
+						{{ if .Is18OrOlder }}
+						<input type="checkbox" name="is-18-or-older" class="checkbox" checked required>
+						{{ else }}
+						<input type="checkbox" name="is-18-or-older" class="checkbox" required>
+						{{ end }}
+						<label for="mlh-code-of-conduct" class="checkbox">I am 18 years old or older</label>
+					</div>
+
+					<div class="field">
+						{{ if .MLHCodeOfConduct }}
+						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" checked required>
+						{{ else }}
+						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" required>
+						{{ end }}
+						<label for="mlh-code-of-conduct" class="checkbox">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of Conduct</a></label>
+					</div>
+
+					<div class="field">
+						{{ if .MLHContestAndPrivacy }}
+						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" checked required>
+						{{ else }}
+						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" required>
+						{{ end }}
+						<label for="mlh-code-of-conduct">I agree to the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a></label>
+					</div>
+
+					<div class="field">
+						<button class="button is-fullwidth is-dark" type="submit">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "footer" . }}
+{{ end }}

@@ -17,15 +17,15 @@ services:
     labels:
       - traefik.enable=true
       # Request locations to route to backend app
-      - traefik.frontend.rule=Host:www.${DOMAIN},${DOMAIN} 
+      # Only take URLs not consumed else where
+      - traefik.frontend.rule=HostRegexp:{catchall:.*}
+      - traefik.frontend.priority=1
       # Name of backend to handle requests from above
       - traefik.backend=bm-app
       - traefik.port=8080
 
   database:
-    build:
-      context: ../
-      dockerfile: ./deploy/database.docker
+    image: postgres:11.3-alpine
     restart: always
     labels:
       # Don't route external traffic from our domain to our db
@@ -51,7 +51,3 @@ services:
     labels:
       - traefik.enable=true
       - traefik.port=8080
-      # Request locations to route to dashboard
-      - traefik.frontend.rule=Host:dashboard.${DOMAIN} 
-      # Login for dashboard
-      - traefik.frontend.auth.basic.users=${TRAEFIK_DASHBOARD_LOGIN} 

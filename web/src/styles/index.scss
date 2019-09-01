@@ -1,286 +1,44 @@
-@import 'vars';
-@import 'grid';
-@import 'util';
-@import 'text';
-
-:root {
-	--border-thin: 0.15rem solid var($black);
-	--box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
-}
-
+// Keeps footer at bottom even on pages with less than a full page of content
 body {
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: auto 1fr auto;
-	grid-template-areas:
-		"nav"     /* auto -> whatever it needs          */
-		"main"    /* 1fr  -> whatever else is available */
-		"footer"; /* auto -> whatever it needs          */
-
+	display: flex;
 	min-height: 100vh;
-}
-
-nav {
-	grid-area: nav;
-}
-
-.nav__container--dark {
-	display: flex;
-	flex: 1;
-
-	.nav__link {
-		color: $black;
-	}
-
-	.nav__link--call-to-action {
-		color: $white;
-		background: $black;
-	}
-
-	.nav__hamburger--bar  {
-		background: $black;
-	}
-
-	.nav__dropdown--menu {
-		background: $black;
-
-		.nav__link--dropdown {
-			color: $white;
-		}
-	}
-}
-
-.nav__container--light {
-	display: flex;
-	flex: 1;
-
-	.nav__link {
-		color: $white;
-	}
-
-	.nav__link--call-to-action {
-		color: $black;
-		background: $white;
-	}
-
-	.nav__hamburger--bar  {
-		background: $white;
-	}
-
-	.nav__dropdown--menu {
-		background: $white;
-
-		.nav__link--dropdown {
-			color: $black;
-		}
-	}
-
-}
-
-.nav__link {
-	margin: 0.5rem;
-	text-decoration: none;
-}
-
-.nav__link--call-to-action {
-	padding: 0.5rem;
-	border-radius: 0.5rem;
-}
-
-.nav__pages {
-	display: flex;
-	flex: 1;
-	justify-content: flex-start;
-	align-items: center;
-}
-
-.nav__logo {
-	height: 3rem;
-	width: auto;
-}
-
-.nav__auth {
-	display: flex;
-	flex: 1;
-	justify-content: flex-end;
-	align-items: center;
-}
-
-.nav__dropdown {
-	align-items: center;
-}
-
-.nav__dropdown--checkbox {
-	display: none;
-}
-
-.nav__dropdown--checkbox:checked ~ ul {
-	display: block;
-}
-
-.nav__dropdown--hamburger {
-	cursor: pointer;
-}
-
-.nav__hamburger--bar {
-	display: block;
-
-	width: 1.75rem;
-	height: 0.25rem;
-	margin-bottom: 0.25rem;
-	border-radius: 1rem;
-}
-
-.nav__dropdown--menu {
-	display: none;
-	position: absolute;
-	align-items: initial;
-	top: 3.5rem;
-
-	line-height: 1.75rem;
-	font-size: 1.15rem;
-	list-style: none;
-
-	border: var(--border-thin);
-	border-radius: 0.25rem;
-}
-
-.nav__link--dropdown {
-	text-decoration: none;
-}
-
-
-footer {
-	grid-area: footer;
-	background: $black;
-}
-
-.footer__container {
-	display: flex;
-	justify-content: center;
-	flex: 1;
-
-	max-width: $max-width;
-
-	margin: 0 auto;
-	color: $white;
-}
-
-.footer__section {
-	list-style: none;
-}
-
-.footer__links {
-	list-style: none;
-}
-
-.footer__link {
-	color: $white;
-	text-decoration: none;
-}
-
-.footer__link:hover {
-	color: $white;
-	text-decoration: underline;
-}
-
-
-
-
-main {
-	grid-area: main;
-
-	display: flex;
-	flex: 1;
-	justify-content: center;
 	flex-direction: column;
 }
 
-.form__auth {
-	width: 100%;
-}
-
-.form__input {
-	margin: 1rem 0;
-}
-
-.form__input--label {
-	display: block;
-	color: #7a7a7a;
-	font-size: 0.75rem;
-}
-
-.form__input--text {
-	width: 100%;
-
-	border: none;
-	border-bottom: 0.15rem solid #7a7a7a;
-	border-radius: 0;
-	box-sizing: border-box;
-}
-
-.form__input--text:focus {
-	border: none;
-	border-bottom: var(--border-thin);
-}
-
-.form__link {
-	display: block;
-	color: #7a7a7a;
-	font-size: 0.75rem;
-	padding: 0.5rem 0;
-}
-
-.form--button {
-	width: 100%;
-	padding: 0.5rem;
-	border: none;
-	border-radius: 0.5rem;
-
-	cursor: pointer;
-
-	background: $black;
-	color: $white;
-}
-
-.card {
-	display: flex;
-	align-self: center;
-	justify-self: center;
-
-	width: 100%;
-	max-width: 25rem;
-	padding: $padding;
-
-	box-shadow: var(--box-shadow);
-	border-radius: 0.5rem;
+.section {
+	flex: 1;
 }
 
 
-.image-header {
+// Make sure background image fills width and stays centered
+.has-background-image {
 	background-position: center;
 	background-size: cover;
 	background-repeat: no-repeat;
-	margin-bottom: 1rem;
+}
 
-	.image-header__content {
-		padding: 10rem 0;
-		text-align: center;
 
-		h1 {
-			font-size: $font-size-hero;
-			color: $white;
-			text-shadow: 0 0 1rem rgba(0,0,0,0.5);
-		}
-
-		h2 {
-			color: $white;
-			font-weight: $font-weight-light;
-			text-shadow: 0 0 1rem rgba(0,0,0,0.5);
-		}
+// Titles in hero elemnts should be B I G
+.hero {
+	.title {
+		font-size: 4rem;
 	}
 }
 
-.column__image {
-	width: 100%;
+// Font size for error pages
+.is-size-error-title {
+	font-size: 10rem;
 }
+
+iframe.full-size {
+	height: 308px !important;
+}
+
+// Bulma defaults to always showing a scrollbar, no thanks
+$body-overflow-y: auto;
+
+// Use dark hammer logo colors instead of Bulma's default
+$dark: #231F20;
+
+// Anything that effects bulma styling needs to come before bulma is imported
+@import "../../../node_modules/bulma/bulma.sass";
