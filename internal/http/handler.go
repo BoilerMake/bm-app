@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/http/web"
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -21,6 +22,8 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 		WebHandler: web.NewHandler(us, mailer),
 	}
 	r := chi.NewRouter()
+
+	r.Use(middleware.WithSession)
 
 	r.Mount("/", h.WebHandler)
 

@@ -60,7 +60,6 @@ func NewHandler(us models.UserService, mailer mail.Mailer) *Handler {
 		r.Use(h.Templates.ReloadTemplates)
 	}
 
-	// Set up pool of buffers used for rendering templates.
 	r.Use(middleware.WithSession)
 
 	r.Get("/", h.getRoot())
