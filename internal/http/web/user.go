@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
@@ -13,7 +14,14 @@ import (
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "signup", nil)
+		p, ok := NewPage("BoilerMake - Sign Up", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "signup", p)
 	}
 }
 
@@ -106,7 +114,14 @@ func (h *Handler) getActivate() http.HandlerFunc {
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "forgot", nil)
+		p, ok := NewPage("BoilerMake - Forgot Password", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "forgot", p)
 	}
 }
 
@@ -155,15 +170,32 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "reset", nil)
+		p, ok := NewPage("BoilerMake - Reset Password", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "reset", p)
 	}
 }
 
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		token := chi.URLParam(r, "token")
-		h.Templates.RenderTemplate(w, "reset", token)
+		p, ok := NewPage("BoilerMake - Reset Password", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		p.Data = map[string]interface{}{
+			"Token": chi.URLParam(r, "token"),
+		}
+
+		h.Templates.RenderTemplate(w, "reset", p)
 	}
 }
 
@@ -190,7 +222,14 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "login", nil)
+		p, ok := NewPage("BoilerMake - Login", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "login", p)
 	}
 }
 
@@ -227,6 +266,31 @@ func (h *Handler) postLogin() http.HandlerFunc {
 	}
 }
 
+// getLogout renders the login template.
+func (h *Handler) getLogout() http.HandlerFunc {
+	fmt.Println("thinghtin")
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("memememem")
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Println(session)
+		session.Options.MaxAge = -1
+		err := session.Save(r, w)
+		if err != nil {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
+}
+
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -251,13 +315,20 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		data := map[string]interface{}{
+		p, ok := NewPage("BoilerMake - Account", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		p.Data = map[string]interface{}{
 			"Email":     u.Email,
 			"FirstName": u.FirstName,
 			"LastName":  u.LastName,
 			"Phone":     u.Phone,
 		}
 
-		h.Templates.RenderTemplate(w, "account", data)
+		h.Templates.RenderTemplate(w, "account", p)
 	}
 }

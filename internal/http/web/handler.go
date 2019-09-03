@@ -17,6 +17,37 @@ import (
 	"github.com/gorilla/sessions"
 )
 
+// A Page is all the data needed to render a page.
+type Page struct {
+	Title string
+
+	// A generic place to put unstructured data
+	Data interface{}
+
+	// The user's email, blank if user not logged in
+	Email           string
+	IsAuthenticated bool
+}
+
+func NewPage(title string, r *http.Request) (*Page, bool) {
+	session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+	if !ok {
+		return nil, false
+	}
+
+	email, ok := session.Values["EMAIL"].(string)
+	if !ok {
+		// It's ok to ignore if this errors (for example when a user doesn't have a
+		// session) because email will just default to the empty string.
+	}
+
+	return &Page{
+		Title:           title,
+		Email:           email,
+		IsAuthenticated: email != "",
+	}, true
+}
+
 // A Handler will route requests to their appropriate HandlerFunc.
 type Handler struct {
 	// A Mux handles all routing and middleware.
@@ -88,6 +119,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
 
+	r.Get("/logout", h.getLogout())
+
 	// Must have auth
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.MustBeAuthenticated)
@@ -115,14 +148,28 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "index", nil)
+		p, ok := NewPage("BoilerMake", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "index", p)
 	}
 }
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "hackers", nil)
+		p, ok := NewPage("BoilerMake - Hackers", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "hackers", p)
 	}
 }
 
@@ -130,7 +177,14 @@ func (h *Handler) getHackers() http.HandlerFunc {
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "404", nil)
+		p, ok := NewPage("BoilerMake - 404", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "404", p)
 	}
 }
 

@@ -21,12 +21,21 @@
 			<a class="navbar-item" href="/about">About</a>
     </div>
 
+		{{ if .IsAuthenticated }}
     <div class="navbar-end">
       <div class="navbar-item">
 				<a class="button is-light" href="/signup">Sign up</a>
 			</div>
 			<a class="navbar-item" href="/login">Log in</a>
     </div>
+		{{ else }}
+    <div class="navbar-end">
+      <div class="navbar-item">
+				<a class="button is-light" href="/account">Account</a>
+			</div>
+			<a class="navbar-item" href="/logout">Log Out</a>
+    </div>
+		{{ end }}
   </div>
 </nav>
 
