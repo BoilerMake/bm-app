@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -37,8 +38,8 @@ func NewPage(title string, r *http.Request) (*Page, bool) {
 
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
-		// It's ok to ignore if this errors (for example when a user doesn't have a
-		// session) because email will just default to the empty string.
+		// Without this, email is set TODO
+		email = ""
 	}
 
 	return &Page{
@@ -151,9 +152,11 @@ func (h *Handler) getRoot() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
+
+		fmt.Printf("%+v\n", p)
 
 		h.Templates.RenderTemplate(w, "index", p)
 	}
@@ -165,7 +168,7 @@ func (h *Handler) getHackers() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Hackers", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -180,7 +183,7 @@ func (h *Handler) get404() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - 404", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 

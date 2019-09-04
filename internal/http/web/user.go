@@ -1,7 +1,6 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
@@ -268,9 +267,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
-	fmt.Println("thinghtin")
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("memememem")
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
@@ -278,7 +275,6 @@ func (h *Handler) getLogout() http.HandlerFunc {
 			return
 		}
 
-		fmt.Println(session)
 		session.Options.MaxAge = -1
 		err := session.Save(r, w)
 		if err != nil {
