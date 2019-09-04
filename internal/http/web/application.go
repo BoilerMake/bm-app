@@ -40,8 +40,17 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
+		p, ok := NewPage("BoilerMake - Apply", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		p.FormRefill = app
+
 		// Otherwise we can show the apply form with the data already filled in
-		h.Templates.RenderTemplate(w, "apply", app)
+		h.Templates.RenderTemplate(w, "apply", p)
 	}
 }
 

@@ -25,6 +25,11 @@ type Page struct {
 	// A generic place to put unstructured data
 	Data interface{}
 
+	// Values to be put back into a form when shown to a user again
+	// For example, when they log in with the wrong password we want
+	// the email they tried to log in with to persist
+	FormRefill interface{}
+
 	// The user's email, blank if user not logged in
 	Email           string
 	IsAuthenticated bool
@@ -38,8 +43,8 @@ func NewPage(title string, r *http.Request) (*Page, bool) {
 
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
-		// Without this, email is set TODO
-		email = ""
+		// It's ok to ignore if this errors (for example when a user doesn't have a
+		// session) because email will just default to the empty string.
 	}
 
 	return &Page{
