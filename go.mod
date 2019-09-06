@@ -2,7 +2,6 @@ module github.com/BoilerMake/new-backend
 
 require (
 	github.com/aws/aws-sdk-go v1.20.20
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-chi/chi v4.0.0+incompatible
 	github.com/gorilla/sessions v1.2.0
 	github.com/lib/pq v1.0.0

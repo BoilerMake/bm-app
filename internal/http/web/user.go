@@ -16,7 +16,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Sign Up", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -116,7 +116,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Forgot Password", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -172,7 +172,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Reset Password", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -186,7 +186,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Reset Password", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -224,7 +224,7 @@ func (h *Handler) getLogin() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Login", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 
@@ -275,7 +275,9 @@ func (h *Handler) getLogout() http.HandlerFunc {
 			return
 		}
 
+		// This expires the token
 		session.Options.MaxAge = -1
+
 		err := session.Save(r, w)
 		if err != nil {
 			// TODO Error Handling, this state should never be reached
@@ -314,7 +316,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 		p, ok := NewPage("BoilerMake - Account", r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
 

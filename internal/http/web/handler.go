@@ -71,10 +71,8 @@ type Handler struct {
 	// An S3 handles uploading files to S3
 	S3 s3.S3
 
+	// HTML templates to render
 	Templates *template.Template
-
-	// Cookiestore for session
-	CookieStore *sessions.CookieStore
 }
 
 // NewHandler creates a handler for web requests.
@@ -160,8 +158,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
-
-		fmt.Printf("%+v\n", p)
+		fmt.Println("after")
 
 		h.Templates.RenderTemplate(w, "index", p)
 	}
