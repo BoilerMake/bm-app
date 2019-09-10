@@ -16,11 +16,8 @@ var (
 // WithSession gets a requests session or makes one if it doesn't exist. It
 // attaches that session to the request's context to be used by handlers later.
 func WithSession(h http.Handler) http.Handler {
-	sessionSecret := mustGetEnv("SESSION_SECRET")
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-
-	key := []byte(sessionSecret)
-	store := sessions.NewCookieStore(key)
+	store := createCookieStore()
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, sessionCookieName)
@@ -37,11 +34,8 @@ func WithSession(h http.Handler) http.Handler {
 // session is new (was just created because it didn't exist before) then it
 // redirects the request to the login page.
 func MustBeAuthenticated(h http.Handler) http.Handler {
-	sessionSecret := mustGetEnv("SESSION_SECRET")
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-
-	key := []byte(sessionSecret)
-	store := sessions.NewCookieStore(key)
+	store := createCookieStore()
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, sessionCookieName)
@@ -65,4 +59,17 @@ func mustGetEnv(varName string) (value string) {
 		log.Fatalf("environment variable not set: %v", varName)
 	}
 	return value
+}
+
+func createCookieStore() *sessions.CookieStore {
+	sessionSecret := mustGetEnv("SESSION_SECRET")
+
+	key := []byte(sessionSecret)
+	store := sessions.NewCookieStore(key)
+
+	store.Options.SameSite = http.SameSiteStrictMode
+	store.Options.Secure = true
+	store.Options.HttpOnly = true
+
+	return store
 }

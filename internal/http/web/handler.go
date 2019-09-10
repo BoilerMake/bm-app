@@ -2,7 +2,6 @@ package web
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -158,7 +157,6 @@ func (h *Handler) getRoot() http.HandlerFunc {
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("after")
 
 		h.Templates.RenderTemplate(w, "index", p)
 	}
