@@ -74,6 +74,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
+	r.Get("/about", h.getAbout())
 
 	/* USER ROUTES */
 	r.Get("/signup", h.getSignup())
@@ -120,6 +121,13 @@ func (h *Handler) getRoot() http.HandlerFunc {
 func (h *Handler) getHackers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h.Templates.RenderTemplate(w, "hackers", nil)
+	}
+}
+
+// getAbout renders the about template.
+func (h *Handler) getAbout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.Templates.RenderTemplate(w, "about", nil)
 	}
 }
 
