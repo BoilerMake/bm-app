@@ -63,13 +63,21 @@ func mustGetEnv(varName string) (value string) {
 
 func createCookieStore() *sessions.CookieStore {
 	sessionSecret := mustGetEnv("SESSION_SECRET")
+	mode := mustGetEnv("ENV_MODE")
 
 	key := []byte(sessionSecret)
 	store := sessions.NewCookieStore(key)
 
+	// Prevents CSRF attacks (on browsers that support SameSite)
 	store.Options.SameSite = http.SameSiteStrictMode
-	store.Options.Secure = true
+
+	// Prevents XSS attacks (JS isn't allowed to access cookie)
 	store.Options.HttpOnly = true
+
+	if mode != "development" {
+		// Only transfer cookie over https
+		store.Options.Secure = true
+	}
 
 	return store
 }
