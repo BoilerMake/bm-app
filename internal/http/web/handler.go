@@ -74,6 +74,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
+	r.Get("/faq", h.getFaq())
 
 	/* USER ROUTES */
 	r.Get("/signup", h.getSignup())
@@ -123,6 +124,13 @@ func (h *Handler) getHackers() http.HandlerFunc {
 	}
 }
 
+// getFaq renders the faq template.
+func (h *Handler) getFaq() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.Templates.RenderTemplate(w, "faq", nil)
+	}
+}
+
 // get404 handles requests that couldn't find a valid route by rendering the
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
@@ -155,10 +163,10 @@ func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
 
 // mustGetEnv looks up and sets an environment variable.  If the environment
 // variable is not found, it panics.
-func mustGetEnv(var_name string) (value string) {
-	value, ok := os.LookupEnv(var_name)
+func mustGetEnv(varName string) (value string) {
+	value, ok := os.LookupEnv(varName)
 	if !ok {
-		log.Fatalf("environment variable not set: %v", var_name)
+		log.Fatalf("environment variable not set: %v", varName)
 	}
 	return value
 }
@@ -192,8 +200,8 @@ func staticFileReplace(mode string) func(path string) string {
 	return func(path string) string {
 		if manifest[path] != nil {
 			return cloudfrontURL + "/" + manifest[path].(string)
-		} else {
-			return "/404"
 		}
+
+		return "/404"
 	}
 }
