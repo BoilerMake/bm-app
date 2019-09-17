@@ -1,9 +1,7 @@
 package web
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,9 +13,45 @@ import (
 	"github.com/BoilerMake/new-backend/internal/s3"
 	"github.com/BoilerMake/new-backend/pkg/template"
 
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/chi"
+	"github.com/gorilla/sessions"
 )
+
+// A Page is all the data needed to render a page.
+type Page struct {
+	Title string
+
+	// A generic place to put unstructured data
+	Data interface{}
+
+	// Values to be put back into a form when shown to a user again
+	// For example, when they log in with the wrong password we want
+	// the email they tried to log in with to persist
+	FormRefill interface{}
+
+	// The user's email, blank if user not logged in
+	Email           string
+	IsAuthenticated bool
+}
+
+func NewPage(title string, r *http.Request) (*Page, bool) {
+	session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+	if !ok {
+		return nil, false
+	}
+
+	email, ok := session.Values["EMAIL"].(string)
+	if !ok {
+		// It's ok to ignore if this errors (for example when a user doesn't have a
+		// session) because email will just default to the empty string.
+	}
+
+	return &Page{
+		Title:           title,
+		Email:           email,
+		IsAuthenticated: email != "",
+	}, true
+}
 
 // A Handler will route requests to their appropriate HandlerFunc.
 type Handler struct {
@@ -36,6 +70,7 @@ type Handler struct {
 	// An S3 handles uploading files to S3
 	S3 s3.S3
 
+	// HTML templates to render
 	Templates *template.Template
 }
 
@@ -68,9 +103,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Use(h.Templates.ReloadTemplates)
 	}
 
-	// Set up pool of buffers used for rendering templates.
-	r.Use(middleware.WithJWT)
-
 	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
@@ -91,11 +123,18 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/login", h.getLogin())
 	r.Post("/login", h.postLogin())
 
-	r.Get("/account", h.getAccount())
+	r.Get("/logout", h.getLogout())
 
-	/* APPLICATION ROUTES */
-	r.Get("/apply", h.getApply())
-	r.Post("/apply", h.postApply())
+	// Must have auth
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustBeAuthenticated)
+
+		r.Get("/account", h.getAccount())
+
+		/* APPLICATION ROUTES */
+		r.Get("/apply", h.getApply())
+		r.Post("/apply", h.postApply())
+	})
 
 	if mode == "development" {
 		// In prod we serve static items through a CDN, in development just serve
@@ -113,14 +152,28 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "index", nil)
+		p, ok := NewPage("BoilerMake", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "index", p)
 	}
 }
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "hackers", nil)
+		p, ok := NewPage("BoilerMake - Hackers", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "hackers", p)
 	}
 }
 
@@ -135,30 +188,15 @@ func (h *Handler) getFaq() http.HandlerFunc {
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "404", nil)
-	}
-}
+		p, ok := NewPage("BoilerMake - 404", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
 
-// getClaimsFromCtx returns the claims of a Context's JWT or an error.
-func getClaimsFromCtx(ctx context.Context) (claims jwt.MapClaims, err error) {
-	// Always make sure the error field is nil
-	err, _ = ctx.Value(middleware.JWTErrorCtxKey).(error)
-	if err != nil {
-		return nil, err
+		h.Templates.RenderTemplate(w, "404", p)
 	}
-
-	// Make sure the token is not nil
-	token, ok := ctx.Value(middleware.JWTCtxKey).(*jwt.Token)
-	if !ok {
-		return nil, fmt.Errorf("missing jwt in context")
-	}
-
-	claims = token.Claims.(jwt.MapClaims)
-	if err = claims.Valid(); err != nil {
-		return nil, err
-	}
-
-	return claims, err
 }
 
 // mustGetEnv looks up and sets an environment variable.  If the environment

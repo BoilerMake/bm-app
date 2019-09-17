@@ -3,11 +3,10 @@ package models
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/sessions"
 )
 
 // Authentication errors
@@ -73,26 +72,14 @@ type PasswordResetPayload struct {
 	NewPassword string `json:"newPassword"`
 }
 
-// GetJWT creates a JWT from a User, a JWTIssuer, and a JWTSigningKey.  The
-// JWTSigningKey must be an array of bytes, not a string.
-func (u *User) GetJWT(jwtIssuer string, jwtSigningKey []byte) (tokenString string, err error) {
-	// TODO make sure our claims are up to par, check out:
-	// https://tools.ietf.org/html/rfc7519#section-4.1
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"iss":   jwtIssuer,
-		"iat":   time.Now().Unix(),
-		"exp":   time.Now().Add(time.Hour * 72).Unix(),
-		"id":    u.ID,
-		"role":  u.Role,
-		"email": u.Email,
-	})
+// SetSession sets all the session values for a user and sets IsNew to false
+// to show that the session is in use.
+func (u *User) SetSession(session *sessions.Session) {
+	session.Values["ID"] = u.ID
+	session.Values["EMAIL"] = u.Email
+	session.Values["ROLE"] = u.Role
 
-	tokenString, err = token.SignedString(jwtSigningKey)
-	if err != nil {
-		return tokenString, err
-	}
-
-	return tokenString, err
+	session.IsNew = false
 }
 
 // FromFormData converts a user from a request's FormData to a models.User

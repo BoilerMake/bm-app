@@ -4,23 +4,30 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
+
+	"github.com/gorilla/sessions"
 )
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Make sure user is logged in
-		claims, err := getClaimsFromCtx(r.Context())
-		if err != nil {
-			// TODO error handling
-			// TODO once session tokens are updated this should show a need to log in first flash
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// TODO error handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
 
-		uid := int(claims["id"].(float64))
-		app, err := h.ApplicationService.GetByUserID(uid)
+		id, ok := session.Values["ID"].(int)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			return
+		}
+
+		app, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
 			// If the error was that there is no application for this user, just render
 			// the blank application form
@@ -33,31 +40,44 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
+		p, ok := NewPage("BoilerMake - Apply", r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		p.FormRefill = app
+
 		// Otherwise we can show the apply form with the data already filled in
-		h.Templates.RenderTemplate(w, "apply", app)
+		h.Templates.RenderTemplate(w, "apply", p)
 	}
 }
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Make sure user is logged in
-		claims, err := getClaimsFromCtx(r.Context())
-		if err != nil {
-			// TODO error handling
-			// TODO once session tokens are updated this should show a need to log in first flash
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
-
 		var a models.Application
-		err = a.FromFormData(r)
+		err := a.FromFormData(r)
 		if err != nil {
 			// TODO error handling
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		a.UserID = int(claims["id"].(float64))
+
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// TODO error handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		a.UserID, ok = session.Values["ID"].(int)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			return
+		}
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {

@@ -1,7 +1,7 @@
 {{ define "apply" }}
 {{ template "header" . }}
 
-{{ template "navbar" }}
+{{ template "navbar" . }}
 
 <section class="section">
 	<div class="container">
@@ -12,7 +12,7 @@
 					<div class="field">
 						<label for="school" class="label">School</label>
 						<div class="control">
-							<input type="text" name="school" class="input" value="{{ .School }}" required>
+							<input type="text" name="school" class="input" value="{{ .FormRefill.School }}" required>
 							{{ template "school datalist" }}
 						</div>
 					</div>
@@ -22,25 +22,25 @@
 						<div class="control">
 							<div class="select is-fullwidth">
 								<select name="gender" required>
-										{{ if or (eq .Gender "Female") (not .Gender) }}
+										{{ if or (eq .FormRefill.Gender "Female") (not .FormRefill.Gender) }}
 										<option value="Female" selected>Female</option>
 										{{ else }}
 										<option value="Female">Female</option>
 										{{ end }}
 
-										{{ if eq .Gender "Male" }}
+										{{ if eq .FormRefill.Gender "Male" }}
 										<option value="Male" selected>Male</option>
 										{{ else }}
 										<option value="Male">Male</option>
 										{{ end }}
 
-										{{ if eq .Gender "Other" }}
+										{{ if eq .FormRefill.Gender "Other" }}
 										<option value="Other" selected>Other</option>
 										{{ else }}
 										<option value="Other">Other</option>
 										{{ end }}
 
-										{{ if eq .Gender "Prefer not to say" }}
+										{{ if eq .FormRefill.Gender "Prefer not to say" }}
 										<option value="Prefer not to say" selected>Prefer not to say</option>
 										{{ else }}
 										<option value="Prefer not to say">Prefer not to say</option>
@@ -53,7 +53,7 @@
 					<div class="field">
 						<label for="major" class="label">Major</label>
 						<div class="control">
-							<input type="text" name="major" class="input" value="{{ .Major }}" required>
+							<input type="text" name="major" class="input" value="{{ .FormRefill.Major }}" required>
 						</div>
 					</div>
 
@@ -62,31 +62,31 @@
 						<div class="control">
 							<div class="select is-fullwidth">
 								<select name="graduation-year" required>
-									{{ if not .GraduationYear }}
+									{{ if not .FormRefill.GraduationYear }}
 									<option disabled selected="true">Choose a year</option>
 									{{ else }}
 									<option disabled>Choose a year</option>
 									{{ end }}
 
-									{{ if eq .GraduationYear "2020" }}
+									{{ if eq .FormRefill.GraduationYear "2020" }}
 									<option value="2020" selected>2020</option>
 									{{ else }}
 									<option value="2020">2020</option>
 									{{ end }}
 
-									{{ if eq .GraduationYear "2021" }}
+									{{ if eq .FormRefill.GraduationYear "2021" }}
 									<option value="2021" selected>2021</option>
 									{{ else }}
 									<option value="2021">2021</option>
 									{{ end }}
 
-									{{ if eq .GraduationYear "2022" }}
+									{{ if eq .FormRefill.GraduationYear "2022" }}
 									<option value="2022" selected>2022</option>
 									{{ else }}
 									<option value="2022">2022</option>
 									{{ end }}
 
-									{{ if eq .GraduationYear "2023" }}
+									{{ if eq .FormRefill.GraduationYear "2023" }}
 									<option value="2023" selected>2023</option>
 									{{ else }}
 									<option value="2023">2023</option>
@@ -99,27 +99,27 @@
 					<div class="field">
 						<label for="dietary-restrictions" class="label">Dietary Restrictions</label>
 						<div class="control">
-							<input type="text" name="dietary-restrictions" class="input" value="{{ .DietaryRestrictions }}">
+							<input type="text" name="dietary-restrictions" class="input" value="{{ .FormRefill.DietaryRestrictions }}">
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="github" class="label">GitHub</label>
 						<div class="control">
-							<input type="text" name="github" class="input" value="{{ .Github }}">
+							<input type="text" name="github" class="input" value="{{ .FormRefill.Github }}">
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="linkedin" class="label">LinkedIn</label>
 						<div class="control">
-							<input type="text" name="linkedin" class="input" value="{{ .Linkedin }}">
+							<input type="text" name="linkedin" class="input" value="{{ .FormRefill.Linkedin }}">
 						</div>
 					</div>
 
 					<div class="file has-name is-fullwidth">
 						<label class="file-label">
-							{{ if .ResumeFile }}
+							{{ if .FormRefill.ResumeFile }}
 							<input class="file-input" type="file" accept=".pdf" name="resume">
 							{{ else }}
 							<input class="file-input" type="file" accept=".pdf" name="resume" required>
@@ -127,8 +127,8 @@
 							<span class="file-cta">
 								<span class="file-label">Upload…</span>
 							</span>
-							{{ if .ResumeFile }}
-							<span class="file-name">{{ .ResumeFile }}</span>
+							{{ if .FormRefill.ResumeFile }}
+							<span class="file-name">{{ .FormRefill.ResumeFile }}</span>
 							{{ else }}
 							<span class="file-name">No file selected</span>
 							{{ end }}
@@ -137,7 +137,7 @@
 
 					<br/>
 					<div class="field">
-						{{ if .IsFirstHackathon }}
+						{{ if .FormRefill.IsFirstHackathon }}
 						<input type="checkbox" name="is-first-hackathon" checked>
 						{{ else }}
 						<input type="checkbox" name="is-first-hackathon">
@@ -150,43 +150,43 @@
 						<div class="control">
 							<div class="select is-fullwidth">
 								<select name="race" required>
-									{{ if or (eq .Race "Asian or Pacific Islander") (not .Race) }}
+									{{ if or (eq .FormRefill.Race "Asian or Pacific Islander") (not .FormRefill.Race) }}
 									<option value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
 									{{ else }}
 									<option value="Asian or Pacific Islander">Asian or Pacific Islander</option>
 									{{ end }}
 
-									{{ if eq .Race "Black or African American" }}
+									{{ if eq .FormRefill.Race "Black or African American" }}
 									<option value="Black or African American" selected>Black or African American</option>
 									{{ else }}
 									<option value="Black or African American">Black or African American</option>
 									{{ end }}
 
-									{{ if eq .Race "Hispanic or Latino" }}
+									{{ if eq .FormRefill.Race "Hispanic or Latino" }}
 									<option value="Hispanic or Latino" selected>Hispanic or Latino</option>
 									{{ else }}
 									<option value="Hispanic or Latino">Hispanic or Latino</option>
 									{{ end }}
 
-									{{ if eq .Race "Native American or American Indian" }}
+									{{ if eq .FormRefill.Race "Native American or American Indian" }}
 									<option value="Native American or American Indian" selected>Native American or American Indian</option>
 									{{ else }}
 									<option value="Native American or American Indian">Native American or American Indian</option>
 									{{ end }}
 
-									{{ if eq .Race "White, Caucasian, or Middle Eastern" }}
+									{{ if eq .FormRefill.Race "White, Caucasian, or Middle Eastern" }}
 									<option value="White, Caucasian, or Middle Eastern" selected>White, Caucasian, or Middle Eastern</option>
 									{{ else }}
 									<option value="White, Caucasian, or Middle Eastern">White, Caucasian, or Middle Eastern</option>
 									{{ end }}
 
-									{{ if eq .Race "Other" }}
+									{{ if eq .FormRefill.Race "Other" }}
 									<option value="Other" selected>Other</option>
 									{{ else }}
 									<option value="Other">Other</option>
 									{{ end }}
 
-									{{ if eq .Race "Prefer not to say" }}
+									{{ if eq .FormRefill.Race "Prefer not to say" }}
 									<option value="Prefer not to say" selected>Prefer not to say</option>
 									{{ else }}
 									<option value="Prefer not to say">Prefer not to say</option>
@@ -199,34 +199,34 @@
 					<div class="field">
 						<label for="shirt-size" class="label">Shirt Size</label>
 						<div class="control">
-							<input type="text" name="shirt-size" class="input" value="{{ .ShirtSize }}" required>
+							<input type="text" name="shirt-size" class="input" value="{{ .FormRefill.ShirtSize }}" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="project-idea" class="label">Project Idea</label>
 						<div class="control">
-							<input type="text" name="project-idea" class="input" value="{{ .ProjectIdea }}">
+							<input type="text" name="project-idea" class="input" value="{{ .FormRefill.ProjectIdea }}">
 						</div>
 					</div>
 
 					<div class="field">
 						<label id="team-members-label" class="label">Team members</label>
 						<div class="control">
-							{{ if gt (len .TeamMembers) 0 }}
-							<input type="text" class="input container" name="team-member-1" aria-labelledby="team-members-label" value="{{ index .TeamMembers 0 }}">
+							{{ if gt (len .FormRefill.TeamMembers) 0 }}
+							<input type="text" class="input container" name="team-member-1" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 0 }}">
 							{{ else }}
 							<input type="text" class="input" name="team-member-1" aria-labelledby="team-members-label">
 							{{ end }}
 
-							{{ if gt (len .TeamMembers) 1 }}
-							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label" value="{{ index .TeamMembers 1 }}">
+							{{ if gt (len .FormRefill.TeamMembers) 1 }}
+							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 1 }}">
 							{{ else }}
 							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label">
 							{{ end }}
 
-							{{ if gt (len .TeamMembers) 2 }}
-							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label" value="{{ index .TeamMembers 2 }}">
+							{{ if gt (len .FormRefill.TeamMembers) 2 }}
+							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 2 }}">
 							{{ else }}
 							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label">
 							{{ end }}
@@ -234,7 +234,7 @@
 					</div>
 
 					<div class="field">
-						{{ if .Is18OrOlder }}
+						{{ if .FormRefill.Is18OrOlder }}
 						<input type="checkbox" name="is-18-or-older" class="checkbox" checked required>
 						{{ else }}
 						<input type="checkbox" name="is-18-or-older" class="checkbox" required>
@@ -243,7 +243,7 @@
 					</div>
 
 					<div class="field">
-						{{ if .MLHCodeOfConduct }}
+						{{ if .FormRefill.MLHCodeOfConduct }}
 						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" checked required>
 						{{ else }}
 						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" required>
@@ -252,7 +252,7 @@
 					</div>
 
 					<div class="field">
-						{{ if .MLHContestAndPrivacy }}
+						{{ if .FormRefill.MLHContestAndPrivacy }}
 						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" checked required>
 						{{ else }}
 						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" required>
