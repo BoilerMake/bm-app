@@ -1,13 +1,13 @@
 {{ define "about" }}
 {{ template "header" . }}
 
-<section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "home_header.jpg" }})'>
-	<div class="hero-head" >
+<!-- <section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "home_header.jpg" }})'> -->
+	<section class="hero-head" >
 		{{ template "navbar" }}
 	</div>
 	<div class="hero-body">
 		<div class="container has-text-centered">
-			<h1 class="title has-text-light">About BoilerMake</h1>
+			<h1 class="title has-text-black">About BoilerMake</h1>
 		</div>
 	</div>
 </section>
@@ -32,7 +32,7 @@
 	<div class="container">
 		<div class="columns is-mobile">
 			<div class="column">
-				<img src='{{ static_path "about_group.jpg" }}'/>
+				<img src='{{ static_path "about_group_2.jpg" }}'/>
 			</div>
 
 		</div>
@@ -46,18 +46,73 @@
           <p>This year, 24 students from Purdue University have come
           together to host an unforgettable hackathon. All the work that has gone into planning
           this event—everything from setting up the venue to the annoying emails that we berate
-          your inboxes with—was accomplished by somebody just like you.
+          your inboxes with—was accomplished by somebody just like you. </p>
 
-          <br> <br>
-
-            If this sort of stuff sounds like your thing, stay tuned for more updates!
-            We’ll be looking for new people to help us throw another successful hackathon in
-            2018! As always - if you have any questions, feel free to hit us up at team@boilermake.org! </p>
+        	<p> <br> If this sort of stuff sounds like your thing, stay tuned for more updates!
+          We’ll be looking for new people to help us throw another successful hackathon in
+          2018! As always - if you have any questions, feel free to hit us up at team@boilermake.org! </p>
 
 <div class="columns is-mobile is-vcentered content">
   <div class="column is-two-thirds">
     <br>
     <h1 class="subtitle">History</h1>
+		<!-- <div class="col-6">
+
+			<div style="display:inline-block;vertical-align:top;">
+    	<img src='{{ static_path "history.jpg" }}', alt="img"/>
+		</div>
+		<div style="display:inline-block;">
+		    <div>hi</div>
+		    <div>Gender</div>
+		    <div>Phoner</div>
+		</div>
+			<div class = "col-6 padding">
+
+			</div>
+		</div> -->
+		<div className="flex v-center">
+		 <div className="col-6">
+			 <img
+				 src="https://photos.smugmug.com/Events/BoilerMake-4/i-NjCgM8d/0/f8c4cdcb/XL/NDS_2643-XL.jpg"
+				 width="100%"
+			 />
+		 </div>
+		 <div className="col-6 padding">
+        <p className="paragraph">
+          <!-- <h2 style={{ fontWeight: 'bold' }}>
+            BoilerMake I: February 8-10th, 2014
+          </h2> -->
+          The first BoilerMake started as a group of students involved with
+          Purdue Hackers created BoilerMake as an organization under the
+          Undergraduate Student Board. The goal was to get students involved and
+          throw a hackathon where everyone could come together and create. It
+          was created to be a great way for students to interact informally with
+          companies and proving their technical skills through development.
+          There were around 400 attendees from 18 schools and about 30 companies
+          all within the same space of Purdue’s gym.
+        </p>
+      </div>
+    </div>
+
+
+
+	 <div className="col-6 padding">
+	 <p className="paragraph">
+		 <!-- <h2 style={{ fontWeight: 'bold' }}>
+			 BoilerMake I: February 8-10th, 2014
+		 </h2> -->
+		 The first BoilerMake started as a group of students involved with
+		 Purdue Hackers created BoilerMake as an organization under the
+		 Undergraduate Student Board. The goal was to get students involved and
+		 throw a hackathon where everyone could come together and create. It
+		 was created to be a great way for students to interact informally with
+		 companies and proving their technical skills through development.
+		 There were around 400 attendees from 18 schools and about 30 companies
+		 all within the same space of Purdue’s gym.
+	 </p>
+ </div>
+
+
       <h2 class="subtitle"> BoilerMake I: February 8-10th, 2014</h2>
     <p>The first BoilerMake started as a group of students involved with Purdue Hackers
       created BoilerMake as an organization under the Undergraduate Student Board. The goal
@@ -118,20 +173,6 @@
 </section>
 
 
-
-<section class="section">
-	<div class="container">
-		<div class="columns is-centered">
-			<div class="column is-7 content">
-				<h2 class="subtitle">What else?</h2>
-				<p>We are proud to be an <a href="https://mlh.io/about">MLH Member Event</a>, which means that hackers have access to resources provided by
-				MLH like the hardware lab and various development credit for students.</p>
-				<p>Head over to our <a href="/hackers">hacker page</a> to see what it's like to attend BoilerMake.
-				If your company is looking to join us, please see our <a href="/sponsors">sponsor page!</a></p>
-			</div>
-		</div>
-	</div>
-</section>
 
 {{ template "footer" . }}
 {{ end }}
