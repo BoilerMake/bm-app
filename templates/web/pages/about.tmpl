@@ -1,38 +1,14 @@
 {{ define "about" }}
 {{ template "header" . }}
 
-<section class="hero-head">
-	{{ template "navbar" }}
+
+<section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "about_home_header.jpg" }})'>
+	<div class="hero-head" >
+		{{ template "navbar" }}
 	</div>
 	<div class="hero-body">
 		<div class="container has-text-centered">
-			<h1 class="title is-1 is-spaced">About BoilerMake</h1>
-		</div>
-	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div class="columns is-centered content">
-			<div class="column is-7">
-				<p>BoilerMake is a hackathon that brings over 500 hackers
-					from across the country under one roof for one incredible weekend. As a team,
-					our mission is to empower each and every hacker to build anything that they can imagine,
-					we’ll pull out all the stops to make sure that dream becomes a reality.
-					We find happiness in knowing that every hacker will walk out of our doors with memories
-					that will last a lifetime.</p>
-
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div class="columns is-mobile">
-			<div class="column">
-				<img src='{{ static_path "about_group_2.jpg" }}' />
-			</div>
+			<!-- <h1 class="title has-text-light">About BoilerMake</h1> -->
 		</div>
 	</div>
 </section>
@@ -41,7 +17,14 @@
 	<div class="container">
 		<div class="columns is-centered">
 			<div class="column is-6">
-				<p>This year, 24 students from Purdue University have come
+				<p>BoilerMake is a hackathon that brings over 500 hackers
+					from across the country under one roof for one incredible weekend. As a team,
+					our mission is to empower each and every hacker to build anything that they can imagine,
+					we’ll pull out all the stops to make sure that dream becomes a reality.
+					We find happiness in knowing that every hacker will walk out of our doors with memories
+					that will last a lifetime.</p>
+
+				<p> <br> This year, 24 students from Purdue University have come
 					together to host an unforgettable hackathon. All the work that has gone into planning
 					this event—everything from setting up the venue to the annoying emails that we berate
 					your inboxes with—was accomplished by somebody just like you. </p>
@@ -56,9 +39,10 @@
 
 <section class="section">
 	<h1 class="title is-1 is-spaced has-text-centered">History</h1>
+	<div class="container">
 	<div class="columns is-mobile is-vcentered content">
 		<div class="column">
-			<img src='{{static_path "history.jpg"}}' alt="">
+			<img src='{{static_path "about_bm_1.jpg"}}' alt="">
 		</div>
 
 		<div class="column">
@@ -72,10 +56,11 @@
 				There were around 400 attendees from 18 schools and about 30 companies
 				all within the same space of Purdue’s gym.</p>
 		</div>
+		</div>
 
 
 	</div>
-
+<div class="container">
 	<div class="columns is-mobile is-vcentered content">
 		<div class="column">
 			<h2 class="subtitle">BoilerMake II: Oct 17-19th, 2014</h2>
@@ -86,15 +71,18 @@
 		</div>
 
 		<div class="column">
-			<img src='{{static_path "about_bm_1.jpg"}}' alt="">
+			<img src='{{static_path "about_bm_2.jpg"}}' alt="">
 		</div>
 
 	</div>
+</div>
+
+<div class="container">
 
 	<div class="columns is-mobile is-vcentered content">
 
 		<div class="column">
-			<img src='{{static_path "about_bm_2.jpg"}}' alt="">
+			<img src='{{static_path "about_bm_3.jpg"}}' alt="">
 		</div>
 
 		<div class="column">
@@ -107,6 +95,9 @@
 		</div>
 
 	</div>
+</div>
+
+<div class="container">
 
 	<div class="columns is-mobile is-vcentered content">
 		<div class="column">
@@ -116,15 +107,18 @@
 		</div>
 
 		<div class="column">
-			<img src='{{static_path "about_boileriv_1.jpg"}}' alt="">
+			<img src='{{static_path "about_bm_4.jpg"}}' alt="">
 		</div>
 
 	</div>
+</div>
+
+<div class="container">
 
 	<div class="columns is-mobile is-vcentered content">
 
 		<div class="column">
-			<img src='{{static_path "about_boileriv_2.jpg"}}' alt="">
+			<img src='{{static_path "about_bm_5.jpg"}}' alt="">
 		</div>
 
 		<div class="column">
@@ -132,6 +126,8 @@
 			<p>BM V came back to the Cordova Recreational Sports Center for another 36 hours of unadulterated hacking. With more yoga, coffee, and neon light than ever before, students put together projects with the help of mentors and friends alike to
 				exhibit to everyone at BoilerMake.</p>
 		</div>
+	</div>
+</div>
 
 
 </section>
