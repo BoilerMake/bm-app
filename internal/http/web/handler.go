@@ -136,6 +136,13 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Post("/apply", h.postApply())
 	})
 
+	/* EXEC ROUTES */
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustBeExec)
+
+		r.Get("/exec", h.getExec())
+	})
+
 	if mode == "development" {
 		// In prod we serve static items through a CDN, in development just serve
 		// out of web/static/ at /static/

@@ -38,6 +38,7 @@ const (
 	RoleHacker = iota
 	RoleSponsor
 	RoleExec
+	RoleAdmin
 )
 
 // A User is an account stored in the database.

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/BoilerMake/new-backend/internal/models"
+
 	"github.com/gorilla/sessions"
 )
 
@@ -42,6 +44,31 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 
 		if session.IsNew {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
+}
+
+// MustBeExec only allows execs and admin roles to access a route
+func MustBeExec(h http.Handler) http.Handler {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	store := createCookieStore()
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		session, _ := store.Get(r, sessionCookieName)
+
+		role, ok := session.Values["ROLE"].(int)
+		if !ok {
+			http.Redirect(w, r, "/404", http.StatusSeeOther)
+			return
+		}
+
+		if role != models.RoleExec && role != models.RoleAdmin {
+			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}
 
