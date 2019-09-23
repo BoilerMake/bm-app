@@ -28,6 +28,3 @@ web/static/
 
 # .DS_Store
 .DS_Store
-web/.DS_Store
-web/src/.DS_Store
-web/src/assets/.DS_Store
