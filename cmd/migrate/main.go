@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/pkg/env"
@@ -43,6 +44,11 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
+
+	for err = db.Ping(); err != nil; {
+		fmt.Println("Ping to database failed, retrying")
+		time.Sleep(1 * time.Second)
+	}
 
 	err = goose.Up(db, "./migrations")
 	if err != nil {
