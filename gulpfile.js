@@ -3,6 +3,7 @@ var rev = require("gulp-rev");
 var sass = require("gulp-sass");
 var uglify = require("gulp-uglify");
 var del = require("del");
+var babel = require('gulp-babel');
 var imagemin = require("gulp-imagemin");
 var autoprefixer = require("gulp-autoprefixer");
 var awspublish = require("gulp-awspublish");
@@ -28,6 +29,10 @@ function styles() {
 function scripts() {
 	return gulp.
 		src("web/src/scripts/**")
+		// Pipe through babel for compatibility
+		.pipe(babel({
+			presets: ["@babel/env"]
+		}))
 		// AKA minify
 		.pipe(uglify())
 		// Output

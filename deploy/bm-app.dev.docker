@@ -21,5 +21,9 @@ ENV GO111MODULE=on
 # know we don't care.
 ENV CGO_ENABLED=0
 
-# Watch for changes to .go and .env files
-ENTRYPOINT CompileDaemon -include=".env" -build="make build" -command="/bm-app/bin/server"
+# Ope
+# Why run make build here? Because docker is the bane of my existence :)
+# Docker volumes overwrite everything with what's on your local machine.  So, running build
+# in the stage above would mean the binary gets overwritten.  Instead, we build it here
+# once the container is run so it actually exists.
+ENTRYPOINT make build && /bm-app/bin/migrate && CompileDaemon -include='.env' -build='make build' -command='/bm-app/bin/server'

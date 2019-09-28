@@ -1,7 +1,7 @@
 {{ define "account" }}
 {{ template "header" . }}
 
-{{ template "navbar dark" }}
+{{ template "navbar" . }}
 
 <main>
 	<div>
@@ -9,26 +9,26 @@
 		<hr>
 
 		<div>
-			<strong>Email: </strong><span>{{ .Email }}</span>
+			<strong>Email: </strong><span>{{ .Data.Email }}</span>
 		</div>
 
 		<div>
-			<strong>First Name: </strong><span>{{ .FirstName }}</span>
+			<strong>First Name: </strong><span>{{ .Data.FirstName }}</span>
 		</div>
 
 		<div>
-			<strong>Last Name: </strong><span>{{ .LastName }}</span>
+			<strong>Last Name: </strong><span>{{ .Data.LastName }}</span>
 		</div>
 
 		<div>
-			<strong>Phone Number: </strong><span>{{ .Phone }}</span>
+			<strong>Phone Number: </strong><span>{{ .Data.Phone }}</span>
 		</div>
 
 		<div>
-			<strong>Project Idea: </strong><span>{{ .ProjectIdea }}</span>
+			<strong>Project Idea: </strong><span>{{ .Data.ProjectIdea }}</span>
 		</div>
 
-		{{ range $i, $teamMember := .TeamMembers }}
+		{{ range $i, $teamMember := .Data.TeamMembers }}
 			<div>
 				<strong>Team Member {{ $i }}: </strong><span>{{ $teamMember }}</span>
 			</div>

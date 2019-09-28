@@ -1,36 +1,42 @@
 {{ define "reset" }}
 {{ template "header" . }}
 
-{{ template "navbar dark" }}
+{{ template "navbar" . }}
 
-<main>
-	<div class="row">
-		<div class="card col-6 col-center">
-			<form class="form__auth" action="" method="post">
-				<h1>Reset Password</h1>
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column box is-5-tablet is-4-desktop">
+				<form action="" method="post">
 
-				<div class="form__input">
-				{{ if not . }}
-					<label class="form__input--label" for="token"><b>Reset Token</b></label>
-					<input class="form__input--text" type="text" name="token" required>
-				{{ else }}
-					<label class="form__input--label" for="token"><b>Reset Token</b></label>
-					<input class="form__input--text" type="text" name="token" value="{{ . }}" required>
-				{{ end }}
-				</div>
+					<div class="field">
+						<label for="token" class="label">Reset Token</label>
+						<div class="control">
+							{{ if not . }}
+								<input type="text" name="token" class="input" required>
+							{{ else }}
+								<input type="text" name="token" class="input" value="{{ . }}" required>
+							{{ end }}
+						</div>
+					</div>
 
-				<div class="form__input">
-					<label class="form__input--label" for="new-password"><b>New Password</b></label>
-					<input class="form__input--text" type="password" name="new-password" required>
-				</div>
+					<div class="field">
+						<label for="new-password" class="label">New Password</label>
+						<div class="control">
+							<input type="password" name="new-password" placeholder="********" class="input" required>
+						</div>
+					</div>
 
-				<div>
-					<button class="form--button" type="submit">Reset</button>
-				</div>
-			</form> 
+					<div class="field">
+						<div class="control">
+							<button class="button is-fullwidth is-dark" type="submit">Reset</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-</main>
+</section>
 
 {{ template "footer" . }}
 {{ end }}

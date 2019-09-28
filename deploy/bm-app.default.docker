@@ -20,4 +20,8 @@ ENV CGO_ENABLED=0
 
 RUN make build
 
-ENTRYPOINT ["/bm-app/bin/server"]
+ENTRYPOINT while ! nc -z database:5432; \
+						 do sleep 1; \
+						 done; \
+						 /bm-app/bin/migrate && \
+						 /bm-app/bin/server
