@@ -69,7 +69,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			// TODO error handling, this state should never be reached
+			rollbar.Error("getting session failed")
+			rollbar.Wait()
 			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
@@ -77,7 +78,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			rollbar.Error(err, " issuer: ", jwtIssuer, ", jwt signing key: ", jwtSigningKey)
+			rollbar.Error(err)
 			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -258,7 +259,8 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			// TODO error handling, this state should never be reached
+			rollbar.Error("getting session failed")
+			rollbar.Wait()
 			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
@@ -266,7 +268,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			rollbar.Error(err, " issuer: ", jwtIssuer, ", jwt signing key: ", jwtSigningKey)
+			rollbar.Error(err)
 			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -282,7 +284,8 @@ func (h *Handler) getLogout() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
+			rollbar.Error("getting session failed")
+			rollbar.Wait()
 			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
@@ -292,7 +295,8 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 		err := session.Save(r, w)
 		if err != nil {
-			// TODO Error Handling, this state should never be reached
+			rollbar.Error(err)
+			rollbar.Wait()
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -306,14 +310,16 @@ func (h *Handler) getAccount() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
+			rollbar.Error("getting session failed")
+			rollbar.Wait()
 			http.Error(w, "getting session failed", http.StatusInternalServerError)
 			return
 		}
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
+			rollbar.Error("invalid session value")
+			rollbar.Wait()
 			http.Error(w, "invalid session value", http.StatusInternalServerError)
 			return
 		}
