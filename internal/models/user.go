@@ -10,27 +10,27 @@ import (
 
 // Authentication errors
 var (
-	ErrUserNotFound   = &ModelError{"user was not found"}
-	ErrEmailInUse     = &ModelError{"email is already in use"}
-	ErrRequiredField  = &ModelError{"required field is missing"}
-	ErrIncorrectLogin = &ModelError{"email or password is incorrect"}
+	ErrUserNotFound   = &ModelError{"User was not found"}
+	ErrEmailInUse     = &ModelError{"Email is already in use"}
+	ErrRequiredField  = &ModelError{"Required field is missing"}
+	ErrIncorrectLogin = &ModelError{"Email or password is incorrect"}
 )
 
 // Validation errors
 var (
-	ErrEmptyEmail           = &ModelError{"email is empty"}
-	ErrInvalidEmail         = &ModelError{"email is invalid"}
-	ErrEmptyPassword        = &ModelError{"password is empty"}
-	ErrEmptyPasswordConfirm = &ModelError{"password confirmation is empty"}
-	ErrEmptyFirstName       = &ModelError{"first name is empty"}
-	ErrEmptyLastName        = &ModelError{"last name is empty"}
-	ErrPasswordConfirm      = &ModelError{"password and confirmation password do not match"}
+	ErrEmptyEmail           = &ModelError{"Email is empty"}
+	ErrInvalidEmail         = &ModelError{"Email is invalid"}
+	ErrEmptyPassword        = &ModelError{"Password is empty"}
+	ErrEmptyPasswordConfirm = &ModelError{"Password confirmation is empty"}
+	ErrEmptyFirstName       = &ModelError{"First name is empty"}
+	ErrEmptyLastName        = &ModelError{"Last name is empty"}
+	ErrPasswordConfirm      = &ModelError{"Password and confirmation password do not match"}
 )
 
 // Password Reset errors
 var (
-	ErrInvalidToken = &ModelError{"password reset token is invalid"}
-	ErrExpiredToken = &ModelError{"password reset token has expired"}
+	ErrInvalidToken = &ModelError{"Password reset token is invalid"}
+	ErrExpiredToken = &ModelError{"Password reset token has expired"}
 )
 
 const (
@@ -72,14 +72,11 @@ type PasswordResetPayload struct {
 	NewPassword string `json:"newPassword"`
 }
 
-// SetSession sets all the session values for a user and sets IsNew to false
-// to show that the session is in use.
+// SetSession sets all the session values for a user
 func (u *User) SetSession(session *sessions.Session) {
 	session.Values["ID"] = u.ID
 	session.Values["EMAIL"] = u.Email
 	session.Values["ROLE"] = u.Role
-
-	session.IsNew = false
 }
 
 // FromFormData converts a user from a request's FormData to a models.User

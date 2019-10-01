@@ -11,11 +11,15 @@ import (
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 	"github.com/BoilerMake/new-backend/internal/s3"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 	"github.com/BoilerMake/new-backend/pkg/template"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
+	"github.com/rollbar/rollbar-go"
 )
+
+type ErrorReporter func(w http.ResponseWriter, r *http.Request, interfaces ...interface{})
 
 // A Page is all the data needed to render a page.
 type Page struct {
@@ -23,6 +27,9 @@ type Page struct {
 
 	// A generic place to put unstructured data
 	Data interface{}
+
+	// An array of messages to show the user
+	Flashes []flash.Flash
 
 	// Values to be put back into a form when shown to a user again
 	// For example, when they log in with the wrong password we want
@@ -50,6 +57,7 @@ func NewPage(title string, r *http.Request) (*Page, bool) {
 		Title:           title,
 		Email:           email,
 		IsAuthenticated: email != "",
+		Flashes:         session.Flashes(),
 	}, true
 }
 
@@ -72,6 +80,9 @@ type Handler struct {
 
 	// HTML templates to render
 	Templates *template.Template
+
+	// An ErrorReport reports errors to something like rollbar
+	ErrReporter ErrorReporter
 }
 
 // NewHandler creates a handler for web requests.
@@ -149,6 +160,19 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		// out of web/static/ at /static/
 		fs := http.StripPrefix("/static", http.FileServer(http.Dir("web/static")))
 		r.Get("/static/*", fs.ServeHTTP)
+	}
+
+	rollbarEnv, ok := os.LookupEnv("ROLLBAR_ENVIRONMENT")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "ROLLBAR_ENVIRONMENT")
+	}
+
+	// Only log to rollbar in production
+	if rollbarEnv == "production" {
+		h.ErrReporter = rollbarReportError
+	} else {
+		// If we're not in production just print out the errors
+		h.ErrReporter = logReportError
 	}
 
 	r.NotFound(h.get404())
@@ -256,5 +280,51 @@ func staticFileReplace(mode string) func(path string) string {
 		}
 
 		return "/404"
+	}
+}
+
+// rollbarReportError reports an error to rollbar and logs it locally.  It
+// should only be reporting errors in production.  You should not call this
+// function directly, instead call h.Error(...) and let that handle it.
+func rollbarReportError(w http.ResponseWriter, r *http.Request, interfaces ...interface{}) {
+	rollbar.Error(interfaces...)
+	rollbar.Wait()
+
+	// Also log the error locally
+	log.Println(interfaces...)
+}
+
+// logReportError logs an error locally.  In production rollbarReportError
+// should be used instead.  You should not call this function directly, instead
+// call h.Error(...) and let that handle it.
+func logReportError(w http.ResponseWriter, r *http.Request, interfaces ...interface{}) {
+	// Also log the error locally
+	log.Println(interfaces...)
+}
+
+// Error checks an error given to it.  If it's a known error that we've made
+// we can show it to the user as a flash.  If it's unknown then we should tell
+// the user that something went wrong and report the error to rollbar.
+func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, interfaces ...interface{}) {
+	switch err.(type) {
+	case *models.ModelError:
+		// This is an error we know about and should let the user know what happened
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// No session was found.  This should never happen, so log it
+			h.ErrReporter(w, r, append([]interface{}{err}, interfaces...)...)
+		}
+
+		session.AddFlash(err.Error())
+		session.Save(r, w)
+	default:
+		// This error could have come from anywhere, so we should just tell the user
+		// something went wrong so that we don't accidently expose something
+		// sensitive
+		// TODO route to 500?
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		// Also, because we don't know how this error happened, we should report it
+		// on rollbar.
+		h.ErrReporter(w, r, append([]interface{}{err}, interfaces...)...)
 	}
 }
