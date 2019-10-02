@@ -1,10 +1,10 @@
 package flash
 
 const (
-	FlashError = iota
-	FlashWarning
-	FlashInfo
-	FlashSuccess
+	Error = iota
+	Warning
+	Info
+	Success
 )
 
 // A Flash holds a message and its type

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,8 @@ import (
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/internal/s3"
 	"github.com/BoilerMake/new-backend/pkg/env"
+	"github.com/BoilerMake/new-backend/pkg/flash"
+
 	"github.com/rollbar/rollbar-go"
 )
 
@@ -18,6 +21,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	// Register flash struct so it can be serialized later
+	gob.Register(flash.Flash{})
 
 	// Initialize databse
 	dbHost, ok := os.LookupEnv("DB_HOST")

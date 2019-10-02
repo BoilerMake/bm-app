@@ -3,19 +3,21 @@ package web
 import (
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	"github.com/fatih/structs"
 	"github.com/go-chi/chi"
-	"github.com/gorilla/sessions"
 	"github.com/rollbar/rollbar-go"
 )
 
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Sign Up", r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		p, ok := NewPage(w, r, "BoilerMake - Signup", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -28,6 +30,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -67,13 +70,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			rollbar.Error("getting session failed")
-			rollbar.Wait()
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
@@ -120,8 +117,12 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Forgot Password", r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		p, ok := NewPage(w, r, "BoilerMake - Forgot Password", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -178,8 +179,12 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Reset Password", r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		p, ok := NewPage(w, r, "BoilerMake - Reset Password", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -192,8 +197,12 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Reset Password", r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		p, ok := NewPage(w, r, "BoilerMake - Reset Password", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -231,8 +240,12 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Login", r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		p, ok := NewPage(w, r, "BoilerMake - Login", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -245,6 +258,8 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -257,13 +272,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			rollbar.Error("getting session failed")
-			rollbar.Wait()
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
@@ -281,14 +290,10 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			rollbar.Error("getting session failed")
-			rollbar.Wait()
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		// This expires the token
 		session.Options.MaxAge = -1
@@ -307,14 +312,10 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			rollbar.Error("getting session failed")
-			rollbar.Wait()
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
@@ -333,10 +334,8 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		p, ok := NewPage("BoilerMake - Account", r)
+		p, ok := NewPage(w, r, "BoilerMake - Account", session)
 		if !ok {
-			rollbar.Error("creating page failed", r)
-			rollbar.Wait()
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
 			return
 		}

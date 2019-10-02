@@ -13,14 +13,10 @@ import (
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			rollbar.Error("invalid session value")
-			rollbar.Wait()
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
@@ -44,7 +40,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
-		p, ok := NewPage("BoilerMake - Apply", r)
+		p, ok := NewPage(w, r, "BoilerMake - Apply", session)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)

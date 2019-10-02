@@ -4,33 +4,35 @@ import (
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )
 
 // Authentication errors
 var (
-	ErrUserNotFound   = &ModelError{"User was not found"}
-	ErrEmailInUse     = &ModelError{"Email is already in use"}
-	ErrRequiredField  = &ModelError{"Required field is missing"}
-	ErrIncorrectLogin = &ModelError{"Email or password is incorrect"}
+	ErrUserNotFound   = &ModelError{"User was not found", flash.Info}
+	ErrEmailInUse     = &ModelError{"Email is already in use", flash.Info}
+	ErrRequiredField  = &ModelError{"Required field is missing", flash.Info}
+	ErrIncorrectLogin = &ModelError{"Email or password is incorrect", flash.Info}
+	ErrNotLoggedIn    = &ModelError{"Please log in first", flash.Info}
 )
 
 // Validation errors
 var (
-	ErrEmptyEmail           = &ModelError{"Email is empty"}
-	ErrInvalidEmail         = &ModelError{"Email is invalid"}
-	ErrEmptyPassword        = &ModelError{"Password is empty"}
-	ErrEmptyPasswordConfirm = &ModelError{"Password confirmation is empty"}
-	ErrEmptyFirstName       = &ModelError{"First name is empty"}
-	ErrEmptyLastName        = &ModelError{"Last name is empty"}
-	ErrPasswordConfirm      = &ModelError{"Password and confirmation password do not match"}
+	ErrEmptyEmail           = &ModelError{"Email is empty", flash.Info}
+	ErrInvalidEmail         = &ModelError{"Email is invalid", flash.Info}
+	ErrEmptyPassword        = &ModelError{"Password is empty", flash.Info}
+	ErrEmptyPasswordConfirm = &ModelError{"Password confirmation is empty", flash.Info}
+	ErrEmptyFirstName       = &ModelError{"First name is empty", flash.Info}
+	ErrEmptyLastName        = &ModelError{"Last name is empty", flash.Info}
+	ErrPasswordConfirm      = &ModelError{"Password and confirmation password do not match", flash.Info}
 )
 
 // Password Reset errors
 var (
-	ErrInvalidToken = &ModelError{"Password reset token is invalid"}
-	ErrExpiredToken = &ModelError{"Password reset token has expired"}
+	ErrInvalidToken = &ModelError{"Password reset token is invalid", flash.Info}
+	ErrExpiredToken = &ModelError{"Password reset token has expired", flash.Info}
 )
 
 const (

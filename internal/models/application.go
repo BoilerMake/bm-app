@@ -4,21 +4,23 @@ import (
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	"github.com/BoilerMake/new-backend/pkg/flash"
 )
 
 // Validation errors
 var (
-	ErrMissingSchool         = &ModelError{"please enter your school's name"}
-	ErrMissingGender         = &ModelError{"please enter your gender"}
-	ErrMissingMajor          = &ModelError{"please enter your major"}
-	ErrMissingGraduationYear = &ModelError{"please enter your graduation year"}
-	ErrMissingRace           = &ModelError{"please enter your race"}
-	ErrMissingShirtSize      = &ModelError{"please enter your shirt size"}
-	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions"}
+	ErrMissingSchool         = &ModelError{"please enter your school's name", flash.Info}
+	ErrMissingGender         = &ModelError{"please enter your gender", flash.Info}
+	ErrMissingMajor          = &ModelError{"please enter your major", flash.Info}
+	ErrMissingGraduationYear = &ModelError{"please enter your graduation year", flash.Info}
+	ErrMissingRace           = &ModelError{"please enter your race", flash.Info}
+	ErrMissingShirtSize      = &ModelError{"please enter your shirt size", flash.Info}
+	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions", flash.Info}
 
 	// Validation errors when form paring
-	ErrMissingResume  = &ModelError{"please upload a resume"}
-	ErrResumeTooLarge = &ModelError{"resume upload is too large"}
+	ErrMissingResume  = &ModelError{"please upload a resume", flash.Info}
+	ErrResumeTooLarge = &ModelError{"resume upload is too large", flash.Info}
 )
 
 const (

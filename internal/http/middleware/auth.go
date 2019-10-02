@@ -1,12 +1,12 @@
 package middleware
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )
@@ -14,22 +14,6 @@ import (
 var (
 	SessionCtxKey = contextKey("Session")
 )
-
-// WithSession gets a requests session or makes one if it doesn't exist. It
-// attaches that session to the request's context to be used by handlers later.
-func WithSession(h http.Handler) http.Handler {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	store := createCookieStore()
-
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, sessionCookieName)
-
-		ctx := context.WithValue(r.Context(), SessionCtxKey, session)
-		h.ServeHTTP(w, r.WithContext(ctx))
-	}
-
-	return http.HandlerFunc(fn)
-}
 
 // MustBeAuthenticated enforces that a user sending a request is logged in.
 // It checks this by seeing if the session has a non empty email. If the
@@ -44,7 +28,14 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok || email == "" {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			session.AddFlash(flash.Flash{
+				Type:    flash.Info,
+				Message: models.ErrNotLoggedIn.Error(),
+			})
+
+			session.Save(r, w)
+
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 
