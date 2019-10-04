@@ -43,4 +43,15 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		});
 	};
+
+  const notifications = document.querySelectorAll('.notification .delete')
+
+	if (notifications.length > 0) {
+		notifications.forEach(el => {
+			var notification = el.parentNode;
+			el.addEventListener('click', () => {
+				notification.parentNode.removeChild(notification);
+			});
+		});
+	}
 });
