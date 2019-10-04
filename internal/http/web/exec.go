@@ -1,6 +1,7 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 )
 
@@ -13,8 +14,7 @@ func (h *Handler) getExec() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Exec", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 

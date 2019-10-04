@@ -34,19 +34,6 @@ iframe.full-size {
 	height: 308px !important;
 }
 
-.flash-message {
-	margin: 0 auto;
-	position: fixed;
-	width: 100%;
-	top: 4rem;
-
-	* {
-		max-width: 960px;
-		width: 85%;
-		margin: 0 auto;
-	}
-}
-
 // Bulma defaults to always showing a scrollbar, no thanks
 $body-overflow-y: auto;
 

@@ -1,11 +1,12 @@
 package web
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
 
-	"github.com/fatih/structs"
 	"github.com/go-chi/chi"
 	"github.com/rollbar/rollbar-go"
 )
@@ -19,8 +20,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Signup", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -46,13 +46,12 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
-			rollbar.Error(err, structs.Map(u))
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 		u.ID = id
 
+		fmt.Println(2)
 		// Build confirmation email
 		to := u.Email
 		subject := "Confirm your email"
@@ -62,22 +61,20 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			"ConfirmLink": link,
 		}
 
+		fmt.Println(3)
 		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
 		if err != nil {
-			rollbar.Error(err, to, subject, "email confirm", data)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err, to, data)
 			return
 		}
 
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
+		fmt.Println(4)
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -94,9 +91,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 		u, err := h.UserService.GetByCode(code)
 		if err != nil {
-			rollbar.Error(err, " code: ", code)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err, code)
 			return
 		}
 
@@ -104,9 +99,8 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		u.ConfirmationCode = ""
 		err = h.UserService.Update(u)
 		if err != nil {
-			rollbar.Error(err, structs.Map(u))
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
+			return
 		}
 
 		// TODO once session tokens are updated this should show a success flash
@@ -124,8 +118,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Forgot Password", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"), http.StatusInternalServerError)
 			return
 		}
 
@@ -149,9 +142,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
-			rollbar.Error(err, structs.Map(u))
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -165,9 +156,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
 		if err != nil {
-			rollbar.Error(err, to, subject, "email reset", data)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err, to, data)
 			return
 		}
 
@@ -186,8 +175,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Reset Password", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -204,8 +192,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Reset Password", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -226,9 +213,7 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -247,8 +232,7 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Login", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -266,9 +250,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 		err := h.UserService.Login(&u)
 		if err != nil {
-			rollbar.Error(err, structs.Map(u))
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -277,9 +259,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -300,9 +280,7 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 		err := session.Save(r, w)
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -319,9 +297,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
-			rollbar.Error("invalid session value")
-			rollbar.Wait()
-			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("invalid session value"))
 			return
 		}
 
@@ -336,7 +312,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Account", session)
 		if !ok {
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 

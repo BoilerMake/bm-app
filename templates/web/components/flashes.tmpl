@@ -1,20 +1,26 @@
 {{ define "flashes" }}
 
-<div class="flash-message">
-		{{ range . }} 
-		{{ if eq .Type 0 }}
-		<div class="notification is-error">
-		{{ else if eq .Type 1 }}
-		<div class="notification is-warning">
-		{{ else if eq .Type 2 }}
-		<div class="notification is-info">
-		{{ else if eq .Type 3 }}
-		<div class="notification is-success">
-		{{ end }}
-			<button class="delete"></button>
-			{{ .Message }}
+{{ if . }}
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			{{ range . }} 
+			{{ if eq .Type 0 }}
+			<div class="notification is-error">
+			{{ else if eq .Type 1 }}
+			<div class="notification is-warning">
+			{{ else if eq .Type 2 }}
+			<div class="notification is-info">
+			{{ else if eq .Type 3 }}
+			<div class="notification is-success">
+			{{ end }}
+				<button class="delete"></button>
+				{{ .Message }}
+			</div>
+			{{ end }}
 		</div>
-		{{ end }}
-</div>
+	</div>
+</section>
+{{ end }}
 
 {{ end }}

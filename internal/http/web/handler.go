@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -220,8 +221,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -238,8 +238,7 @@ func (h *Handler) getHackers() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - Hackers", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -256,8 +255,7 @@ func (h *Handler) getAbout() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - About", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -274,8 +272,7 @@ func (h *Handler) getFaq() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - FAQ", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -293,8 +290,7 @@ func (h *Handler) get404() http.HandlerFunc {
 
 		p, ok := NewPage(w, r, "BoilerMake - 404", session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -355,7 +351,7 @@ func rollbarReportError(w http.ResponseWriter, r *http.Request, interfaces ...in
 	rollbar.Wait()
 
 	// Also log the error locally
-	log.Println(interfaces...)
+	log.Println("ERROR:", interfaces)
 }
 
 // logReportError logs an error locally.  In production rollbarReportError
@@ -363,7 +359,7 @@ func rollbarReportError(w http.ResponseWriter, r *http.Request, interfaces ...in
 // call h.Error(...) and let that handle it.
 func logReportError(w http.ResponseWriter, r *http.Request, interfaces ...interface{}) {
 	// Also log the error locally
-	log.Println(interfaces...)
+	log.Println("ERROR:", interfaces)
 }
 
 // Error checks an error given to it.  If it's a known error that we've made
@@ -382,14 +378,16 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 			Message: modelError.Error(),
 		})
 		session.Save(r, w)
+
+		// Redirect to previous page
+		http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
 	default:
+		// Because we don't know how this error happened, we should report it on rollbar.
+		h.ErrReporter(w, r, append([]interface{}{err}, interfaces...)...)
+
 		// This error could have come from anywhere, so we should just tell the user
 		// something went wrong so that we don't accidently expose something
 		// sensitive
-		// TODO route to 500?
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		// Also, because we don't know how this error happened, we should report it
-		// on rollbar.
-		h.ErrReporter(w, r, append([]interface{}{err}, interfaces...)...)
+		h.Templates.RenderTemplate(w, "500", nil)
 	}
 }

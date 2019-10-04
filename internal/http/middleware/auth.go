@@ -55,6 +55,7 @@ func MustBeExec(h http.Handler) http.Handler {
 
 		role, ok := session.Values["ROLE"].(int)
 		if !ok {
+			// We'll redirect people to 404 to keep them from poking around
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}
