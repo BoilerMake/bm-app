@@ -2,7 +2,6 @@ package web
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -51,7 +50,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		}
 		u.ID = id
 
-		fmt.Println(2)
 		// Build confirmation email
 		to := u.Email
 		subject := "Confirm your email"
@@ -61,7 +59,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			"ConfirmLink": link,
 		}
 
-		fmt.Println(3)
 		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
 		if err != nil {
 			h.Error(w, r, err, to, data)
@@ -70,7 +67,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
-		fmt.Println(4)
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
