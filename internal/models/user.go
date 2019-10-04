@@ -11,11 +11,12 @@ import (
 
 // Authentication errors
 var (
-	ErrUserNotFound   = &ModelError{"User was not found", flash.Info}
-	ErrEmailInUse     = &ModelError{"Email is already in use", flash.Info}
-	ErrRequiredField  = &ModelError{"Required field is missing", flash.Info}
-	ErrIncorrectLogin = &ModelError{"Email or password is incorrect", flash.Info}
-	ErrNotLoggedIn    = &ModelError{"Please log in first", flash.Info}
+	ErrUserNotFound            = &ModelError{"User not found", flash.Info}
+	ErrEmailInUse              = &ModelError{"Email is already in use", flash.Info}
+	ErrRequiredField           = &ModelError{"Required field is missing", flash.Info}
+	ErrIncorrectLogin          = &ModelError{"Email or password is incorrect", flash.Info}
+	ErrNotLoggedIn             = &ModelError{"Please log in first", flash.Info}
+	ErrInvalidConfirmationCode = &ModelError{"Invalid email confirmation code", flash.Info}
 )
 
 // Validation errors

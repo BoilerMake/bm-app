@@ -18,7 +18,7 @@ var (
 	ErrMissingShirtSize      = &ModelError{"please enter your shirt size", flash.Info}
 	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions", flash.Info}
 
-	// Validation errors when form paring
+	// Validation errors when parsing form
 	ErrMissingResume  = &ModelError{"please upload a resume", flash.Info}
 	ErrResumeTooLarge = &ModelError{"resume upload is too large", flash.Info}
 )

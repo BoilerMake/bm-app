@@ -7,7 +7,6 @@ import (
 	"github.com/BoilerMake/new-backend/internal/models"
 
 	"github.com/go-chi/chi"
-	"github.com/rollbar/rollbar-go"
 )
 
 // getSignup renders the signup template.
@@ -99,7 +98,6 @@ func (h *Handler) getActivate() http.HandlerFunc {
 			return
 		}
 
-		// TODO once session tokens are updated this should show a success flash
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
@@ -156,7 +154,6 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			return
 		}
 
-		// TODO once session tokens are updated this should show a success flash
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
@@ -213,7 +210,6 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 			return
 		}
 
-		// TODO once session tokens are updated this should show a success flash
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
@@ -299,10 +295,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 		u, err := h.UserService.GetByEmail(email)
 		if err != nil {
-			rollbar.Error(err)
-			rollbar.Wait()
-			// TODO once session tokens are updated this should show a need to login first flash
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			h.Error(w, r, err)
 			return
 		}
 
