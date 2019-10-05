@@ -166,7 +166,8 @@ func (h *Handler) getRoot() http.HandlerFunc {
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "index", p)
+		h.Templates.RenderTemplate(w, "bmvii home", p)
+		//h.Templates.RenderTemplate(w, "offseason home", p)
 	}
 }
 

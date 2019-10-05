@@ -40,5 +40,70 @@ $body-overflow-y: auto;
 // Use dark hammer logo colors instead of Bulma's default
 $dark: #231F20;
 
+// Custom red color
+
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
+
+.bm-vii-hero {
+	background-position: center;
+	background-size: auto 100%;
+	background-repeat: no-repeat;
+}
+
+.button.is-red {
+	background-color: #AC333B;
+	border-color: transparent;
+	color: $white;
+}
+
+.bmvii-why__img {
+	max-width: 128px;
+}
+
+.bmvii-why__quarry {
+	display: block;
+	margin: 0 auto;
+}
+
+.bmvii-schedule__day {
+	flex-basis: 0;
+	flex-grow: 1;
+	box-sizing: border-box;
+}
+
+.bmvii-schedule__item {
+	margin: 1rem 0;
+	padding: 0.75rem;
+
+	&:nth-child(odd) {
+		background: #F5F5F5;
+	}
+}
+
+.bmvii-schedule__item_info {
+	display: flex;
+	justify-content: space-between;
+}
+
+.bmvii-schedule__item_time {
+	white-space: nowrap;
+}
+
+.bmvii-schedule__item_event {
+	text-align: right;
+}
+
+.bmvii-testimonials {
+	background-position: bottom;
+	background-size: contain;
+	padding-bottom: 10rem;
+}
+
+.bmvii-testimonial__image {
+	border-radius: 6px 6px 0 0;
+}
+
+.bmvii-testimonial__text {
+	padding: 1.25rem;
+}

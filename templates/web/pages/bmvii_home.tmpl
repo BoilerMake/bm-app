@@ -1,0 +1,434 @@
+{{ define "bmvii home" }}
+{{ template "header" . }}
+
+{{ template "bmvii navbar" . }}
+
+<section class="section bm-vii-hero" style='background-color: #6176CF; background-image: url( {{ static_path "bmvii_home_background.svg" }})'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img src={{ static_path "bmvii_greetings.svg" }}>
+			</div>
+		</div>
+		<div class="columns is-centered content has-text-centered">
+			<div class="column is-5">
+				<h2 class="title has-text-light">Hack Your Own Adventure</h1>
+				<h3 class="subtitle has-text-light">Purdue University | January 24-26, 2020</h2>
+			</div>
+		</div>
+		<div class="columns is-centered content has-text-centered">
+			<div class="column is-5">
+				<a class="button">Learn More</a>
+				<a class="button is-red">Apply</a>
+			</div>
+		</div>
+		<div class="columns is-centered content">
+			<div class="column is-6">
+				<img src={{ static_path "bmvii_hammers.svg" }}>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section has-background-image" style='background-color: #FFA13C; background-image: url( {{ static_path "bmvii_why_clouds.svg" }}); padding-bottom: 0; padding-left: 0; padding-right:0;'>
+	<div class="container" style="padding: 0 1.5rem;">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img src={{ static_path "bmvii_why.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-4 has-text-white has-text-centered">Join us for a fun weekend filled with learning and creation! Here are a few other reasons you should join us:</p>
+			</div>
+		</div>
+
+		<div class="columns is-centered has-text-centered">
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+				</div>
+			</div>
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="columns is-centered has-text-centered">
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+				</div>
+			</div>
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+					<div class="column is-half">
+						<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+						<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8 has-text-centered">
+				<a class="button is-4 title has-text-centered" href="/hackers">What else do hackers do? →</a>
+			</div>
+		</div>
+	</div>
+
+	<img src={{ static_path "bmvii_why_quarry.svg" }} class="bmvii-why__quarry">
+</section>
+
+<section class="section" style='background-color: #7B004E;'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img src={{ static_path "bmvii_join_the_fun.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-10">
+				<p class="subtitle is-4 has-text-white has-text-centered">We provide the hacking space, food, activities, and swag so you can work on awesome projects.  We've jam-packed the schedule with fun events to make sure you have a great weekend.</p>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-3">
+				<div class="box">
+					<img src={{ static_path "bmvii_schedule_friday.svg" }}>
+
+					<div class="bmvii-schedule__day">
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">6:00 PM</span>
+								<span class="bmvii-schedule__item_event">Check in begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">8:00 PM</span>
+								<span class="bmvii-schedule__item_event">Opening ceremonies</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:00 PM</span>
+								<span class="bmvii-schedule__item_event">Team assembly</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:30 PM</span>
+								<span class="bmvii-schedule__item_event">Dinner</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">10:00 PM</span>
+								<span class="bmvii-schedule__item_event">Hacking begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">11:00 PM</span>
+								<span class="bmvii-schedule__item_event">Activity</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="column is-3">
+				<div class="box">
+					<img src={{ static_path "bmvii_schedule_saturday.svg" }}>
+
+					<div class="bmvii-schedule__day">
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">6:00 PM</span>
+								<span class="bmvii-schedule__item_event">Check in begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">8:00 PM</span>
+								<span class="bmvii-schedule__item_event">Opening ceremonies</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:00 PM</span>
+								<span class="bmvii-schedule__item_event">Team assembly</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:30 PM</span>
+								<span class="bmvii-schedule__item_event">Dinner</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">10:00 PM</span>
+								<span class="bmvii-schedule__item_event">Hacking begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">11:00 PM</span>
+								<span class="bmvii-schedule__item_event">Activity</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="column is-3">
+				<div class="box">
+					<img src={{ static_path "bmvii_schedule_sunday.svg" }}>
+
+					<div class="bmvii-schedule__day">
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">6:00 PM</span>
+								<span class="bmvii-schedule__item_event">Check in begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">8:00 PM</span>
+								<span class="bmvii-schedule__item_event">Opening ceremonies</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:00 PM</span>
+								<span class="bmvii-schedule__item_event">Team assembly</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">9:30 PM</span>
+								<span class="bmvii-schedule__item_event">Dinner</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">10:00 PM</span>
+								<span class="bmvii-schedule__item_event">Hacking begins</span>
+							</div>
+						</div>
+
+						<div class="bmvii-schedule__item">
+							<div class="bmvii-schedule__item_info">
+								<span class="bmvii-schedule__item_time">11:00 PM</span>
+								<span class="bmvii-schedule__item_event">Activity</span>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</section>
+
+<section class="section has-background-image bmvii-testimonials" style='background-color: #8D9EDC; background-image: url( {{ static_path "bmvii_testimonials_trees.svg" }});'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img src={{ static_path "bmvii_testimonials.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-4 has-text-white has-text-centered">Look, people love BoilerMake. They absolutely fucking love it. So much fun is had by nearly every person that comes. Here are some testimonials.</p>
+			</div>
+		</div>
+
+		<div class="columns is-centered has-text-centered">
+
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<div class="box is-paddingless">
+							<img src={{ static_path "nice_to_meet_ya.jpg" }} class="bmvii-testimonial__image">
+							<div class="bmvii-testimonial__text">
+								<p class="title is-3 has-text-weight-bold">❝</p>
+								<p class="subtitle is-5">Omg I had so much fun. You wouldn't believe how much fun I had. Learned so much and did so much.</p>
+								<p class="subtitle is-5 has-text-weight-bold">Zach Johnson</p>
+							</div>
+						</div>
+					</div>
+					<div class="column is-half">
+						<div class="box is-paddingless">
+							<img src={{ static_path "nice_to_meet_ya.jpg" }} class="bmvii-testimonial__image">
+							<div class="bmvii-testimonial__text">
+								<p class="title is-3 has-text-weight-bold">❝</p>
+								<p class="subtitle is-5">Omg I had so much fun. You wouldn't believe how much fun I had. Learned so much and did so much.</p>
+								<p class="subtitle is-5 has-text-weight-bold">Zach Johnson</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="column is-4">
+				<div class="columns is-vcentered is-mobile">
+					<div class="column is-half">
+						<div class="box is-paddingless">
+							<img src={{ static_path "nice_to_meet_ya.jpg" }} class="bmvii-testimonial__image">
+							<div class="bmvii-testimonial__text">
+								<p class="title is-3 has-text-weight-bold">❝</p>
+								<p class="subtitle is-5">Omg I had so much fun. You wouldn't believe how much fun I had. Learned so much and did so much.</p>
+								<p class="subtitle is-5 has-text-weight-bold">Zach Johnson</p>
+							</div>
+						</div>
+					</div>
+					<div class="column is-half">
+						<div class="box is-paddingless">
+							<img src={{ static_path "nice_to_meet_ya.jpg" }} class="bmvii-testimonial__image">
+							<div class="bmvii-testimonial__text">
+								<p class="title is-3 has-text-weight-bold">❝</p>
+								<p class="subtitle is-5">Omg I had so much fun. You wouldn't believe how much fun I had. Learned so much and did so much.</p>
+								<p class="subtitle is-5 has-text-weight-bold">Zach Johnson</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+</section>
+
+<section class="section" style='background-color: #BF435B;'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img src={{ static_path "bmvii_faq.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-4 has-text-white has-text-centered">There are probably lots of questions that you have. We all have questions. Here are some that are asked a lot.</p>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<div class="tile is-ancestor">
+					<div class="tile is-vertical is-parent">
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>What is a hackathon?</strong></h3>
+							<p>
+									A hackathon is not somewhere that you come to hack the NSA, 
+							but rather a great place for people to come together and work 
+							on incredible projects. You'll be surrounded by a group of 
+							incredibly intelligent and creative people, as well as brilliant 
+							mentors from some of the largest tech companies across the country. 
+							Hackathons can serve as a great place to learn, and you may end up 
+							surprising yourself on what you can accomplish by the end of the weekend.
+							</p>
+						</div>
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>Are you an MLH member event?</strong></h3>
+							<p>
+									Yes! We are an MLH member and all hackers are required to sign the MLH Code of Conduct
+									when applying. You can look it over
+									<a href='https://static.mlh.io/docs/mlh-code-of-conduct.pdf' target='_blank'>here</a>.
+							</p>
+						</div>
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>I'm under 18 years of age, can I come?</strong></h3>
+							<p>
+								Due to Purdue University policy, we cannot allow students under the age of 18 to attend BoilerMake.
+							</p>
+						</div>
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>Should I go?</strong></h3>
+							<p>
+								We have <a href='https://medium.com/@BoilerMake/why-you-should-go-to-a-hackathon-2d4ede475c9' target='_blank'> this great article on Medium</a> to help you with this question.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8 has-text-centered">
+				<a class="button is-4 title has-text-centered" href="/faq">Want to know more? →</a>
+			</div>
+		</div>
+</section>
+
+<section class="section" style='background-color: #6176CF;'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-4">
+				<img src={{ static_path "bmvii_sponsors.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-4 has-text-white has-text-centered">BoilerMake is possible through the support of our amazing sponsors.</p>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-8 has-text-centered">
+				<a class="button is-4 title has-text-centered" href="/sponsors">Interested in sponsoring us? →</a>
+			</div>
+		</div>
+</section>
+
+{{ template "bmvii_footer" . }}
+{{ end }}
