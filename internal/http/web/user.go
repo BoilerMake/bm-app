@@ -320,13 +320,50 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		p.Data = map[string]interface{}{
-			"Email":     u.Email,
+		p.FormRefill = map[string]interface{}{
 			"FirstName": u.FirstName,
 			"LastName":  u.LastName,
-			"Phone":     u.Phone,
+			"Email":     u.Email,
 		}
 
 		h.Templates.RenderTemplate(w, "account", p)
+	}
+}
+
+// postAccount updates a user's account.
+func (h *Handler) postAccount() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "getting session failed", http.StatusInternalServerError)
+			return
+		}
+
+		email, ok := session.Values["EMAIL"].(string)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			return
+		}
+
+		u, err := h.UserService.GetByEmail(email)
+		if err != nil {
+			// TODO error handling
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		u.FirstName = r.FormValue("first-name")
+		u.LastName = r.FormValue("last-name")
+
+		err = h.UserService.Update(u)
+		if err != nil {
+			// TODO error handling
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+
+		http.Redirect(w, r, "/account", http.StatusSeeOther)
 	}
 }

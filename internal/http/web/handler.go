@@ -131,6 +131,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Use(middleware.MustBeAuthenticated)
 
 		r.Get("/account", h.getAccount())
+		r.Post("/account", h.postAccount())
 
 		/* APPLICATION ROUTES */
 		r.Get("/apply", h.getApply())
