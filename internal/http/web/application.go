@@ -48,7 +48,10 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
+		var ok bool
 		var a models.Application
 
 		err := a.FromFormData(r)
