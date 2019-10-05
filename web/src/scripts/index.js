@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			var notification = el.parentNode;
 			el.addEventListener('click', () => {
 				notification.parentNode.removeChild(notification);
+
+				// If there's no more notificaitons left, remove the container for them
+				const newNotifications = document.querySelectorAll('.notification .delete')
+				if (newNotifications.length == 0) {
+					var flashes = document.getElementById("flashes");
+					flashes.parentNode.removeChild(flashes);
+				}
 			});
 		});
 	}
