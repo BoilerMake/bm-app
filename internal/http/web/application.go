@@ -5,10 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
-
-	"github.com/gorilla/sessions"
 )
 
 // getApply renders the apply template.
@@ -60,11 +57,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			h.Error(w, r, errors.New("getting session failed"))
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		a.UserID, ok = session.Values["ID"].(int)
 		if !ok {

@@ -11,10 +11,6 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var (
-	SessionCtxKey = contextKey("Session")
-)
-
 // MustBeAuthenticated enforces that a user sending a request is logged in.
 // It checks this by seeing if the session has a non empty email. If the
 // session does not have an email then that means the session is not valid
