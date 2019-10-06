@@ -15,7 +15,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Signup", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -117,7 +117,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Forgot Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -175,7 +175,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Reset Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -191,7 +191,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Reset Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -231,7 +231,7 @@ func (h *Handler) getLogin() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Login", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -325,7 +325,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Account", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)

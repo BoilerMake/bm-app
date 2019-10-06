@@ -42,7 +42,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Apply", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)

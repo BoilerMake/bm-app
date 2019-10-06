@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -19,6 +20,8 @@ import (
 
 // A Page is all the data needed to render a page.
 type Page struct {
+	Title string
+
 	// Current status of app
 	Status string
 
@@ -35,7 +38,7 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(status string, r *http.Request) (*Page, bool) {
+func NewPage(title string, status string, r *http.Request) (*Page, bool) {
 	session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 	if !ok {
 		return nil, false
@@ -47,10 +50,12 @@ func NewPage(status string, r *http.Request) (*Page, bool) {
 		// session) because email will just default to the empty string.
 	}
 
+	fmt.Println(title)
 	return &Page{
+		Title:           title,
+		Status:          status,
 		Email:           email,
 		IsAuthenticated: email != "",
-		Status:          status,
 	}, true
 }
 
@@ -163,7 +168,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -179,7 +184,7 @@ func (h *Handler) getHackers() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - Hackers", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -210,7 +215,7 @@ func (h *Handler) get404() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage(status, r)
+		p, ok := NewPage("BoilerMake - 404", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
