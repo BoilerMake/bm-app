@@ -19,7 +19,8 @@ import (
 
 // A Page is all the data needed to render a page.
 type Page struct {
-	Title string
+	// Current status of app
+	Status string
 
 	// A generic place to put unstructured data
 	Data interface{}
@@ -34,7 +35,7 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(title string, r *http.Request) (*Page, bool) {
+func NewPage(status string, r *http.Request) (*Page, bool) {
 	session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 	if !ok {
 		return nil, false
@@ -47,9 +48,9 @@ func NewPage(title string, r *http.Request) (*Page, bool) {
 	}
 
 	return &Page{
-		Title:           title,
 		Email:           email,
 		IsAuthenticated: email != "",
+		Status:          status,
 	}, true
 }
 
@@ -159,8 +160,10 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake", r)
+		p, ok := NewPage(status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -173,8 +176,10 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Hackers", r)
+		p, ok := NewPage(status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -202,8 +207,10 @@ func (h *Handler) getFaq() http.HandlerFunc {
 // get404 handles requests that couldn't find a valid route by rendering the
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - 404", r)
+		p, ok := NewPage(status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
