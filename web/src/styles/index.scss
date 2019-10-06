@@ -45,6 +45,7 @@ $dark: #231F20;
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
 
+html{scroll-behavior:smooth}
 .bm-vii-hero {
 	background-position: center;
 	background-size: auto 100%;
@@ -57,8 +58,16 @@ $dark: #231F20;
 	color: $white;
 }
 
+.button.is-red.is-outlined {
+	background-color: transparent;
+	border-color: #AC333B;
+	color: $black;
+}
+
 .bmvii-why__img {
 	max-width: 128px;
+	border-radius: 50%;
+	box-shadow: 0 0 0 0.33rem rgba(255, 255, 255, 0.25);
 }
 
 .bmvii-why__quarry {
@@ -96,12 +105,13 @@ $dark: #231F20;
 
 .bmvii-testimonials {
 	background-position: bottom;
-	background-size: contain;
+	background-size: auto 100%;
 	padding-bottom: 10rem;
 }
 
 .bmvii-testimonial__image {
 	border-radius: 6px 6px 0 0;
+	width: 100%;
 }
 
 .bmvii-testimonial__text {
