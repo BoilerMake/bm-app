@@ -1,11 +1,9 @@
 {{ define "about" }}
 {{ template "header" . }}
 
+{{ template "navbar" . }}
 
 <section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "about_home_header.jpg" }})'>
-	<div class="hero-head">
-		{{ template "navbar" }}
-	</div>
 	<div class="hero-body">
 	</div>
 </section>

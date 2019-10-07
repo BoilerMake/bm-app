@@ -1,6 +1,9 @@
 {{ define "footer" }}
 
-{{/* For now always return offseason, once we get others then we can add conditionals */}}
-{{ template "offseason footer" }}
+{{ if and (ge .Status "1") (le .Status "5") }}
+	{{ template "bmvii footer" . }}
+{{ else }}
+	{{ template "offseason footer" . }}
+{{ end }}
 
 {{ end }}

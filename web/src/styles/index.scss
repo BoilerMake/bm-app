@@ -1,3 +1,7 @@
+html {
+	scroll-behavior:smooth;
+}
+
 // Keeps footer at bottom even on pages with less than a full page of content
 body {
 	display: flex;
@@ -45,7 +49,10 @@ $dark: #231F20;
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
 
-html{scroll-behavior:smooth}
+.bm-navbar {
+	flex-grow: 0;
+}
+
 .bm-vii-hero {
 	background-position: center;
 	background-size: auto 100%;

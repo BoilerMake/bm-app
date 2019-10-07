@@ -198,15 +198,33 @@ func (h *Handler) getHackers() http.HandlerFunc {
 
 // getAbout renders the about template.
 func (h *Handler) getAbout() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "about", nil)
+		p, ok := NewPage("BoilerMake - About", status, r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "about", p)
 	}
 }
 
 // getFaq renders the faq template.
 func (h *Handler) getFaq() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		h.Templates.RenderTemplate(w, "faq", nil)
+		p, ok := NewPage("BoilerMake - FAQ", status, r)
+		if !ok {
+			// TODO Error Handling, this state should never be reached
+			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "faq", p)
 	}
 }
 
