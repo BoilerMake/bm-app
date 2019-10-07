@@ -22,6 +22,10 @@ jobs:
           name: "Run Tests"
           command: |
             make test
+      - run:
+          name: "Print Logs"
+          command: |
+            docker-compose -f deploy/docker-compose.default.yml -f deploy/test/docker-compose.test.yml logs bm-app
 
   # SSHs into our server and runs deploy_prod.sh
   deploy_prod:
