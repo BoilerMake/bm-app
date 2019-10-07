@@ -28,11 +28,15 @@
 			<a class="navbar-item">
 				<img src={{ static_path "twitter_logo.svg" }} alt="Twitter logo" width="25" height="25">
 			</a>
+			{{ if .IsAuthenticated }}
+			<div class="navbar-item">
+				<a class="button is-outlined is-red" href="/apply">My Application</a>
+			</div>
+			<a class="navbar-item" href="/logout">Log Out</a>
+			{{ else }}
 			<div class="navbar-item">
 				<a class="button is-outlined is-red" href="/apply">Apply</a>
 			</div>
-			{{ if .IsAuthenticated }}
-			<a class="navbar-item" href="/logout">Log Out</a>
 			{{ end }}
 		</div>
 	</div>

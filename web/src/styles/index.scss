@@ -117,3 +117,21 @@ html{scroll-behavior:smooth}
 .bmvii-testimonial__text {
 	padding: 1.25rem;
 }
+
+.bmvii-application {
+	background-size: auto 100%;
+	background-repeat: repeat-y;
+	background-position: center;
+
+	padding-top: 5rem;
+	padding-bottom: 5rem;
+
+	.label {
+		font-weight: normal;
+	}
+
+	.field-label {
+		flex-grow: 2;
+		text-align: left;
+	}
+}

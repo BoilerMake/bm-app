@@ -1,235 +1,263 @@
 {{ define "apply" }}
 {{ template "header" . }}
 
-{{ template "navbar" . }}
+{{ template "bmvii navbar" . }}
 
-<section class="section">
+<section class="section bmvii-application" style='background-color: #6176CF; background-image: url({{ static_path "bmvii_application_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
-			<div class="column box is-5-tablet is-4-desktop">
-				<form action="" method="post" enctype="multipart/form-data">
+			<div class="box column is-6">
 
-					<div class="field">
-						<label for="school" class="label">School</label>
-						<div class="control">
-							<input type="text" name="school" class="input" value="{{ .FormRefill.School }}" required>
-							{{ template "school datalist" }}
-						</div>
+				<div class="columns is-centered content">
+					<div class="column is-8">
+						<img style="padding: 2rem 0;" src={{ static_path "bmvii_application_header.svg" }}>
 					</div>
+				</div>
 
-					<div class="field">
-						<label for="gender" class="label">Gender</label>
-						<div class="control">
-							<div class="select is-fullwidth">
-								<select name="gender" required>
-										{{ if or (eq .FormRefill.Gender "Female") (not .FormRefill.Gender) }}
-										<option value="Female" selected>Female</option>
-										{{ else }}
-										<option value="Female">Female</option>
-										{{ end }}
-
-										{{ if eq .FormRefill.Gender "Male" }}
-										<option value="Male" selected>Male</option>
-										{{ else }}
-										<option value="Male">Male</option>
-										{{ end }}
-
-										{{ if eq .FormRefill.Gender "Other" }}
-										<option value="Other" selected>Other</option>
-										{{ else }}
-										<option value="Other">Other</option>
-										{{ end }}
-
-										{{ if eq .FormRefill.Gender "Prefer not to say" }}
-										<option value="Prefer not to say" selected>Prefer not to say</option>
-										{{ else }}
-										<option value="Prefer not to say">Prefer not to say</option>
-										{{ end }}
-									</select>
+				<form action="" method="post" enctype="multipart/form-data" style="padding: 0 1.5rem;">
+					<h3>School</h3>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="school" class="label">School</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="school" class="input" value="{{ .FormRefill.School }}" required>
+									{{ template "school datalist" }}
 								</div>
 							</div>
-					</div>
-
-					<div class="field">
-						<label for="major" class="label">Major</label>
-						<div class="control">
-							<input type="text" name="major" class="input" value="{{ .FormRefill.Major }}" required>
 						</div>
 					</div>
 
-					<div class="field">
-						<label for="graduation-year" class="label">Graduation Year</label>
-						<div class="control">
-							<div class="select is-fullwidth">
-								<select name="graduation-year" required>
-									{{ if not .FormRefill.GraduationYear }}
-									<option disabled selected="true">Choose a year</option>
-									{{ else }}
-									<option disabled>Choose a year</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.GraduationYear "2020" }}
-									<option value="2020" selected>2020</option>
-									{{ else }}
-									<option value="2020">2020</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.GraduationYear "2021" }}
-									<option value="2021" selected>2021</option>
-									{{ else }}
-									<option value="2021">2021</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.GraduationYear "2022" }}
-									<option value="2022" selected>2022</option>
-									{{ else }}
-									<option value="2022">2022</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.GraduationYear "2023" }}
-									<option value="2023" selected>2023</option>
-									{{ else }}
-									<option value="2023">2023</option>
-									{{ end }}
-								</select>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="major" class="label">Major</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="major" class="input" value="{{ .FormRefill.Major }}" required>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="field">
-						<label for="dietary-restrictions" class="label">Dietary Restrictions</label>
-						<div class="control">
-							<input type="text" name="dietary-restrictions" class="input" value="{{ .FormRefill.DietaryRestrictions }}">
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="graduation-year" class="label">Graduation Year</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="graduation-year" required>
+											{{ if not .FormRefill.GraduationYear }}
+											<option disabled selected="true">Choose a year</option>
+											{{ else }}
+											<option disabled>Choose a year</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.GraduationYear "2020" }}
+											<option value="2020" selected>2020</option>
+											{{ else }}
+											<option value="2020">2020</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.GraduationYear "2021" }}
+											<option value="2021" selected>2021</option>
+											{{ else }}
+											<option value="2021">2021</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.GraduationYear "2022" }}
+											<option value="2022" selected>2022</option>
+											{{ else }}
+											<option value="2022">2022</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.GraduationYear "2023" }}
+											<option value="2023" selected>2023</option>
+											{{ else }}
+											<option value="2023">2023</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="field">
-						<label for="github" class="label">GitHub</label>
-						<div class="control">
-							<input type="text" name="github" class="input" value="{{ .FormRefill.Github }}">
+					<h3>Personal</h3>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="school" class="label">Resume</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="file has-name">
+									<label class="file-label">
+										{{ if .FormRefill.ResumeFile }}
+										<input class="file-input" type="file" accept=".pdf" name="resume">
+										{{ else }}
+										<input class="file-input" type="file" accept=".pdf" name="resume" required>
+										{{ end }}
+										<span class="file-cta">
+											<span class="file-label">Upload…</span>
+										</span>
+										{{ if .FormRefill.ResumeFile }}
+										<span class="file-name">{{ .FormRefill.ResumeFile }}</span>
+										{{ else }}
+										<span class="file-name">No file selected</span>
+										{{ end }}
+									</label>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="field">
-						<label for="linkedin" class="label">LinkedIn</label>
-						<div class="control">
-							<input type="text" name="linkedin" class="input" value="{{ .FormRefill.Linkedin }}">
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="gender" class="label">Gender</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="gender" required>
+											{{ if or (eq .FormRefill.Gender "Female") (not .FormRefill.Gender) }}
+											<option value="Female" selected>Female</option>
+											{{ else }}
+											<option value="Female">Female</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Gender "Male" }}
+											<option value="Male" selected>Male</option>
+											{{ else }}
+											<option value="Male">Male</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Gender "Other" }}
+											<option value="Other" selected>Other</option>
+											{{ else }}
+											<option value="Other">Other</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Gender "Prefer not to say" }}
+											<option value="Prefer not to say" selected>Prefer not to say</option>
+											{{ else }}
+											<option value="Prefer not to say">Prefer not to say</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div class="file has-name is-fullwidth">
-						<label class="file-label">
-							{{ if .FormRefill.ResumeFile }}
-							<input class="file-input" type="file" accept=".pdf" name="resume">
-							{{ else }}
-							<input class="file-input" type="file" accept=".pdf" name="resume" required>
-							{{ end }}
-							<span class="file-cta">
-								<span class="file-label">Upload…</span>
-							</span>
-							{{ if .FormRefill.ResumeFile }}
-							<span class="file-name">{{ .FormRefill.ResumeFile }}</span>
-							{{ else }}
-							<span class="file-name">No file selected</span>
-							{{ end }}
-						</label>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="race" class="label">Race</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="race" required>
+											{{ if or (eq .FormRefill.Race "Asian or Pacific Islander") (not .FormRefill.Race) }}
+											<option value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
+											{{ else }}
+											<option value="Asian or Pacific Islander">Asian or Pacific Islander</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Black or African American" }}
+											<option value="Black or African American" selected>Black or African American</option>
+											{{ else }}
+											<option value="Black or African American">Black or African American</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Hispanic or Latino" }}
+											<option value="Hispanic or Latino" selected>Hispanic or Latino</option>
+											{{ else }}
+											<option value="Hispanic or Latino">Hispanic or Latino</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Native American or American Indian" }}
+											<option value="Native American or American Indian" selected>Native American or American Indian</option>
+											{{ else }}
+											<option value="Native American or American Indian">Native American or American Indian</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "White, Caucasian, or Middle Eastern" }}
+											<option value="White, Caucasian, or Middle Eastern" selected>White, Caucasian, or Middle Eastern</option>
+											{{ else }}
+											<option value="White, Caucasian, or Middle Eastern">White, Caucasian, or Middle Eastern</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Other" }}
+											<option value="Other" selected>Other</option>
+											{{ else }}
+											<option value="Other">Other</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Prefer not to say" }}
+											<option value="Prefer not to say" selected>Prefer not to say</option>
+											{{ else }}
+											<option value="Prefer not to say">Prefer not to say</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="dietary-restrictions" class="label">Dietary Restrictions</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="dietary-restrictions" class="input" value="{{ .FormRefill.DietaryRestrictions }}">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<h3>Social</h3>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="github" class="label">GitHub</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="github" class="input" value="{{ .FormRefill.Github }}">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="linkedin" class="label">LinkedIn</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="linkedin" class="input" value="{{ .FormRefill.Linkedin }}">
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<br/>
+
 					<div class="field">
-						{{ if .FormRefill.IsFirstHackathon }}
-						<input type="checkbox" name="is-first-hackathon" checked>
-						{{ else }}
-						<input type="checkbox" name="is-first-hackathon">
-						{{ end }}
-						<label for="is-first-hackathon" class="checkbox">This is my first hackathon</label>
-					</div>
-				
-					<div class="field">
-						<label for="race" class="label">Race</label>
+						<label for="why-bm" class="label">Why do you want to come to BoilerMake?</label>
 						<div class="control">
-							<div class="select is-fullwidth">
-								<select name="race" required>
-									{{ if or (eq .FormRefill.Race "Asian or Pacific Islander") (not .FormRefill.Race) }}
-									<option value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
-									{{ else }}
-									<option value="Asian or Pacific Islander">Asian or Pacific Islander</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "Black or African American" }}
-									<option value="Black or African American" selected>Black or African American</option>
-									{{ else }}
-									<option value="Black or African American">Black or African American</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "Hispanic or Latino" }}
-									<option value="Hispanic or Latino" selected>Hispanic or Latino</option>
-									{{ else }}
-									<option value="Hispanic or Latino">Hispanic or Latino</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "Native American or American Indian" }}
-									<option value="Native American or American Indian" selected>Native American or American Indian</option>
-									{{ else }}
-									<option value="Native American or American Indian">Native American or American Indian</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "White, Caucasian, or Middle Eastern" }}
-									<option value="White, Caucasian, or Middle Eastern" selected>White, Caucasian, or Middle Eastern</option>
-									{{ else }}
-									<option value="White, Caucasian, or Middle Eastern">White, Caucasian, or Middle Eastern</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "Other" }}
-									<option value="Other" selected>Other</option>
-									{{ else }}
-									<option value="Other">Other</option>
-									{{ end }}
-
-									{{ if eq .FormRefill.Race "Prefer not to say" }}
-									<option value="Prefer not to say" selected>Prefer not to say</option>
-									{{ else }}
-									<option value="Prefer not to say">Prefer not to say</option>
-									{{ end }}
-								</select>
-							</div>
-						</div>
-					</div>
-
-					<div class="field">
-						<label for="shirt-size" class="label">Shirt Size</label>
-						<div class="control">
-							<input type="text" name="shirt-size" class="input" value="{{ .FormRefill.ShirtSize }}" required>
-						</div>
-					</div>
-
-					<div class="field">
-						<label for="project-idea" class="label">Project Idea</label>
-						<div class="control">
-							<input type="text" name="project-idea" class="input" value="{{ .FormRefill.ProjectIdea }}">
-						</div>
-					</div>
-
-					<div class="field">
-						<label id="team-members-label" class="label">Team members</label>
-						<div class="control">
-							{{ if gt (len .FormRefill.TeamMembers) 0 }}
-							<input type="text" class="input container" name="team-member-1" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 0 }}">
-							{{ else }}
-							<input type="text" class="input" name="team-member-1" aria-labelledby="team-members-label">
-							{{ end }}
-
-							{{ if gt (len .FormRefill.TeamMembers) 1 }}
-							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 1 }}">
-							{{ else }}
-							<input class="input" type="text" name="team-member-2" aria-labelledby="team-members-label">
-							{{ end }}
-
-							{{ if gt (len .FormRefill.TeamMembers) 2 }}
-							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label" value="{{ index .FormRefill.TeamMembers 2 }}">
-							{{ else }}
-							<input class="input" type="text" name="team-member-3" aria-labelledby="team-members-label">
-							{{ end }}
+							<textarea class="textarea"></textarea>
 						</div>
 					</div>
 
@@ -260,8 +288,8 @@
 						<label for="mlh-code-of-conduct">I agree to the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a></label>
 					</div>
 
-					<div class="field">
-						<button class="button is-fullwidth is-dark" type="submit">Submit</button>
+					<div class="field has-text-centered">
+						<button class="button is-red" type="submit">Submit Application</button>
 					</div>
 				</form>
 			</div>
@@ -269,5 +297,5 @@
 	</div>
 </section>
 
-{{ template "footer" . }}
+{{ template "bmvii footer" . }}
 {{ end }}

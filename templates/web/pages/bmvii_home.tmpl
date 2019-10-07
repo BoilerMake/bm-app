@@ -19,7 +19,11 @@
 		<div class="columns is-centered content has-text-centered">
 			<div class="column is-5">
 				<a class="button is-white is-outlined" href="#why">Learn More</a>
-				<a class="button is-red">Apply</a>
+				{{ if .IsAuthenticated }}
+				<a class="button is-red" href="/apply">My Application</a>
+				{{ else }}
+				<a class="button is-red" href="/apply">Apply</a>
+				{{ end }}
 			</div>
 		</div>
 		<div class="columns is-centered content">
