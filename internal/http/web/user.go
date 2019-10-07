@@ -13,6 +13,10 @@ import (
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := NewPage("BoilerMake - Signup", status, r)
@@ -28,6 +32,12 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -88,6 +98,12 @@ func (h *Handler) postSignup() http.HandlerFunc {
 // getActivate activates the account that corresponds to the activation code
 // if there is such an account.
 func (h *Handler) getActivate() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := chi.URLParam(r, "code")
 
@@ -115,6 +131,10 @@ func (h *Handler) getActivate() http.HandlerFunc {
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := NewPage("BoilerMake - Forgot Password", status, r)
@@ -130,6 +150,12 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -173,6 +199,10 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := NewPage("BoilerMake - Reset Password", status, r)
@@ -189,6 +219,10 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := NewPage("BoilerMake - Reset Password", status, r)
@@ -208,6 +242,12 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var passwordResetInfo models.PasswordResetPayload
 		passwordResetInfo.UserToken = r.FormValue("token")
@@ -229,6 +269,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := NewPage("BoilerMake - Login", status, r)
@@ -244,6 +288,12 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -277,6 +327,12 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
@@ -302,6 +358,10 @@ func (h *Handler) getLogout() http.HandlerFunc {
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)

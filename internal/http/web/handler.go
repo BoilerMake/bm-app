@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/mail"
@@ -50,7 +51,6 @@ func NewPage(title string, status string, r *http.Request) (*Page, bool) {
 		// session) because email will just default to the empty string.
 	}
 
-	fmt.Println(title)
 	return &Page{
 		Title:           title,
 		Status:          status,
@@ -175,8 +175,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "bmvii home", p)
-		//h.Templates.RenderTemplate(w, "offseason home", p)
+		h.Templates.RenderTemplate(w, "home", p)
 	}
 }
 
@@ -288,4 +287,21 @@ func staticFileReplace(mode string) func(path string) string {
 
 		return "/404"
 	}
+}
+
+// onSeasonOnly checks to make sure status is between 2 and 4, meaning
+// that the event is either happening right now or is upcoming.  If it is not
+// then the route is redirected to a 404.  If the application status is not on
+// season then this will return an error.
+func onSeasonOnly(status string) error {
+	statusInt, err := strconv.Atoi(status)
+	if err != nil {
+		return err
+	}
+
+	if statusInt < 2 || statusInt > 4 {
+		return fmt.Errorf("application is currently not in season")
+	}
+
+	return nil
 }
