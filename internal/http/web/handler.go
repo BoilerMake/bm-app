@@ -139,6 +139,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	/* EXEC ROUTES */
 	r.Get("/exec", h.getExec())
+	r.Post("/exec/announcement", h.postExecAnnouncement())
+	r.Post("/exec/accepted", h.postExecAccepted())
 	// r.Group(func(r chi.Router) {
 	// 	r.Use(middleware.MustBeExec)
 	//
