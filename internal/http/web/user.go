@@ -12,8 +12,10 @@ import (
 
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Sign Up", r)
+		p, ok := NewPage("BoilerMake - Signup", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -112,8 +114,10 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Forgot Password", r)
+		p, ok := NewPage("BoilerMake - Forgot Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -168,8 +172,10 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Reset Password", r)
+		p, ok := NewPage("BoilerMake - Reset Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -182,8 +188,10 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Reset Password", r)
+		p, ok := NewPage("BoilerMake - Reset Password", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -220,8 +228,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Login", r)
+		p, ok := NewPage("BoilerMake - Login", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
@@ -291,6 +301,8 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
 		if !ok {
@@ -313,7 +325,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		p, ok := NewPage("BoilerMake - Account", r)
+		p, ok := NewPage("BoilerMake - Account", status, r)
 		if !ok {
 			// TODO Error Handling, this state should never be reached
 			http.Error(w, "creating page failed", http.StatusInternalServerError)
