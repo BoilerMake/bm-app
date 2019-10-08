@@ -1,40 +1,20 @@
 package middleware
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )
 
-var (
-	SessionCtxKey = contextKey("Session")
-)
-
-// WithSession gets a requests session or makes one if it doesn't exist. It
-// attaches that session to the request's context to be used by handlers later.
-func WithSession(h http.Handler) http.Handler {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	store := createCookieStore()
-
-	fn := func(w http.ResponseWriter, r *http.Request) {
-		session, _ := store.Get(r, sessionCookieName)
-
-		ctx := context.WithValue(r.Context(), SessionCtxKey, session)
-		h.ServeHTTP(w, r.WithContext(ctx))
-	}
-
-	return http.HandlerFunc(fn)
-}
-
 // MustBeAuthenticated enforces that a user sending a request is logged in.
-// It checks this by seeing if the IsNew values of the sesison is true. If the
-// session is new (was just created because it didn't exist before) then it
-// redirects the request to the login page.
+// It checks this by seeing if the session has a non empty email. If the
+// session does not have an email then that means the session is not valid
+// and so the request is redirected to the login page.
 func MustBeAuthenticated(h http.Handler) http.Handler {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	store := createCookieStore()
@@ -42,8 +22,16 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session, _ := store.Get(r, sessionCookieName)
 
-		if session.IsNew {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		email, ok := session.Values["EMAIL"].(string)
+		if !ok || email == "" {
+			session.AddFlash(flash.Flash{
+				Type:    flash.Info,
+				Message: models.ErrNotLoggedIn.Error(),
+			})
+
+			session.Save(r, w)
+
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 
@@ -63,6 +51,7 @@ func MustBeExec(h http.Handler) http.Handler {
 
 		role, ok := session.Values["ROLE"].(int)
 		if !ok {
+			// We'll redirect people to 404 to keep them from poking around
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}

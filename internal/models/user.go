@@ -1,37 +1,39 @@
 package models
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )
 
 // Authentication errors
 var (
-	ErrUserNotFound   = errors.New("user was not found")
-	ErrEmailInUse     = errors.New("email is already in use")
-	ErrRequiredField  = errors.New("required field is missing")
-	ErrIncorrectLogin = errors.New("email or password is incorrect")
+	ErrUserNotFound            = &ModelError{"User not found", flash.Info}
+	ErrEmailInUse              = &ModelError{"Email is already in use", flash.Info}
+	ErrRequiredField           = &ModelError{"Required field is missing", flash.Info}
+	ErrIncorrectLogin          = &ModelError{"Email or password is incorrect", flash.Info}
+	ErrNotLoggedIn             = &ModelError{"Please log in first", flash.Info}
+	ErrInvalidConfirmationCode = &ModelError{"Invalid email confirmation code", flash.Info}
 )
 
 // Validation errors
 var (
-	ErrEmptyEmail           = errors.New("email is empty")
-	ErrInvalidEmail         = errors.New("email is invalid")
-	ErrEmptyPassword        = errors.New("password is empty")
-	ErrEmptyPasswordConfirm = errors.New("password confirmation is empty")
-	ErrEmptyFirstName       = errors.New("first name is empty")
-	ErrEmptyLastName        = errors.New("last name is empty")
-	ErrPasswordConfirm      = errors.New("password and confirmation password do not match")
+	ErrEmptyEmail           = &ModelError{"Email is empty", flash.Info}
+	ErrInvalidEmail         = &ModelError{"Email is invalid", flash.Info}
+	ErrEmptyPassword        = &ModelError{"Password is empty", flash.Info}
+	ErrEmptyPasswordConfirm = &ModelError{"Password confirmation is empty", flash.Info}
+	ErrEmptyFirstName       = &ModelError{"First name is empty", flash.Info}
+	ErrEmptyLastName        = &ModelError{"Last name is empty", flash.Info}
+	ErrPasswordConfirm      = &ModelError{"Password and confirmation password do not match", flash.Info}
 )
 
 // Password Reset errors
 var (
-	ErrInvalidToken = errors.New("password reset token is invalid")
-	ErrExpiredToken = errors.New("password reset token has expired")
+	ErrInvalidToken = &ModelError{"Password reset token is invalid", flash.Info}
+	ErrExpiredToken = &ModelError{"Password reset token has expired", flash.Info}
 )
 
 const (
@@ -73,14 +75,11 @@ type PasswordResetPayload struct {
 	NewPassword string `json:"newPassword"`
 }
 
-// SetSession sets all the session values for a user and sets IsNew to false
-// to show that the session is in use.
+// SetSession sets all the session values for a user
 func (u *User) SetSession(session *sessions.Session) {
 	session.Values["ID"] = u.ID
 	session.Values["EMAIL"] = u.Email
 	session.Values["ROLE"] = u.Role
-
-	session.IsNew = false
 }
 
 // FromFormData converts a user from a request's FormData to a models.User
