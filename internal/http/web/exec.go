@@ -1,9 +1,10 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/BoilerMake/new-backend/internal/postgres"
 )
 
 type ExecInfo struct {
@@ -34,14 +35,12 @@ func (h *Handler) getExec() http.HandlerFunc {
 	}
 }
 
-// func (s *UserService) changeAcceptStatus(email string) error {
-// 	dbu, err := s.GetByEmail(email)
-// 	// TODO error handling
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+func changeAcceptStatus(email string) error {
+	var s postgres.UserService
+	s.GetByEmail(email)
+
+	return nil
+}
 
 // Post Exec for announcements
 func (h *Handler) postExecAnnouncement() http.HandlerFunc {
@@ -56,6 +55,8 @@ func (h *Handler) postExecAccepted() http.HandlerFunc {
 		var execInfo ExecInfo
 		execInfo.FromExecData(r)
 		emails := strings.Split(execInfo.AcceptedEmails, ", ")
-		fmt.Println(emails)
+		for _, email := range emails {
+			changeAcceptStatus(email)
+		}
 	}
 }
