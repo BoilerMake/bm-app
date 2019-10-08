@@ -323,25 +323,20 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 // postAccount updates a user's account.
 func (h *Handler) postAccount() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("invalid session value"))
 			return
 		}
 
 		u, err := h.UserService.GetByEmail(email)
 		if err != nil {
-			// TODO error handling
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -350,8 +345,7 @@ func (h *Handler) postAccount() http.HandlerFunc {
 
 		err = h.UserService.Update(u)
 		if err != nil {
-			// TODO error handling
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			h.Error(w, r, err)
 			return
 		}
 
