@@ -11,6 +11,7 @@ import (
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -33,7 +34,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Apply", session)
+		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return

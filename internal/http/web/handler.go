@@ -26,6 +26,9 @@ type ErrorReporter func(interfaces ...interface{})
 type Page struct {
 	Title string
 
+	// Current status of app
+	Status string
+
 	// A generic place to put unstructured data
 	Data interface{}
 
@@ -42,7 +45,7 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(w http.ResponseWriter, r *http.Request, title string, session *sessions.Session) (*Page, bool) {
+func NewPage(w http.ResponseWriter, r *http.Request, title string, status string, session *sessions.Session) (*Page, bool) {
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
 		// It's ok to ignore if this errors (for example when a user doesn't have a
@@ -62,6 +65,7 @@ func NewPage(w http.ResponseWriter, r *http.Request, title string, session *sess
 
 	return &Page{
 		Title:           title,
+		Status:          status,
 		Email:           email,
 		IsAuthenticated: email != "",
 		Flashes:         flashes,
@@ -215,11 +219,12 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake", status, session)
 
-		p, ok := NewPage(w, r, "BoilerMake", session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return
@@ -232,11 +237,12 @@ func (h *Handler) getRoot() http.HandlerFunc {
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
 
-		p, ok := NewPage(w, r, "BoilerMake - Hackers", session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return
@@ -249,28 +255,30 @@ func (h *Handler) getHackers() http.HandlerFunc {
 // getAbout renders the about template.
 func (h *Handler) getAbout() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
 
-		p, ok := NewPage(w, r, "BoilerMake - About", session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "hackers", p)
+		h.Templates.RenderTemplate(w, "about", p)
 	}
 }
 
 // getFaq renders the faq template.
 func (h *Handler) getFaq() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
 
-		p, ok := NewPage(w, r, "BoilerMake - FAQ", session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return
@@ -284,11 +292,12 @@ func (h *Handler) getFaq() http.HandlerFunc {
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
 
-		p, ok := NewPage(w, r, "BoilerMake - 404", session)
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"))
 			return
