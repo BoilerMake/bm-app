@@ -76,7 +76,13 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		return err
 	}
 
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
 	oldApp, err := s.GetByUserID(newApp.UserID)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// Application hasn't been made yet
@@ -84,8 +90,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			if newApp.ResumeFile == "" {
 				return models.ErrMissingResume
 			}
-
-			_, err = s.DB.Exec(`INSERT INTO bm7_applications (
+			_, err = tx.Exec(`INSERT INTO bm7_applications (
 			user_id,
 			school,
 			gender,
@@ -124,8 +129,16 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			)
 
 			if err != nil {
+				if rollbackErr := tx.Rollback(); rollbackErr != nil {
+					return rollbackErr
+				}
 				return err
 			}
+		} else {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return err
 		}
 	} else {
 		// Application already exists, so update it
@@ -136,7 +149,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		}
 
 		if newApp.ResumeFile != "" {
-			_, err = s.DB.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm7_applications
 			SET
 				school = $1,
 				gender = $2,
@@ -174,7 +187,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 				newApp.UserID,
 			)
 		} else {
-			_, err = s.DB.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm7_applications
 			SET
 				school = $1,
 				gender = $2,
@@ -212,10 +225,14 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		}
 
 		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return err
 		}
 	}
 
+	err = tx.Commit()
 	return err
 }
 
@@ -223,7 +240,12 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	var dba dbApplication
 
-	err := s.DB.QueryRow(`SELECT
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.QueryRow(`SELECT
 			id,
 			user_id,
 			decision,
@@ -269,11 +291,12 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	)
 
 	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
 		return nil, err
 	}
 
-	// TODO if there's an err dbu will likely be nil so toModel will panic.
-	// Seems like toModel needs to check for nil and maybe return an err.
-	// Definitely something to test.
+	err = tx.Commit()
 	return dba.toModel(), err
 }
