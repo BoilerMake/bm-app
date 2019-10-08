@@ -12,6 +12,7 @@ bin/
 # Configs we don't want pushed
 .env
 PGDATA/
+package-lock.json
 # But allow deploy/test/.env
 !/deploy/test/.env
 

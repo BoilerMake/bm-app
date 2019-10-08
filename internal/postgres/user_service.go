@@ -70,19 +70,16 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 
 	code, err = GenerateRandomString(32)
 	if err != nil {
-
 		return id, code, err
 	}
 
 	err = u.Validate()
 	if err != nil {
-
 		return id, code, err
 	}
 
 	err = u.HashPassword()
 	if err != nil {
-
 		return id, code, err
 	}
 
@@ -161,7 +158,11 @@ func (s *UserService) GetById(id int) (*models.User, error) {
 	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, models.ErrIncorrectLogin
+		} else {
+			return nil, err
+		}
 	}
 
 	// TODO if there's an err dbu will likely be nil so toModel will panic.
@@ -188,7 +189,11 @@ func (s *UserService) GetByEmail(email string) (*models.User, error) {
 	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, models.ErrIncorrectLogin
+		} else {
+			return nil, err
+		}
 	}
 
 	// TODO if there's an err dbu will likely be nil so toModel will panic.
@@ -215,7 +220,11 @@ func (s *UserService) GetByCode(code string) (*models.User, error) {
 	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, models.ErrInvalidConfirmationCode
+		} else {
+			return nil, err
+		}
 	}
 
 	return dbu.toModel(), err
@@ -254,13 +263,6 @@ func (s *UserService) GetAll() (u *[]models.User, err error) {
 // Update changes the values of a user in the database.  It will update all
 // fields in the user model given to it, including nil or zero fields.  Don't
 // give it a user with only the changes you want to make.
-//
-// TODO being able to update email has some implications to it:
-// - NOT NULL/UNIQUE
-// - Reconfirming their new email
-// - Removing old email from mailing lists(?) and adding new one
-//   - Do we even have mailing lists for this to be a problem with?
-// - Obvious answer seems to just not allow changing email (what we've always done)
 func (s *UserService) Update(u *models.User) error {
 	_, err := s.DB.Exec(`UPDATE users
 	SET
@@ -274,7 +276,9 @@ func (s *UserService) Update(u *models.User) error {
 		confirmation_code = $8
 	WHERE id = $9`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.IsActive, u.ConfirmationCode, u.ID)
 
-	// TODO make sure when an exec fails it doesn't have an effect on the db
+	if err == sql.ErrNoRows {
+		return models.ErrIncorrectLogin
+	}
 	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
@@ -295,6 +299,7 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if email == "" {
 		return "", models.ErrEmptyEmail
 	}
+
 	token, err := GenerateRandomString(passwordResetTokenLength)
 	if err != nil {
 		return "", err
@@ -364,7 +369,6 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		}
 	}
 
-	// TODO output useful errors
 	if argon2.CheckPassword(userToken, hashedToken) {
 		s.TokenChangePassword(id, uid, password)
 		return nil
@@ -374,7 +378,6 @@ func (s *UserService) ResetPassword(token string, password string) error {
 }
 
 // TokenChangePassword changes password then deletes the token used
-// TODO error checking on failed change
 func (s *UserService) TokenChangePassword(id int, uid int, password string) error {
 	passwordHash, err := argon2.DefaultParameters.HashPassword(password)
 	if err != nil {
@@ -386,7 +389,6 @@ func (s *UserService) TokenChangePassword(id int, uid int, password string) erro
 
 	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
 	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
-	// TODO make sure when an exec fails it doesn't have an effect on the db
 
 	return err
 }
