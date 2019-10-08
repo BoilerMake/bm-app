@@ -4,21 +4,23 @@ import (
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	"github.com/BoilerMake/new-backend/pkg/flash"
 )
 
 // Validation errors
 var (
-	ErrMissingSchool         = &ModelError{"please enter your school's name"}
-	ErrMissingGender         = &ModelError{"please enter your gender"}
-	ErrMissingMajor          = &ModelError{"please enter your major"}
-	ErrMissingGraduationYear = &ModelError{"please enter your graduation year"}
-	ErrMissingRace           = &ModelError{"please enter your race"}
-	ErrMissingShirtSize      = &ModelError{"please enter your shirt size"}
-	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions"}
+	ErrMissingSchool         = &ModelError{"please enter your school's name", flash.Info}
+	ErrMissingGender         = &ModelError{"please enter your gender", flash.Info}
+	ErrMissingMajor          = &ModelError{"please enter your major", flash.Info}
+	ErrMissingGraduationYear = &ModelError{"please enter your graduation year", flash.Info}
+	ErrMissingRace           = &ModelError{"please enter your race", flash.Info}
+	ErrMissingShirtSize      = &ModelError{"please enter your shirt size", flash.Info}
+	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions", flash.Info}
 
-	// Validation errors when form paring
-	ErrMissingResume  = &ModelError{"please upload a resume"}
-	ErrResumeTooLarge = &ModelError{"resume upload is too large"}
+	// Validation errors when parsing form
+	ErrMissingResume  = &ModelError{"please upload a resume", flash.Info}
+	ErrResumeTooLarge = &ModelError{"resume upload is too large", flash.Info}
 )
 
 const (
@@ -99,6 +101,14 @@ func (a *Application) FromFormData(r *http.Request) error {
 	// it with this post request.
 	_, header, err := r.FormFile("resume")
 	if err != nil {
+		// Check if this error happened becuase request was too large
+		// Kinda janky but it works
+		if err.Error() == "multipart: NextPart: http: request body too large" {
+			return ErrResumeTooLarge
+		}
+
+		// Otherwise only return an error if it's not because the file was missing.  Again,
+		// we handle the msising resume case in the database.
 		if err != http.ErrMissingFile {
 			return err
 		}

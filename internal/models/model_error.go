@@ -1,11 +1,14 @@
 package models
 
-import "fmt"
-
 type ModelError struct {
 	Message string
+	Type    int
 }
 
-func (e *ModelError) Error() string {
-	return fmt.Sprintf("model error: %v", e.Message)
+func (e ModelError) Error() string {
+	return e.Message
+}
+
+func (e ModelError) GetType() int {
+	return e.Type
 }

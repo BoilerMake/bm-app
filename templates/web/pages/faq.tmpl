@@ -1,7 +1,9 @@
 {{ define "faq" }}
 	{{ template "header" . }}
 
-	{{ template "navbar" }}
+	{{ template "navbar" . }}
+
+	{{ template "flashes" .Flashes }}
 
 	<main>
 		<div class="section">
