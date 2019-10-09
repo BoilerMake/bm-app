@@ -7,7 +7,6 @@ package postgres
 import (
 	"crypto/rand"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -67,7 +66,6 @@ func (u *dbUser) toModel() *models.User {
 // - nil user
 func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	// Generate confirmation code
-
 	code, err = GenerateRandomString(32)
 	if err != nil {
 		return id, code, err
@@ -83,7 +81,12 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 		return id, code, err
 	}
 
-	err = s.DB.QueryRow(`INSERT INTO users (
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return id, code, err
+	}
+
+	err = tx.QueryRow(`INSERT INTO users (
 			role,
 			email,
 			password_hash,
@@ -108,14 +111,33 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "unique_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return id, code, rollbackErr
+			}
 			return id, code, models.ErrEmailInUse
 		case "not_null_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return id, code, rollbackErr
+			}
 			return id, code, models.ErrRequiredField
 		default:
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return id, code, rollbackErr
+			}
 			return id, code, pgerr
 		}
 	}
 
+	// Switch statement above only checks for postgres specific errors, so here we'll check
+	// for a generic error
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return id, code, rollbackErr
+		}
+		return id, code, err
+	}
+
+	err = tx.Commit()
 	return id, code, err
 }
 
@@ -141,10 +163,15 @@ func (s *UserService) Login(u *models.User) error {
 }
 
 // GetById returns a single user with the given id.
-func (s *UserService) GetById(id int) (*models.User, error) {
+func (s *UserService) GetById(id int) (u *models.User, err error) {
 	var dbu dbUser
 
-	err := s.DB.QueryRow(`SELECT
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return u, err
+	}
+
+	err = tx.QueryRow(`SELECT
 		id,
 		role,
 		email,
@@ -158,6 +185,10 @@ func (s *UserService) GetById(id int) (*models.User, error) {
 	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
+
 		if err == sql.ErrNoRows {
 			return nil, models.ErrIncorrectLogin
 		} else {
@@ -165,17 +196,20 @@ func (s *UserService) GetById(id int) (*models.User, error) {
 		}
 	}
 
-	// TODO if there's an err dbu will likely be nil so toModel will panic.
-	// Seems like toModel needs to check for nil and maybe return an err.
-	// Definitely something to test.
+	err = tx.Commit()
 	return dbu.toModel(), err
 }
 
 // GetByEmail returns a single user with the given email.
-func (s *UserService) GetByEmail(email string) (*models.User, error) {
+func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 	var dbu dbUser
 
-	err := s.DB.QueryRow(`SELECT
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return u, err
+	}
+
+	err = tx.QueryRow(`SELECT
 		id,
 		role,
 		email,
@@ -189,6 +223,10 @@ func (s *UserService) GetByEmail(email string) (*models.User, error) {
 	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return u, rollbackErr
+		}
+
 		if err == sql.ErrNoRows {
 			return nil, models.ErrIncorrectLogin
 		} else {
@@ -196,17 +234,20 @@ func (s *UserService) GetByEmail(email string) (*models.User, error) {
 		}
 	}
 
-	// TODO if there's an err dbu will likely be nil so toModel will panic.
-	// Seems like toModel needs to check for nil and maybe return an err.
-	// Definitely something to test.
+	err = tx.Commit()
 	return dbu.toModel(), err
 }
 
 // GetByCode returns a single user with the given email confirmation code
-func (s *UserService) GetByCode(code string) (*models.User, error) {
+func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 	var dbu dbUser
 
-	err := s.DB.QueryRow(`SELECT
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return u, err
+	}
+
+	err = tx.QueryRow(`SELECT
 		id,
 		role,
 		email,
@@ -220,6 +261,10 @@ func (s *UserService) GetByCode(code string) (*models.User, error) {
 	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return u, rollbackErr
+		}
+
 		if err == sql.ErrNoRows {
 			return nil, models.ErrInvalidConfirmationCode
 		} else {
@@ -230,41 +275,16 @@ func (s *UserService) GetByCode(code string) (*models.User, error) {
 	return dbu.toModel(), err
 }
 
-// GetAll finds and returns all user in the database.
-func (s *UserService) GetAll() (u *[]models.User, err error) {
-	rows, err := s.DB.Query(`SELECT
-		id,
-		role,
-		email,
-		first_name,
-		last_name,
-		phone,
-		is_active,
-		confirmation_code
-	FROM users`)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get all users: %v", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var dbu dbUser
-		err = rows.Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get all users: %v", err)
-		}
-
-		*u = append(*u, *dbu.toModel())
-	}
-
-	return u, err
-}
-
 // Update changes the values of a user in the database.  It will update all
 // fields in the user model given to it, including nil or zero fields.  Don't
 // give it a user with only the changes you want to make.
 func (s *UserService) Update(u *models.User) error {
-	_, err := s.DB.Exec(`UPDATE users
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`UPDATE users
 	SET
 		role = $1,
 		email = $2,
@@ -276,21 +296,42 @@ func (s *UserService) Update(u *models.User) error {
 		confirmation_code = $8
 	WHERE id = $9`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.IsActive, u.ConfirmationCode, u.ID)
 
-	if err == sql.ErrNoRows {
-		return models.ErrIncorrectLogin
-	}
 	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "unique_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return models.ErrEmailInUse
 		case "not_null_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return models.ErrRequiredField
 		default:
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return pgerr
 		}
 	}
 
+	// Switch statement above only checks for postgres specific errors, so here we'll check
+	// for a generic error
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+
+		if err == sql.ErrNoRows {
+			return models.ErrIncorrectLogin
+		} else {
+			return err
+		}
+	}
+
+	err = tx.Commit()
 	return err
 }
 
@@ -313,7 +354,12 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 		return "", err
 	}
 
-	_, err = s.DB.Exec(`
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return "", err
+	}
+
+	_, err = tx.Exec(`
 	INSERT INTO
 		password_reset_tokens (uid, tokenID, hashedToken)
 	VALUES
@@ -323,13 +369,26 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "not_null_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return "", rollbackErr
+			}
 			return "", nil
 		}
 	}
 
+	// Switch statement above only checks for postgres specific errors, so here we'll check
+	// for a generic error
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return "", rollbackErr
+		}
+		return "", err
+	}
+
 	userToken := tokenID + token
 
-	return userToken, nil
+	err = tx.Commit()
+	return userToken, err
 }
 
 // ResetPassword resets the user's password
@@ -387,8 +446,34 @@ func (s *UserService) TokenChangePassword(id int, uid int, password string) erro
 	// Remove any trace of unhashed password (can never be too safe)
 	password = ""
 
-	_, err = s.DB.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(`UPDATE users SET password_hash = $1 WHERE id = $2`, passwordHash, uid)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	tx, err = s.DB.Begin()
+	if err != nil {
+		return err
+	}
 	_, err = s.DB.Exec(`DELETE FROM password_reset_tokens WHERE id=$1`, id)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+	err = tx.Commit()
 
 	return err
 }

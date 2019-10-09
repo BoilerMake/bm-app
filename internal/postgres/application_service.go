@@ -22,18 +22,15 @@ type dbApplication struct {
 	CheckedInAt          pq.NullTime
 	RSVP                 sql.NullBool
 	School               sql.NullString
-	Gender               sql.NullString
 	Major                sql.NullString
 	GraduationYear       sql.NullString
+	ResumeFile           sql.NullString
+	Gender               sql.NullString
+	Race                 sql.NullString
 	DietaryRestrictions  sql.NullString
 	Github               sql.NullString
 	Linkedin             sql.NullString
-	ResumeFile           sql.NullString
-	IsFirstHackathon     sql.NullBool
-	Race                 sql.NullString
-	ShirtSize            sql.NullString
-	ProjectIdea          sql.NullString
-	TeamMembers          []string
+	WhyBM                sql.NullString
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
@@ -50,18 +47,15 @@ func (a *dbApplication) toModel() *models.Application {
 		CheckedInAt:          a.CheckedInAt.Time,
 		RSVP:                 a.RSVP.Bool,
 		School:               a.School.String,
-		Gender:               a.Gender.String,
 		Major:                a.Major.String,
 		GraduationYear:       a.GraduationYear.String,
+		ResumeFile:           a.ResumeFile.String,
+		Gender:               a.Gender.String,
+		Race:                 a.Race.String,
 		DietaryRestrictions:  a.DietaryRestrictions.String,
 		Github:               a.Github.String,
 		Linkedin:             a.Linkedin.String,
-		ResumeFile:           a.ResumeFile.String,
-		IsFirstHackathon:     a.IsFirstHackathon.Bool,
-		Race:                 a.Race.String,
-		ShirtSize:            a.ShirtSize.String,
-		ProjectIdea:          a.ProjectIdea.String,
-		TeamMembers:          a.TeamMembers,
+		WhyBM:                a.WhyBM.String,
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,
@@ -76,7 +70,13 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		return err
 	}
 
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
 	oldApp, err := s.GetByUserID(newApp.UserID)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// Application hasn't been made yet
@@ -84,48 +84,49 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			if newApp.ResumeFile == "" {
 				return models.ErrMissingResume
 			}
-
-			_, err = s.DB.Exec(`INSERT INTO bm7_applications (
+			_, err = tx.Exec(`INSERT INTO bm7_applications (
 			user_id,
 			school,
-			gender,
 			major,
 			graduation_year,
+			resume_file,
+			gender,
+			race,
 			dietary_restrictions,
 			github,
 			linkedin,
-			resume_file,
-			is_first_hackathon,
-			race,
-			shirt_size,
-			project_idea,
-			team_members,
+			why_bm,
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17);`,
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
 				newApp.UserID,
 				newApp.School,
-				newApp.Gender,
 				newApp.Major,
 				newApp.GraduationYear,
+				newApp.ResumeFile,
+				newApp.Gender,
+				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
 				newApp.Linkedin,
-				newApp.ResumeFile,
-				newApp.IsFirstHackathon,
-				newApp.Race,
-				newApp.ShirtSize,
-				newApp.ProjectIdea,
-				pq.Array(newApp.TeamMembers),
+				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
 				newApp.MLHContestAndPrivacy,
 			)
 
 			if err != nil {
+				if rollbackErr := tx.Rollback(); rollbackErr != nil {
+					return rollbackErr
+				}
 				return err
 			}
+		} else {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return err
 		}
 	} else {
 		// Application already exists, so update it
@@ -136,74 +137,62 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		}
 
 		if newApp.ResumeFile != "" {
-			_, err = s.DB.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm7_applications
 			SET
 				school = $1,
-				gender = $2,
-				major = $3,
-				graduation_year = $4,
-				dietary_restrictions = $5,
-				github = $6,
-				linkedin = $7,
-				resume_file = $8,
-				is_first_hackathon = $9,
-				race = $10,
-				shirt_size = $11,
-				project_idea = $12,
-				team_members = $13,
-				tac_18_or_older = $14,
-				tac_mlh_code_of_conduct = $15,
-				tac_mlh_contest_and_privacy = $16
-			WHERE user_id = $17`,
+				major = $2,
+				graduation_year = $3,
+				resume_file = $4,
+				gender = $5,
+				race = $6,
+				dietary_restrictions = $7,
+				github = $8,
+				linkedin = $9,
+				why_bm = $10
+				tac_18_or_older = $11,
+				tac_mlh_code_of_conduct = $12,
+				tac_mlh_contest_and_privacy = $13
+			WHERE user_id = $14`,
 				newApp.School,
-				newApp.Gender,
 				newApp.Major,
 				newApp.GraduationYear,
+				newApp.ResumeFile,
+				newApp.Gender,
+				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
 				newApp.Linkedin,
-				newApp.ResumeFile,
-				newApp.IsFirstHackathon,
-				newApp.Race,
-				newApp.ShirtSize,
-				newApp.ProjectIdea,
-				pq.Array(newApp.TeamMembers),
+				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
 				newApp.MLHContestAndPrivacy,
 				newApp.UserID,
 			)
 		} else {
-			_, err = s.DB.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm7_applications
 			SET
 				school = $1,
-				gender = $2,
-				major = $3,
-				graduation_year = $4,
-				dietary_restrictions = $5,
-				github = $6,
-				linkedin = $7,
-				is_first_hackathon = $8,
-				race = $9,
-				shirt_size = $10,
-				project_idea = $11,
-				team_members = $12,
-				tac_18_or_older = $13,
-				tac_mlh_code_of_conduct = $14,
-				tac_mlh_contest_and_privacy = $15
-			WHERE user_id = $16`,
+				major = $2,
+				graduation_year = $3,
+				gender = $4,
+				race = $5,
+				dietary_restrictions = $6,
+				github = $7,
+				linkedin = $8,
+				why_bm = $9,
+				tac_18_or_older = $10,
+				tac_mlh_code_of_conduct = $11,
+				tac_mlh_contest_and_privacy = $12
+			WHERE user_id = $13`,
 				newApp.School,
-				newApp.Gender,
 				newApp.Major,
 				newApp.GraduationYear,
+				newApp.Gender,
+				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
 				newApp.Linkedin,
-				newApp.IsFirstHackathon,
-				newApp.Race,
-				newApp.ShirtSize,
-				newApp.ProjectIdea,
-				pq.Array(newApp.TeamMembers),
+				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
 				newApp.MLHContestAndPrivacy,
@@ -212,10 +201,14 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		}
 
 		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return err
 		}
 	}
 
+	err = tx.Commit()
 	return err
 }
 
@@ -223,24 +216,26 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	var dba dbApplication
 
-	err := s.DB.QueryRow(`SELECT
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.QueryRow(`SELECT
 			id,
 			user_id,
 			decision,
 			rsvp,
 			school,
-			gender,
 			major,
 			graduation_year,
+			resume_file,
+			gender,
+			race,
 			dietary_restrictions,
 			github,
 			linkedin,
-			resume_file,
-			is_first_hackathon,
-			race,
-			shirt_size,
-			project_idea,
-			team_members,
+			why_bm,
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy
@@ -251,29 +246,27 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.Decision,
 		&dba.RSVP,
 		&dba.School,
-		&dba.Gender,
 		&dba.Major,
 		&dba.GraduationYear,
+		&dba.ResumeFile,
+		&dba.Gender,
+		&dba.Race,
 		&dba.DietaryRestrictions,
 		&dba.Github,
 		&dba.Linkedin,
-		&dba.ResumeFile,
-		&dba.IsFirstHackathon,
-		&dba.Race,
-		&dba.ShirtSize,
-		&dba.ProjectIdea,
-		pq.Array(&dba.TeamMembers),
+		&dba.WhyBM,
 		&dba.Is18OrOlder,
 		&dba.MLHCodeOfConduct,
 		&dba.MLHContestAndPrivacy,
 	)
 
 	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
 		return nil, err
 	}
 
-	// TODO if there's an err dbu will likely be nil so toModel will panic.
-	// Seems like toModel needs to check for nil and maybe return an err.
-	// Definitely something to test.
+	err = tx.Commit()
 	return dba.toModel(), err
 }

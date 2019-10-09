@@ -13,6 +13,10 @@ import (
 func (h *Handler) getSignup() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -30,6 +34,12 @@ func (h *Handler) getSignup() http.HandlerFunc {
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -82,6 +92,12 @@ func (h *Handler) postSignup() http.HandlerFunc {
 // getActivate activates the account that corresponds to the activation code
 // if there is such an account.
 func (h *Handler) getActivate() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := chi.URLParam(r, "code")
 
@@ -108,6 +124,10 @@ func (h *Handler) getActivate() http.HandlerFunc {
 func (h *Handler) getForgotPassword() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -124,6 +144,12 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -165,6 +191,10 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 func (h *Handler) getResetPassword() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -183,6 +213,10 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -203,6 +237,12 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var passwordResetInfo models.PasswordResetPayload
 		passwordResetInfo.UserToken = r.FormValue("token")
@@ -223,6 +263,10 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 func (h *Handler) getLogin() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -240,6 +284,11 @@ func (h *Handler) getLogin() http.HandlerFunc {
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
@@ -268,6 +317,11 @@ func (h *Handler) postLogin() http.HandlerFunc {
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -289,6 +343,10 @@ func (h *Handler) getLogout() http.HandlerFunc {
 func (h *Handler) getAccount() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)

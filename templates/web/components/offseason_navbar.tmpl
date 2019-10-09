@@ -20,20 +20,6 @@
 			<a class="navbar-item" href="/faq">FAQ</a>
 			<a class="navbar-item" href="/about">About</a>
 		</div>
-
-		<div class="navbar-end">
-			{{ if .IsAuthenticated }}
-			<div class="navbar-item">
-				<a class="button is-light" href="/account">Account</a>
-			</div>
-			<a class="navbar-item" href="/logout">Log Out</a>
-			{{ else }}
-			<div class="navbar-item">
-				<a class="button is-light" href="/signup">Sign up</a>
-			</div>
-			<a class="navbar-item" href="/login">Log in</a>
-			{{ end }}
-		</div>
 	</div>
 </nav>
 

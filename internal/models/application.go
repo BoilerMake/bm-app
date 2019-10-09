@@ -1,26 +1,25 @@
 package models
 
 import (
+	"errors"
 	"mime/multipart"
 	"net/http"
 	"time"
-
-	"github.com/BoilerMake/new-backend/pkg/flash"
 )
 
 // Validation errors
 var (
-	ErrMissingSchool         = &ModelError{"please enter your school's name", flash.Info}
-	ErrMissingGender         = &ModelError{"please enter your gender", flash.Info}
-	ErrMissingMajor          = &ModelError{"please enter your major", flash.Info}
-	ErrMissingGraduationYear = &ModelError{"please enter your graduation year", flash.Info}
-	ErrMissingRace           = &ModelError{"please enter your race", flash.Info}
-	ErrMissingShirtSize      = &ModelError{"please enter your shirt size", flash.Info}
-	ErrMissingTACAgree       = &ModelError{"please agree to the terms and conditions", flash.Info}
+	ErrMissingSchool         = errors.New("please enter your school's name")
+	ErrMissingMajor          = errors.New("please enter your major")
+	ErrMissingGraduationYear = errors.New("please enter your graduation year")
+	ErrMissingGender         = errors.New("please enter your gender")
+	ErrMissingRace           = errors.New("please enter your race")
+	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake?")
+	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
 
-	// Validation errors when parsing form
-	ErrMissingResume  = &ModelError{"please upload a resume", flash.Info}
-	ErrResumeTooLarge = &ModelError{"resume upload is too large", flash.Info}
+	// Validation errors when form paring
+	ErrMissingResume  = errors.New("please upload a resume")
+	ErrResumeTooLarge = errors.New("resume upload is too large")
 )
 
 const (
@@ -39,24 +38,21 @@ const (
 type Application struct {
 	ID                   int
 	Decision             int
+	EmailedDecision      bool
 	UserID               int
+	RSVP                 bool
+	CheckedInAt          time.Time
 	School               string
-	Gender               string
 	Major                string
 	GraduationYear       string
+	ResumeFile           string
+	Resume               *multipart.FileHeader // Stored in S3, not db
+	Gender               string
+	Race                 string
 	DietaryRestrictions  string
 	Github               string
 	Linkedin             string
-	ResumeFile           string
-	Resume               *multipart.FileHeader // Stored in S3, not db
-	RSVP                 bool
-	IsFirstHackathon     bool
-	Race                 string
-	EmailedDecision      bool
-	CheckedInAt          time.Time
-	ShirtSize            string
-	ProjectIdea          string
-	TeamMembers          []string
+	WhyBM                string
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
 	MLHContestAndPrivacy bool
@@ -67,16 +63,16 @@ type Application struct {
 func (a *Application) Validate() error {
 	if a.School == "" {
 		return ErrMissingSchool
-	} else if a.Gender == "" {
-		return ErrMissingGender
 	} else if a.Major == "" {
 		return ErrMissingMajor
 	} else if a.GraduationYear == "" {
 		return ErrMissingGraduationYear
+	} else if a.Gender == "" {
+		return ErrMissingGender
 	} else if a.Race == "" {
 		return ErrMissingRace
-	} else if a.ShirtSize == "" {
-		return ErrMissingShirtSize
+	} else if a.WhyBM == "" {
+		return ErrMissingWhyBM
 	} else if !a.Is18OrOlder || !a.MLHCodeOfConduct || !a.MLHContestAndPrivacy {
 		return ErrMissingTACAgree
 	}
@@ -88,12 +84,14 @@ func (a *Application) Validate() error {
 // models.Application struct.
 func (a *Application) FromFormData(r *http.Request) error {
 	a.School = r.FormValue("school")
-	a.Gender = r.FormValue("gender")
 	a.Major = r.FormValue("major")
 	a.GraduationYear = r.FormValue("graduation-year")
+	a.Gender = r.FormValue("gender")
+	a.Race = r.FormValue("race")
 	a.DietaryRestrictions = r.FormValue("dietary-restrictions")
 	a.Github = r.FormValue("github")
 	a.Linkedin = r.FormValue("linkedin")
+	a.WhyBM = r.FormValue("why-bm")
 
 	// If no file was uploaded then set ResumeFile to empty string and let
 	// application_service decide what to do.  If there's already a ResumeFile
@@ -122,12 +120,6 @@ func (a *Application) FromFormData(r *http.Request) error {
 			return ErrResumeTooLarge
 		}
 	}
-
-	a.IsFirstHackathon = r.FormValue("is-first-hackathon") == "on"
-	a.Race = r.FormValue("race")
-	a.ShirtSize = r.FormValue("shirt-size")
-	a.ProjectIdea = r.FormValue("project-idea")
-	a.TeamMembers = append(a.TeamMembers, r.FormValue("team-member-1"), r.FormValue("team-member-2"), r.FormValue("team-member-3"))
 
 	a.Is18OrOlder = r.FormValue("is-18-or-older") == "on"
 	a.MLHCodeOfConduct = r.FormValue("mlh-code-of-conduct") == "on"

@@ -145,7 +145,6 @@ type UserService interface {
 	GetById(id int) (*User, error)
 	GetByEmail(email string) (*User, error)
 	GetByCode(code string) (*User, error)
-	GetAll() (*[]User, error)
 	Update(u *User) error
 	GetPasswordReset(email string) (string, error)
 	ResetPassword(token string, newPassword string) error

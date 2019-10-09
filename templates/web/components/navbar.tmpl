@@ -1,6 +1,9 @@
 {{ define "navbar" }}
 
-{{/* For now always return offseason, once we get others then we can add conditionals */}}
-{{ template "offseason navbar" }}
+{{ if and (ge .Status "2") (le .Status "4") }}
+	{{ template "bmvii navbar" . }}
+{{ else }}
+	{{ template "offseason navbar" . }}
+{{ end }}
 
 {{ end }}

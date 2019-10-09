@@ -12,6 +12,10 @@ import (
 func (h *Handler) getApply() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
@@ -50,6 +54,11 @@ func (h *Handler) getApply() http.HandlerFunc {
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
+	err := onSeasonOnly(status)
+	if err != nil {
+		return h.get404()
+	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ok bool

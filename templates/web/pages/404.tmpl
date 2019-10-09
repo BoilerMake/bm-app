@@ -1,10 +1,9 @@
 {{ define "404" }}
 {{ template "header" . }}
 
+{{ template "navbar" . }}
+
 <section class="hero is-fullheight is-dark">
-	<div class="hero-head" >
-		{{ template "navbar" . }}
-	</div>
 	<div class="hero-body">
 		{{ template "flashes" .Flashes }}
 		<div class="container has-text-centered">
