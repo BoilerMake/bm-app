@@ -14,9 +14,13 @@ body {
 	flex: 1;
 }
 
-.section.bm-flashes {
-	// Keeps flashes from showing up ;w
-	flex: 0;
+.bm-flashes {
+	position: fixed;
+	margin: 0 auto;
+	width: 100%;
+	top: 5rem;
+
+	z-index: 99;
 }
 
 // Make sure background image fills width and stays centered

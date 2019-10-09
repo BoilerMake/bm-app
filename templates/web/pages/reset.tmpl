@@ -9,15 +9,20 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column box is-5-tablet is-4-desktop">
+				<h2>Reset password</h2>
 				<form action="" method="post">
 
 					<div class="field">
 						<label for="token" class="label">Reset Token</label>
 						<div class="control">
-							{{ if not . }}
-								<input type="text" name="token" class="input" required>
+							{{ if (.Data) }}
+								{{ if (.Data.Token) }}
+									<input type="text" name="token" class="input" value="{{ . }}" placeholder="Copy the token from the email you recieved" required>
+								{{ else }}
+									<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
+								{{ end }}
 							{{ else }}
-								<input type="text" name="token" class="input" value="{{ . }}" required>
+								<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
 							{{ end }}
 						</div>
 					</div>
