@@ -99,6 +99,14 @@ func (a *Application) FromFormData(r *http.Request) error {
 	// it with this post request.
 	_, header, err := r.FormFile("resume")
 	if err != nil {
+		// Check if this error happened becuase request was too large
+		// Kinda janky but it works
+		if err.Error() == "multipart: NextPart: http: request body too large" {
+			return ErrResumeTooLarge
+		}
+
+		// Otherwise only return an error if it's not because the file was missing.  Again,
+		// we handle the msising resume case in the database.
 		if err != http.ErrMissingFile {
 			return err
 		}

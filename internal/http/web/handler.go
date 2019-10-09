@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,11 +14,15 @@ import (
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 	"github.com/BoilerMake/new-backend/internal/s3"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 	"github.com/BoilerMake/new-backend/pkg/template"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
+	"github.com/rollbar/rollbar-go"
 )
+
+type ErrorReporter func(interfaces ...interface{})
 
 // A Page is all the data needed to render a page.
 type Page struct {
@@ -29,6 +34,9 @@ type Page struct {
 	// A generic place to put unstructured data
 	Data interface{}
 
+	// An array of messages to show the user
+	Flashes []flash.Flash
+
 	// Values to be put back into a form when shown to a user again
 	// For example, when they log in with the wrong password we want
 	// the email they tried to log in with to persist
@@ -39,16 +47,22 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(title string, status string, r *http.Request) (*Page, bool) {
-	session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-	if !ok {
-		return nil, false
-	}
-
+func NewPage(w http.ResponseWriter, r *http.Request, title string, status string, session *sessions.Session) (*Page, bool) {
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
 		// It's ok to ignore if this errors (for example when a user doesn't have a
 		// session) because email will just default to the empty string.
+	}
+
+	var flashes []flash.Flash
+	flashesInterface := session.Flashes()
+	session.Save(r, w)
+
+	for _, e := range flashesInterface {
+		f, ok := e.(flash.Flash)
+		if ok {
+			flashes = append(flashes, f)
+		}
 	}
 
 	return &Page{
@@ -56,6 +70,7 @@ func NewPage(title string, status string, r *http.Request) (*Page, bool) {
 		Status:          status,
 		Email:           email,
 		IsAuthenticated: email != "",
+		Flashes:         flashes,
 	}, true
 }
 
@@ -78,6 +93,15 @@ type Handler struct {
 
 	// HTML templates to render
 	Templates *template.Template
+
+	// An ErrorReport reports errors to something like rollbar
+	ErrReporter ErrorReporter
+
+	// Stores session cookies
+	SessionStore *sessions.CookieStore
+
+	// Name cookie that stores sessions
+	SessionCookieName string
 }
 
 // NewHandler creates a handler for web requests.
@@ -141,13 +165,13 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		/* APPLICATION ROUTES */
 		r.Get("/apply", h.getApply())
 		r.Post("/apply", h.postApply())
-	})
 
-	/* EXEC ROUTES */
-	r.Group(func(r chi.Router) {
-		r.Use(middleware.MustBeExec)
+		/* EXEC ROUTES */
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.MustBeExec)
 
-		r.Get("/exec", h.getExec())
+			r.Get("/exec", h.getExec())
+		})
 	})
 
 	if mode == "development" {
@@ -157,6 +181,37 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Get("/static/*", fs.ServeHTTP)
 	}
 
+	// Only log to rollbar in production
+	rollbarEnv := mustGetEnv("ROLLBAR_ENVIRONMENT")
+
+	if rollbarEnv == "production" {
+		h.ErrReporter = rollbarReportError
+	} else {
+		// If we're not in production just print out the errors
+		h.ErrReporter = logReportError
+	}
+
+	// Set up session store
+	sessionSecret := mustGetEnv("SESSION_SECRET")
+
+	sessionKey := []byte(sessionSecret)
+	store := sessions.NewCookieStore(sessionKey)
+
+	// Prevents CSRF attacks (on browsers that support SameSite)
+	store.Options.SameSite = http.SameSiteStrictMode
+
+	// Prevents XSS attacks (JS isn't allowed to access cookie)
+	store.Options.HttpOnly = true
+
+	if mode != "development" {
+		// Only transfer cookie over https
+		store.Options.Secure = true
+	}
+	h.SessionStore = store
+
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	h.SessionCookieName = sessionCookieName
+
 	r.NotFound(h.get404())
 
 	h.Mux = r
@@ -165,13 +220,15 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -181,13 +238,15 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Hackers", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -197,13 +256,15 @@ func (h *Handler) getHackers() http.HandlerFunc {
 
 // getAbout renders the about template.
 func (h *Handler) getAbout() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - About", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -213,13 +274,15 @@ func (h *Handler) getAbout() http.HandlerFunc {
 
 // getFaq renders the faq template.
 func (h *Handler) getFaq() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - FAQ", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -230,13 +293,15 @@ func (h *Handler) getFaq() http.HandlerFunc {
 // get404 handles requests that couldn't find a valid route by rendering the
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - 404", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -304,4 +369,53 @@ func onSeasonOnly(status string) error {
 	}
 
 	return nil
+}
+
+// rollbarReportError reports an error to rollbar and logs it locally.  It
+// should only be reporting errors in production.  You should not call this
+// function directly, instead call h.Error(...) and let that handle it.
+func rollbarReportError(interfaces ...interface{}) {
+	rollbar.Error(interfaces...)
+	rollbar.Wait()
+
+	// Also log the error locally
+	log.Println("ERROR:", interfaces)
+}
+
+// logReportError logs an error locally.  In production rollbarReportError
+// should be used instead.  You should not call this function directly, instead
+// call h.Error(...) and let that handle it.
+func logReportError(interfaces ...interface{}) {
+	// Also log the error locally
+	log.Println("ERROR:", interfaces)
+}
+
+// Error checks an error given to it.  If it's a known error that we've made
+// we can show it to the user as a flash.  If it's unknown then we should tell
+// the user that something went wrong and report the error to rollbar.
+func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, interfaces ...interface{}) {
+	switch err.(type) {
+	case *models.ModelError:
+		modelError := err.(*models.ModelError)
+
+		// This is an error we know about and should let the user know what happened
+		session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+
+		session.AddFlash(flash.Flash{
+			Type:    modelError.GetType(),
+			Message: modelError.Error(),
+		})
+		session.Save(r, w)
+
+		// Redirect to previous page
+		http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+	default:
+		// Because we don't know how this error happened, we should report it on rollbar.
+		h.ErrReporter(append([]interface{}{err}, interfaces...)...)
+
+		// This error could have come from anywhere, so we should just tell the user
+		// something went wrong so that we don't accidently expose something
+		// sensitive
+		h.Templates.RenderTemplate(w, "500", nil)
+	}
 }

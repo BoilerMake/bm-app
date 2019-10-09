@@ -188,7 +188,12 @@ func (s *UserService) GetById(id int) (u *models.User, err error) {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return nil, rollbackErr
 		}
-		return nil, err
+
+		if err == sql.ErrNoRows {
+			return nil, models.ErrIncorrectLogin
+		} else {
+			return nil, err
+		}
 	}
 
 	err = tx.Commit()
@@ -221,7 +226,12 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return u, rollbackErr
 		}
-		return u, err
+
+		if err == sql.ErrNoRows {
+			return nil, models.ErrIncorrectLogin
+		} else {
+			return nil, err
+		}
 	}
 
 	err = tx.Commit()
@@ -254,10 +264,14 @@ func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return u, rollbackErr
 		}
-		return u, err
+
+		if err == sql.ErrNoRows {
+			return nil, models.ErrInvalidConfirmationCode
+		} else {
+			return nil, err
+		}
 	}
 
-	err = tx.Commit()
 	return dbu.toModel(), err
 }
 
@@ -282,6 +296,7 @@ func (s *UserService) Update(u *models.User) error {
 		confirmation_code = $8
 	WHERE id = $9`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.IsActive, u.ConfirmationCode, u.ID)
 
+	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "unique_violation":
@@ -308,7 +323,12 @@ func (s *UserService) Update(u *models.User) error {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return rollbackErr
 		}
-		return err
+
+		if err == sql.ErrNoRows {
+			return models.ErrIncorrectLogin
+		} else {
+			return err
+		}
 	}
 
 	err = tx.Commit()
@@ -320,6 +340,7 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if email == "" {
 		return "", models.ErrEmptyEmail
 	}
+
 	token, err := GenerateRandomString(passwordResetTokenLength)
 	if err != nil {
 		return "", err
@@ -407,7 +428,6 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		}
 	}
 
-	// TODO output useful errors
 	if argon2.CheckPassword(userToken, hashedToken) {
 		s.TokenChangePassword(id, uid, password)
 		return nil
@@ -417,7 +437,6 @@ func (s *UserService) ResetPassword(token string, password string) error {
 }
 
 // TokenChangePassword changes password then deletes the token used
-// TODO error checking on failed change
 func (s *UserService) TokenChangePassword(id int, uid int, password string) error {
 	passwordHash, err := argon2.DefaultParameters.HashPassword(password)
 	if err != nil {

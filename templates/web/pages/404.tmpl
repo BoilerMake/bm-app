@@ -5,6 +5,7 @@
 
 <section class="hero is-fullheight is-dark">
 	<div class="hero-body">
+		{{ template "flashes" .Flashes }}
 		<div class="container has-text-centered">
 			<h1 class="is-size-error-title has-text-light is-inline">4</h1>
 			<img class="is-inline" src='{{ static_path "logo_white.svg" }}'style="height: 8rem;"/>

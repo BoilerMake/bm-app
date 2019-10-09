@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,9 @@ import (
 	"github.com/BoilerMake/new-backend/internal/postgres"
 	"github.com/BoilerMake/new-backend/internal/s3"
 	"github.com/BoilerMake/new-backend/pkg/env"
+	"github.com/BoilerMake/new-backend/pkg/flash"
+
+	"github.com/rollbar/rollbar-go"
 )
 
 func main() {
@@ -17,6 +21,9 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	// Register flash struct so it can be serialized later
+	gob.Register(flash.Flash{})
 
 	// Initialize databse
 	dbHost, ok := os.LookupEnv("DB_HOST")
@@ -51,6 +58,28 @@ func main() {
 	S3 := s3.NewS3()
 	h := http.NewHandler(us, as, mailer, S3)
 
+	rollbarEnv, ok := os.LookupEnv("ROLLBAR_ENVIRONMENT")
+	if !ok {
+		log.Fatalf("environment variable not set: %v", "ROLLBAR_ENVIRONMENT")
+	}
+
+	if rollbarEnv == "production" {
+		rollbarToken, ok := os.LookupEnv("ROLLBAR_TOKEN")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "ROLLBAR_TOKEN")
+		}
+		rollbarRoot, ok := os.LookupEnv("ROLLBAR_SERVER_ROOT")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "ROLLBAR_SERVER_ROOT")
+		}
+
+		rollbar.SetToken(rollbarToken)
+		rollbar.SetEnvironment(rollbarEnv)
+		rollbar.SetCodeVersion("master")
+		rollbar.SetServerHost("web.1")
+		rollbar.SetServerRoot(rollbarRoot)
+	}
+
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
 		log.Fatalf("environment variable not set: %v", "PORT")
@@ -63,4 +92,5 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 }

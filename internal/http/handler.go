@@ -26,7 +26,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	// Limit body request size
 	r.Use(middleware.LimitRequestSize)
-	r.Use(middleware.WithSession)
 
 	r.Mount("/", h.WebHandler)
 

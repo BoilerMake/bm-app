@@ -1,18 +1,21 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 )
 
 // getExec renders the exec home page.
 func (h *Handler) getExec() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		p, ok := NewPage("BoilerMake - Execs", status, r)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - Exec", status, session)
+
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 

@@ -2,16 +2,15 @@ package web
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
 	"github.com/BoilerMake/new-backend/internal/models"
-
-	"github.com/gorilla/sessions"
 )
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -19,17 +18,11 @@ func (h *Handler) getApply() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			// TODO error handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("invalid session value"))
 			return
 		}
 
@@ -40,16 +33,14 @@ func (h *Handler) getApply() http.HandlerFunc {
 			if err == sql.ErrNoRows {
 				app = &models.Application{}
 			} else {
-				// TODO error handling
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				h.Error(w, r, err)
 				return
 			}
 		}
 
-		p, ok := NewPage("BoilerMake - Apply", status, r)
+		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "creating page failed", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("creating page failed"))
 			return
 		}
 
@@ -62,6 +53,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -69,33 +61,26 @@ func (h *Handler) postApply() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		var ok bool
 		var a models.Application
+
 		err := a.FromFormData(r)
 		if err != nil {
-			// TODO error handling
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
-		session, ok := r.Context().Value(middleware.SessionCtxKey).(*sessions.Session)
-		if !ok {
-			// TODO error handling, this state should never be reached
-			http.Error(w, "getting session failed", http.StatusInternalServerError)
-			return
-		}
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
 		a.UserID, ok = session.Values["ID"].(int)
 		if !ok {
-			// TODO Error Handling, this state should never be reached
-			http.Error(w, "invalid session value", http.StatusInternalServerError)
+			h.Error(w, r, errors.New("invalid session value"))
 			return
 		}
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {
-			// TODO error handling
-			// TODO once session tokens are updated this should show a failure flash
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.Error(w, r, err)
 			return
 		}
 
@@ -104,9 +89,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 		if a.ResumeFile != "" {
 			err = h.S3.UploadResume(a.UserID, a.Resume)
 			if err != nil {
-				// TODO error handling
-				// TODO once session tokens are updated this should show a failure flash
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				h.Error(w, r, err)
 				return
 			}
 		}
