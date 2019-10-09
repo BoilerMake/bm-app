@@ -84,8 +84,8 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		// Redirect to homepage if signup was successful
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Redirect to application if signup was successful
+		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}
 }
 
@@ -309,8 +309,8 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		// Redirect to homepage if login was successful
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Redirect to application if login was successful
+		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}
 }
 
