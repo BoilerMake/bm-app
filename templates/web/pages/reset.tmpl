@@ -5,7 +5,7 @@
 
 {{ template "flashes" .Flashes }}
 
-<section class="section">
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column box is-5-tablet is-4-desktop">
@@ -31,7 +31,7 @@
 
 					<div class="field">
 						<div class="control">
-							<button class="button is-fullwidth is-dark" type="submit">Reset</button>
+							<button class="button is-fullwidth is-red" type="submit">Reset</button>
 						</div>
 					</div>
 				</form>
