@@ -10,9 +10,14 @@ body {
 }
 
 .section {
+	// Make page take up at least 100vh (So footer is never awkwardly in the middle)
 	flex: 1;
 }
 
+.section.bm-flashes {
+	// Keeps flashes from showing up ;w
+	flex: 0;
+}
 
 // Make sure background image fills width and stays centered
 .has-background-image {
