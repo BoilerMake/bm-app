@@ -135,6 +135,9 @@ $dark: #231F20;
 }
 
 .bmvii-form {
+	display: flex;
+	align-items: center;
+
 	background-color: #6176CF; 
 	background-size: auto 100%;
 	background-repeat: repeat-y;
