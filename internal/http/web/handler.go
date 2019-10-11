@@ -136,6 +136,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	/* WEB ROUTES */
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
+	r.Get("/sponsors", h.getSponsors())
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
 
@@ -251,6 +252,24 @@ func (h *Handler) getHackers() http.HandlerFunc {
 		}
 
 		h.Templates.RenderTemplate(w, "hackers", p)
+	}
+}
+
+// getSponsors renders the sponsors template.
+func (h *Handler) getSponsors() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	status := mustGetEnv("APP_STATUS")
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		p, ok := NewPage(w, r, "BoilerMake - Sponsors", status, session)
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"))
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "sponsors", p)
 	}
 }
 
