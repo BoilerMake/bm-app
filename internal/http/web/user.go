@@ -115,8 +115,8 @@ func (h *Handler) getActivate() http.HandlerFunc {
 			return
 		}
 
-		// Redirect to homepage if activation was successful
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Redirect to application if activation was successful
+		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}
 }
 
