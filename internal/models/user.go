@@ -2,6 +2,7 @@ package models
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/BoilerMake/new-backend/pkg/argon2"
 	"github.com/BoilerMake/new-backend/pkg/flash"
@@ -98,6 +99,8 @@ func (u *User) FromFormData(r *http.Request) {
 
 // Validate checks if a User has all the necessary fields.
 func (u *User) Validate() error {
+	u.Email = strings.ToLower(u.Email)
+
 	if u.Email == "" {
 		return ErrEmptyEmail
 	} else if u.Password == "" {
