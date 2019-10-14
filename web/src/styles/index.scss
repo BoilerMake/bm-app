@@ -10,9 +10,18 @@ body {
 }
 
 .section {
+	// Make page take up at least 100vh (So footer is never awkwardly in the middle)
 	flex: 1;
 }
 
+.bm-flashes {
+	position: fixed;
+	margin: 0 auto;
+	width: 100%;
+	top: 5rem;
+
+	z-index: 99;
+}
 
 // Make sure background image fills width and stays centered
 .has-background-image {
@@ -125,7 +134,11 @@ $dark: #231F20;
 	padding: 1.25rem;
 }
 
-.bmvii-application {
+.bmvii-form {
+	display: flex;
+	align-items: center;
+
+	background-color: #6176CF; 
 	background-size: auto 100%;
 	background-repeat: repeat-y;
 	background-position: center;

@@ -1,6 +1,6 @@
 #! /bin/sh
 
-cd ~/backend
+cd ~/bm-app
 
 # Update our repo
 git pull
@@ -22,4 +22,4 @@ gulp prod
 
 # This will rebuild our serivces *then* replace the current ones with them.
 # Avoiding downtime is cool
-sudo docker-compose -f ~/backend/deploy/docker-compose.default.yml -f ~/backend/deploy/docker-compose.prod.yml up -d --build --force-recreate
+sudo docker-compose -f ~/bm-app/deploy/docker-compose.default.yml -f ~/bm-app/deploy/docker-compose.prod.yml up -d --build --force-recreate

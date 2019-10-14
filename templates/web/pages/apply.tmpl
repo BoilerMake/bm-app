@@ -1,16 +1,16 @@
 {{ define "apply" }}
-{{ template "header" . }}
+{{ template "head" . }}
 
 {{ template "bmvii navbar" . }}
 
-<section class="section bmvii-application" style='background-color: #6176CF; background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="box column is-6">
 
 				<div class="columns is-centered content">
 					<div class="column is-8">
-						<img style="padding: 2rem 0;" src={{ static_path "bmvii_application_header.svg" }}>
+						<img alt="Apply to BoilerMake" style="padding: 2rem 0;" src={{ static_path "bmvii_application_header.svg" }}>
 					</div>
 				</div>
 
@@ -23,7 +23,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="school" class="input" value="{{ .FormRefill.School }}" required>
+									<input type="text" name="school" list="bmvii-application__schools" class="input" value="{{ .FormRefill.School }}" required>
 									{{ template "school datalist" }}
 								</div>
 							</div>

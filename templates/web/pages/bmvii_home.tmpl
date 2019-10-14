@@ -1,5 +1,5 @@
 {{ define "bmvii home" }}
-{{ template "header" . }}
+{{ template "head" . }}
 
 {{ template "bmvii navbar" . }}
 
@@ -7,7 +7,7 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-5">
-				<img src={{ static_path "bmvii_greetings.svg" }}>
+				<img alt="Greetings from BoilerMake" src={{ static_path "bmvii_greetings.svg" }}>
 			</div>
 		</div>
 		<div class="columns is-centered content has-text-centered">
@@ -28,7 +28,7 @@
 		</div>
 		<div class="columns is-centered content">
 			<div class="column is-6">
-				<img src={{ static_path "bmvii_hammers.svg" }}>
+				<img alt="Stylized BoilerMake logo hammers" src={{ static_path "bmvii_hammers.svg" }}>
 			</div>
 		</div>
 	</div>
@@ -38,7 +38,7 @@
 	<div class="container" style="padding: 0 1.5rem;">
 		<div class="columns is-centered content">
 			<div class="column is-5">
-				<img src={{ static_path "bmvii_why.svg" }}>
+				<img alt="Why BoilerMake?" src={{ static_path "bmvii_why.svg" }}>
 			</div>
 		</div>
 
@@ -53,23 +53,23 @@
 				<div class="column is-6">
 					<div class="columns is-vcentered is-mobile">
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_build.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img alt="Gears turning" src={{ static_path "bmvii_why_build.svg" }} class="bmvii-why__img">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Build Creative Projects</p>
 						</div>
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_food.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img alt="Silverware" src={{ static_path "bmvii_why_food.svg" }} class="bmvii-why__img">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Eat Delicious Food</p>
 						</div>
 					</div>
 				</div>
 				<div class="column is-6">
 					<div class="columns is-vcentered is-mobile">
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_skills.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img src={{ static_path "bmvii_why_skills.svg" }} class="bmvii-why__img" alt="Brain">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Learn New Skills</p>
 						</div>
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img">
+							<img src={{ static_path "bmvii_why_friends.svg" }} class="bmvii-why__img" alt="People">
 							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
 						</div>
 					</div>
@@ -79,24 +79,24 @@
 				<div class="column is-6">
 					<div class="columns is-vcentered is-mobile">
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_resume.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img src={{ static_path "bmvii_why_resume.svg" }} class="bmvii-why__img" alt="Good resume">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Boost Your Resume</p>
 						</div>
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_companies.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img src={{ static_path "bmvii_why_companies.svg" }} class="bmvii-why__img" alt="Formal attire">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Talk to Company Reps</p>
 						</div>
 					</div>
 				</div>
 				<div class="column is-6">
 					<div class="columns is-vcentered is-mobile">
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_memories.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img src={{ static_path "bmvii_why_memories.svg" }} class="bmvii-why__img" alt="Floppy disk">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make Incredible Memories</p>
 						</div>
 						<div class="column is-half">
-							<img src={{ static_path "bmvii_why_prizes.svg" }} class="bmvii-why__img">
-							<p class="subtitle is-5 has-text-white has-text-weight-bold">Make new friends</p>
+							<img src={{ static_path "bmvii_why_prizes.svg" }} class="bmvii-why__img" alt="Trophy">
+							<p class="subtitle is-5 has-text-white has-text-weight-bold">Win Cool Prizes</p>
 						</div>
 					</div>
 				</div>
@@ -110,14 +110,14 @@
 		</div>
 	</div>
 
-	<img src={{ static_path "bmvii_why_quarry.svg" }} class="bmvii-why__quarry">
+	<img src={{ static_path "bmvii_why_quarry.svg" }} class="bmvii-why__quarry" alt="Illustration of rolling hills">
 </section>
 
 <section class="section" style='background-color: #7B004E;'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-3">
-				<img src={{ static_path "bmvii_join_the_fun.svg" }}>
+				<img alt="Join The Fun" src={{ static_path "bmvii_join_the_fun.svg" }}>
 			</div>
 		</div>
 
@@ -130,7 +130,7 @@
 		<div class="columns is-centered content">
 			<div class="column is-4">
 				<div class="box">
-					<img src={{ static_path "bmvii_schedule_friday.svg" }}>
+					<img alt="Friday, January 24" src={{ static_path "bmvii_schedule_friday.svg" }}>
 
 					<div class="bmvii-schedule__day">
 						<div class="bmvii-schedule__item">
@@ -181,7 +181,7 @@
 
 			<div class="column is-4">
 				<div class="box">
-					<img src={{ static_path "bmvii_schedule_saturday.svg" }}>
+					<img alt="Saturday, January 25" src={{ static_path "bmvii_schedule_saturday.svg" }}>
 
 					<div class="bmvii-schedule__day">
 						<div class="bmvii-schedule__item">
@@ -232,7 +232,7 @@
 
 			<div class="column is-4">
 				<div class="box">
-					<img src={{ static_path "bmvii_schedule_sunday.svg" }}>
+					<img alt="Sunday, January 26" src={{ static_path "bmvii_schedule_sunday.svg" }}>
 
 					<div class="bmvii-schedule__day">
 						<div class="bmvii-schedule__item">
@@ -289,7 +289,7 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-3">
-				<img src={{ static_path "bmvii_testimonials.svg" }}>
+				<img alt="Testimonials" src={{ static_path "bmvii_testimonials.svg" }}>
 			</div>
 		</div>
 
@@ -357,7 +357,7 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-6">
-				<img src={{ static_path "bmvii_faq.svg" }}>
+				<img alt="Frequently Asked Questions" src={{ static_path "bmvii_faq.svg" }}>
 			</div>
 		</div>
 
@@ -492,7 +492,7 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-3">
-				<img src={{ static_path "bmvii_sponsors.svg" }}>
+				<img alt="Sponsors" src={{ static_path "bmvii_sponsors.svg" }}>
 			</div>
 		</div>
 
