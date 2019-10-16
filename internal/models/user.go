@@ -29,6 +29,7 @@ var (
 	ErrEmptyFirstName       = &ModelError{"First name is empty", flash.Info}
 	ErrEmptyLastName        = &ModelError{"Last name is empty", flash.Info}
 	ErrPasswordConfirm      = &ModelError{"Password and confirmation password do not match", flash.Info}
+	ErrPasswordTooShort     = &ModelError{"Password must be at least 3 characters", flash.Info}
 )
 
 // Password Reset errors
@@ -109,6 +110,8 @@ func (u *User) Validate() error {
 		return ErrEmptyPasswordConfirm
 	} else if u.PasswordConfirm != u.Password {
 		return ErrPasswordConfirm
+	} else if len(u.Password) < 3 {
+		return ErrPasswordTooShort
 	} else if u.FirstName == "" {
 		return ErrEmptyFirstName
 	} else if u.LastName == "" {
