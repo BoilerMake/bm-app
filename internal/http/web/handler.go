@@ -104,6 +104,11 @@ type Handler struct {
 	SessionCookieName string
 }
 
+// A OAuthAccessResponse stores the returned access token from oauth request
+type OAuthAccessResponse struct {
+	AccessToken string `json:"access_token"`
+}
+
 // NewHandler creates a handler for web requests.
 func NewHandler(us models.UserService, as models.ApplicationService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
@@ -138,6 +143,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/hackers", h.getHackers())
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
+
+	/* Github Oauth*/
+	r.HandleFunc("/oauth/redirect", h.oauthRedirect())
 
 	/* USER ROUTES */
 	r.Get("/signup", h.getSignup())
@@ -217,6 +225,60 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	h.Mux = r
 	return &h
+}
+
+// Redirect to github oauth
+func (h *Handler) oauthRedirect() http.HandlerFunc {
+	log.Println("Reached github redirect.")
+	// We will be using `httpClient` to make external HTTP requests later in our code
+	httpClient := http.Client{}
+	return func(w http.ResponseWriter, r *http.Request) {
+		/*************
+		MOVE THESE CONSTANTS TO ENV?
+		**************/
+		var clientID string = "c8656020b5401193309b"
+		var clientSecret string = "d9413af4af8c37cf5e178136d4eb91e355b6c2e1"
+		// First, we need to get the value of the `code` query param
+		err := r.ParseForm()
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "could not parse query: %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		code := r.FormValue("code")
+
+		// Next, lets for the HTTP request to call the github oauth enpoint
+		// to get our access token
+		reqURL := fmt.Sprintf("https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, code)
+		req, err := http.NewRequest(http.MethodPost, reqURL, nil)
+		// TODO: NEED BETTER ERROR CHECKING HERE
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "could not create HTTP request: %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+		}
+		// We set this header since we want the response
+		// as JSON
+		req.Header.Set("accept", "application/json")
+
+		// Send out the HTTP request
+		res, err := httpClient.Do(req)
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "could not send HTTP request: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		defer res.Body.Close()
+
+		// Parse the request body into the `OAuthAccessResponse` struct
+		var t OAuthAccessResponse
+		if err := json.NewDecoder(res.Body).Decode(&t); err != nil {
+			fmt.Fprintf(os.Stdout, "could not parse JSON response: %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
+		// Finally, send a response to redirect the user to the "welcome" page
+		// with the access token
+		w.Header().Set("Location", "/?access_token="+t.AccessToken)
+		w.WriteHeader(http.StatusFound)
+	}
 }
 
 // getRoot renders the index template.

@@ -31,6 +31,23 @@ func (h *Handler) getSignup() http.HandlerFunc {
 	}
 }
 
+// func (h *Handler) issueSession() http.HandlerFunc {
+// 	fn := func(w http.ResponseWriter, req *http.Request) {
+// 		ctx := req.Context()
+// 		githubUser, err := github.UserFromContext(ctx)
+// 		if err != nil {
+// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+// 			return
+// 		}
+// 		// 2. Implement a success handler to issue some form of session
+// 		session := sessionStore.New(sessionName)
+// 		session.Values[sessionUserKey] = *githubUser.ID
+// 		session.Save(w)
+// 		http.Redirect(w, req, "/profile", http.StatusFound)
+// 	}
+// 	return http.HandlerFunc(fn)
+// }
+
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
