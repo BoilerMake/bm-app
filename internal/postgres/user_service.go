@@ -34,9 +34,8 @@ type dbUser struct {
 	Role         sql.NullInt64
 	Email        sql.NullString
 	PasswordHash sql.NullString
-	first_name   sql.NullString
-	last_name    sql.NullString
-	Phone        sql.NullString
+	FirstName    sql.NullString
+	LastName     sql.NullString
 
 	IsActive         sql.NullBool
 	ConfirmationCode sql.NullString
@@ -50,9 +49,8 @@ func (u *dbUser) toModel() *models.User {
 		Role:         int(u.Role.Int64),
 		Email:        u.Email.String,
 		PasswordHash: u.PasswordHash.String,
-		FirstName:    u.first_name.String,
-		LastName:     u.last_name.String,
-		Phone:        u.Phone.String,
+		FirstName:    u.FirstName.String,
+		LastName:     u.LastName.String,
 
 		IsActive:         u.IsActive.Bool,
 		ConfirmationCode: u.ConfirmationCode.String,
@@ -92,17 +90,15 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			password_hash,
 			first_name,
 			last_name,
-			phone,
 			is_active,
 			confirmation_code
-		) VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, $8)
+		) VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id;`,
 		u.Role,
 		u.Email,
 		u.PasswordHash,
 		u.FirstName,
 		u.LastName,
-		u.Phone,
 		false,
 		code,
 	).Scan(&id)
@@ -178,11 +174,10 @@ func (s *UserService) GetById(id int) (u *models.User, err error) {
 		password_hash,
 		first_name,
 		last_name,
-		phone,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -216,11 +211,10 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		password_hash,
 		first_name,
 		last_name,
-		phone,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE email = LOWER($1)`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -254,11 +248,10 @@ func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 		password_hash,
 		first_name,
 		last_name,
-		phone,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -291,10 +284,9 @@ func (s *UserService) Update(u *models.User) error {
 		password_hash = $3,
 		first_name = $4,
 		last_name = $5,
-		phone = $6,
-		is_active = $7,
-		confirmation_code = $8
-	WHERE id = $9`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.Phone, u.IsActive, u.ConfirmationCode, u.ID)
+		is_active = $6,
+		confirmation_code = $7
+	WHERE id = $8`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.IsActive, u.ConfirmationCode, u.ID)
 
 	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {

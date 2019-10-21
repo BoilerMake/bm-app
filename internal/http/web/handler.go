@@ -64,6 +64,7 @@ func NewPage(w http.ResponseWriter, r *http.Request, title string, status string
 			flashes = append(flashes, f)
 		}
 	}
+	fmt.Println(flashes)
 
 	return &Page{
 		Title:           title,
@@ -422,6 +423,7 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		// This error could have come from anywhere, so we should just tell the user
 		// something went wrong so that we don't accidently expose something
 		// sensitive
+		// TODO this needs a page!
 		h.Templates.RenderTemplate(w, "500", nil)
 	}
 }

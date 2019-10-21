@@ -3,9 +3,11 @@ package web
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 )
 
 // getApply renders the apply template.
@@ -20,6 +22,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
+		fmt.Println("oiuoi")
 		id, ok := session.Values["ID"].(int)
 		if !ok {
 			h.Error(w, r, errors.New("invalid session value"))
@@ -95,7 +98,13 @@ func (h *Handler) postApply() http.HandlerFunc {
 		}
 
 		// Redirect back to application page if successful
-		// TODO once session tokens are updated this should show success and give a date for when apps are locked
+		// Also show a success flash
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Your application has been saved!  Feel free to change it until applications close",
+		})
+		session.Save(r, w)
+
 		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}
 }

@@ -60,8 +60,6 @@ type User struct {
 	FirstName string `json:"firstName"` // NOT NULL
 	LastName  string `json:"lastName"`  // NOT NULL
 
-	Phone string `json:"phone"`
-
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
 }
@@ -94,8 +92,6 @@ func (u *User) FromFormData(r *http.Request) {
 
 	u.FirstName = r.FormValue("first-name")
 	u.LastName = r.FormValue("last-name")
-
-	u.Phone = r.FormValue("phone")
 }
 
 // Validate checks if a User has all the necessary fields.

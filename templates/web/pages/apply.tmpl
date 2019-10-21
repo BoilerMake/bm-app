@@ -3,6 +3,8 @@
 
 {{ template "bmvii navbar" . }}
 
+{{ template "flashes" .Flashes }}
+
 <section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
@@ -118,6 +120,19 @@
 
 					<div class="field is-horizontal">
 						<div class="field-label is-normal">
+							<label for="dietary-restrictions" class="label">Phone Number</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="tel" name="phone-number" class="input" maxlength="17" value="{{ .FormRefill.Phone }}">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
 							<label for="gender" class="label">Gender</label>
 						</div>
 						<div class="field-body">
@@ -225,7 +240,6 @@
 						</div>
 					</div>
 
-					<h3>Social</h3>
 					<div class="field is-horizontal">
 						<div class="field-label is-normal">
 							<label for="github" class="label">GitHub</label>
@@ -239,14 +253,67 @@
 						</div>
 					</div>
 
+					<div class="field">
+						{{ if .FormRefill.IsFirstHackathon }}
+						<input type="checkbox" name="is-first-hackathon" class="checkbox" checked>
+						{{ else }}
+						<input type="checkbox" name="is-first-hackathon" class="checkbox">
+						{{ end }}
+						<label for="is-first-hackathon" class="checkbox">This is my first hackathon</label>
+					</div>
+
 					<div class="field is-horizontal">
 						<div class="field-label is-normal">
-							<label for="linkedin" class="label">LinkedIn</label>
+							<label for="race" class="label">Where did you hear about BoilerMake?</label>
 						</div>
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="linkedin" class="input" value="{{ .FormRefill.Linkedin }}">
+									<div class="select is-fullwidth">
+										<select name="referrer" required>
+											{{ if or (eq .FormRefill.Referrer "Facebook") (not .FormRefill.Referrer) }}
+											<option value="Facebook" selected>Facebook</option>
+											{{ else }}
+											<option value="Facebook">Facebook</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Instagram" }}
+											<option value="Instagram" selected>Instagram</option>
+											{{ else }}
+											<option value="Instagram">Instagram</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Twitter" }}
+											<option value="Twitter" selected>Twitter</option>
+											{{ else }}
+											<option value="Twitter">Twitter</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Poster" }}
+											<option value="Poster" selected>Poster</option>
+											{{ else }}
+											<option value="Poster">Poster</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Class visit" }}
+											<option value="Class visit" selected>Class visit</option>
+											{{ else }}
+											<option value="Class visit">Class visit</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Word of mouth" }}
+											<option value="Word of mouth" selected>Word of mouth</option>
+											{{ else }}
+											<option value="Word of mouth">Word of mouth</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Other" }}
+											<option value="Other" selected>Other</option>
+											{{ else }}
+											<option value="Other">Other</option>
+											{{ end }}
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
