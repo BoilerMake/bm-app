@@ -140,8 +140,15 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/faq", h.getFaq())
 
 	/* USER ROUTES */
-	r.Get("/signup", h.getSignup())
-	r.Post("/signup", h.postSignup())
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustNotBeAuthenticated)
+
+		r.Get("/signup", h.getSignup())
+		r.Post("/signup", h.postSignup())
+
+		r.Get("/login", h.getLogin())
+		r.Post("/login", h.postLogin())
+	})
 
 	r.Get("/activate/{code}", h.getActivate())
 
@@ -150,9 +157,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/reset", h.getResetPassword())
 	r.Get("/reset/{token}", h.getResetPasswordWithToken())
 	r.Post("/reset/{token}", h.postResetPassword())
-
-	r.Get("/login", h.getLogin())
-	r.Post("/login", h.postLogin())
 
 	r.Get("/logout", h.getLogout())
 
