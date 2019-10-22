@@ -103,7 +103,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 		u, err := h.UserService.GetByCode(code)
 		if err != nil {
-			h.Error(w, r, err, "", code)
+			h.Error(w, r, err, "/", code)
 			return
 		}
 
@@ -111,7 +111,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		u.ConfirmationCode = ""
 		err = h.UserService.Update(u)
 		if err != nil {
-			h.Error(w, r, err, "")
+			h.Error(w, r, err, "/")
 			return
 		}
 

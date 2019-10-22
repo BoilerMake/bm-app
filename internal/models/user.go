@@ -18,7 +18,7 @@ var (
 	ErrIncorrectLogin          = &ModelError{"Email or password is incorrect", flash.Info}
 	ErrNotLoggedIn             = &ModelError{"Please create an account or log in first", flash.Info}
 	ErrAlreadyLoggedIn         = &ModelError{"You're already logged in", flash.Info}
-	ErrInvalidConfirmationCode = &ModelError{"Invalid email confirmation code", flash.Info}
+	ErrInvalidConfirmationCode = &ModelError{"Email confirmation code no longer valid", flash.Info}
 )
 
 // Validation errors
