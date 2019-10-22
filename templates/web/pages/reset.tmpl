@@ -13,18 +13,21 @@
 				<form action="" method="post">
 
 					<div class="field">
-						<label for="token" class="label">Reset Token</label>
-						<div class="control">
-							{{ if (.Data) }}
-								{{ if (.Data.Token) }}
-									<input type="text" name="token" class="input" value="{{ . }}" placeholder="Copy the token from the email you recieved" required>
-								{{ else }}
-									<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
-								{{ end }}
+						{{ if (.Data) }}
+							{{ if (.Data.Token) }}
+									<input type="hidden" name="token" class="input" value="{{ .Data.Token }}" placeholder="Copy the token from the email you recieved" required>
 							{{ else }}
-								<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
+								<label for="token" class="label">Reset Token</label>
+								<div class="control">
+									<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
+								</div>
 							{{ end }}
-						</div>
+						{{ else }}
+							<label for="token" class="label">Reset Token</label>
+							<div class="control">
+								<input type="text" name="token" class="input" placeholder="Copy the token from the email you recieved" required>
+							</div>
+						{{ end }}
 					</div>
 
 					<div class="field">
