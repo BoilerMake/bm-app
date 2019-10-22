@@ -229,7 +229,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 // Redirect to github oauth
 func (h *Handler) oauthRedirect() http.HandlerFunc {
-	log.Println("Reached github redirect.")
 	// We will be using `httpClient` to make external HTTP requests later in our code
 	httpClient := http.Client{}
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -278,6 +277,37 @@ func (h *Handler) oauthRedirect() http.HandlerFunc {
 		// with the access token
 		w.Header().Set("Location", "/?access_token="+t.AccessToken)
 		w.WriteHeader(http.StatusFound)
+
+		// Get User info from github api
+		// log.Println("https://api.github.com/user?access_token=" + t.AccessToken)
+		resp, err := http.Get("https://api.github.com/user?access_token=" + t.AccessToken)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		log.Println(string(body))
+		type GithubUserResponse struct {
+			Login string `json:"login"`
+			Name  string `json:"name"`
+			Email string `json:"email"`
+		}
+
+		var result GithubUserResponse
+		json.Unmarshal(body, &result)
+		// Check if the fields exist
+		log.Println("Login: " + result.Login)
+		log.Println("Name: " + result.Name)
+		log.Println("Email: " + result.Email)
+
+		// Implement signup as github user
+		// New github user table
+		// Implement login as github user
 	}
 }
 
