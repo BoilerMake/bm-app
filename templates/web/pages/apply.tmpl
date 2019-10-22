@@ -25,7 +25,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="school" list="bmvii-application__schools" class="input" value="{{ .FormRefill.School }}" required>
+									<input type="text" name="school" list="bmvii-application__schools" class="input" maxlength="512" value="{{ .FormRefill.School }}" required>
 									{{ template "school datalist" }}
 								</div>
 							</div>
@@ -39,7 +39,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="major" class="input" value="{{ .FormRefill.Major }}" required>
+									<input type="text" name="major" class="input" maxlength="512" value="{{ .FormRefill.Major }}" required>
 								</div>
 							</div>
 						</div>
@@ -234,7 +234,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="dietary-restrictions" class="input" value="{{ .FormRefill.DietaryRestrictions }}">
+									<input type="text" name="dietary-restrictions" class="input" maxlength="512" value="{{ .FormRefill.DietaryRestrictions }}">
 								</div>
 							</div>
 						</div>
@@ -247,7 +247,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="github" class="input" value="{{ .FormRefill.Github }}">
+									<input type="text" name="github" class="input" maxlength="512" value="{{ .FormRefill.Github }}">
 								</div>
 							</div>
 						</div>
