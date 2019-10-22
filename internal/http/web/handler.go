@@ -233,7 +233,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -251,7 +251,7 @@ func (h *Handler) getHackers() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -269,7 +269,7 @@ func (h *Handler) getAbout() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -287,7 +287,7 @@ func (h *Handler) getFaq() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -306,7 +306,7 @@ func (h *Handler) get404() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -403,7 +403,7 @@ func logReportError(interfaces ...interface{}) {
 // Error checks an error given to it.  If it's a known error that we've made
 // we can show it to the user as a flash.  If it's unknown then we should tell
 // the user that something went wrong and report the error to rollbar.
-func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, interfaces ...interface{}) {
+func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, redirectPath string, interfaces ...interface{}) {
 	switch err.(type) {
 	case *models.ModelError:
 		modelError := err.(*models.ModelError)
@@ -418,7 +418,11 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		session.Save(r, w)
 
 		// Redirect to previous page
-		http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		if redirectPath != "" {
+			http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		}
 	default:
 		// Because we don't know how this error happened, we should report it on rollbar.
 		h.ErrReporter(append([]interface{}{err}, interfaces...)...)

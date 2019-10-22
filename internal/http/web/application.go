@@ -23,7 +23,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
@@ -34,14 +34,14 @@ func (h *Handler) getApply() http.HandlerFunc {
 			if err == sql.ErrNoRows {
 				app = &models.Application{}
 			} else {
-				h.Error(w, r, err)
+				h.Error(w, r, err, "")
 				return
 			}
 		}
 
 		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -67,7 +67,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 
 		err := a.FromFormData(r)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -75,13 +75,13 @@ func (h *Handler) postApply() http.HandlerFunc {
 
 		a.UserID, ok = session.Values["ID"].(int)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -90,7 +90,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 		if a.ResumeFile != "" {
 			err = h.S3.UploadResume(a.UserID, a.Resume)
 			if err != nil {
-				h.Error(w, r, err)
+				h.Error(w, r, err, "")
 				return
 			}
 		}

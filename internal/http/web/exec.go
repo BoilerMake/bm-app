@@ -15,7 +15,7 @@ func (h *Handler) getExec() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Exec", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
