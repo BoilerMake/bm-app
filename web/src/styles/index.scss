@@ -89,6 +89,7 @@ $dark: #231F20;
 .bmvii-why__quarry {
 	display: block;
 	margin: 0 auto;
+	width: 100%;
 }
 
 .bmvii-schedule__day {
@@ -121,7 +122,7 @@ $dark: #231F20;
 
 .bmvii-testimonials {
 	background-position: bottom;
-	background-size: auto 100%;
+	background-size: contain;
 	padding-bottom: 10rem;
 }
 
@@ -132,6 +133,12 @@ $dark: #231F20;
 
 .bmvii-testimonial__text {
 	padding: 1.25rem;
+}
+
+.bmvii-faq {
+	background-position: bottom;
+	background-size: contain;
+	padding-bottom: 15rem;
 }
 
 .bmvii-form {

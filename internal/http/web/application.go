@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
@@ -22,7 +21,6 @@ func (h *Handler) getApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session, _ := h.SessionStore.Get(r, sessionCookieName)
 
-		fmt.Println("oiuoi")
 		id, ok := session.Values["ID"].(int)
 		if !ok {
 			h.Error(w, r, errors.New("invalid session value"))

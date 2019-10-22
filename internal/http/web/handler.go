@@ -64,7 +64,6 @@ func NewPage(w http.ResponseWriter, r *http.Request, title string, status string
 			flashes = append(flashes, f)
 		}
 	}
-	fmt.Println(flashes)
 
 	return &Page{
 		Title:           title,
