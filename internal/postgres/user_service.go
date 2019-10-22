@@ -391,6 +391,10 @@ func (s *UserService) ResetPassword(token string, password string) error {
 	tokenID := token[:userIDTokenLength]
 	userToken := token[userIDTokenLength:]
 
+	if len(password) < 3 {
+		return models.ErrPasswordTooShort
+	}
+
 	id := -1
 	var uid int
 	var hashedToken string
