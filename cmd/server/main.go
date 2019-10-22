@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http"
 	"github.com/BoilerMake/new-backend/internal/mail"
@@ -20,6 +21,26 @@ func main() {
 	err := env.Load(true)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	mode, ok := os.LookupEnv("ENV_MODE")
+	if !ok {
+		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "ENV_MODE")
+	}
+
+	// Set up logging with a new file each time the server starts
+	if mode == "production" {
+		logPath, ok := os.LookupEnv("LOG_PATH")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "LOG_PATH")
+		}
+
+		logFile, err := os.Create(logPath + "/" + time.Now().String())
+		if err != nil {
+			log.Fatalf("failed to create log file: %v", err)
+		}
+
+		log.SetOutput(logFile)
 	}
 
 	// Register flash struct so it can be serialized later
