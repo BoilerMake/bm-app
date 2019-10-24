@@ -367,7 +367,12 @@ func staticFileReplace(mode string) func(path string) string {
 
 	return func(path string) string {
 		if manifest[path] != nil {
-			return cloudfrontURL + "/" + manifest[path].(string)
+			fullPath, ok := manifest[path].(string)
+			if !ok {
+				return "/404"
+			}
+
+			return cloudfrontURL + "/" + fullPath
 		}
 
 		return "/404"

@@ -95,7 +95,7 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			phone,
 			is_active,
 			confirmation_code
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		) VALUES ($1, LOWER($2), $3, $4, $5, $6, $7, $8)
 		RETURNING id;`,
 		u.Role,
 		u.Email,
@@ -220,7 +220,7 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE email = LOWER($1)`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.first_name, &dbu.last_name, &dbu.Phone, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -287,7 +287,7 @@ func (s *UserService) Update(u *models.User) error {
 	_, err = tx.Exec(`UPDATE users
 	SET
 		role = $1,
-		email = $2,
+		email = LOWER($2),
 		password_hash = $3,
 		first_name = $4,
 		last_name = $5,
@@ -363,7 +363,7 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	INSERT INTO
 		password_reset_tokens (uid, tokenID, hashedToken)
 	VALUES
-		((SELECT id FROM users WHERE email = $1), $2, $3);`, email, tokenID, hashedToken)
+		((SELECT id FROM users WHERE email = LOWER($1)), $2, $3);`, email, tokenID, hashedToken)
 
 	// User should not know if the email exists
 	if pgerr, ok := err.(*pq.Error); ok {
