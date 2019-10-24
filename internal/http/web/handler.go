@@ -270,7 +270,7 @@ func (h *Handler) getSponsors() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Sponsors", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
