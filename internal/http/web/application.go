@@ -99,7 +99,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 		// Also show a success flash
 		session.AddFlash(flash.Flash{
 			Type:    flash.Success,
-			Message: "Your application has been saved!  Feel free to change it until applications close",
+			Message: "Your application has been saved! You can make changes here until applications close.",
 		})
 		session.Save(r, w)
 
