@@ -45,9 +45,11 @@ func main() {
 	}
 	defer db.Close()
 
-	for err = db.Ping(); err != nil; {
+	err = db.Ping()
+	for err != nil {
 		fmt.Println("Ping to database failed, retrying")
 		time.Sleep(1 * time.Second)
+		err = db.Ping()
 	}
 
 	err = goose.Up(db, "./migrations")
