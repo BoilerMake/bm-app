@@ -26,6 +26,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	// Limit body request size
 	r.Use(middleware.LimitRequestSize)
+	// Log some stuff for each request
+	r.Use(middleware.Logging)
 	// Recover from panics
 	r.Use(middleware.Recoverer)
 

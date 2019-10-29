@@ -141,8 +141,15 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/faq", h.getFaq())
 
 	/* USER ROUTES */
-	r.Get("/signup", h.getSignup())
-	r.Post("/signup", h.postSignup())
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustNotBeAuthenticated)
+
+		r.Get("/signup", h.getSignup())
+		r.Post("/signup", h.postSignup())
+
+		r.Get("/login", h.getLogin())
+		r.Post("/login", h.postLogin())
+	})
 
 	r.Get("/activate/{code}", h.getActivate())
 
@@ -151,9 +158,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/reset", h.getResetPassword())
 	r.Get("/reset/{token}", h.getResetPasswordWithToken())
 	r.Post("/reset/{token}", h.postResetPassword())
-
-	r.Get("/login", h.getLogin())
-	r.Post("/login", h.postLogin())
 
 	r.Get("/logout", h.getLogout())
 
@@ -230,7 +234,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -248,7 +252,7 @@ func (h *Handler) getHackers() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -266,7 +270,7 @@ func (h *Handler) getSponsors() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Sponsors", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -284,7 +288,7 @@ func (h *Handler) getAbout() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -302,7 +306,7 @@ func (h *Handler) getFaq() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -321,7 +325,7 @@ func (h *Handler) get404() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -418,7 +422,7 @@ func logReportError(interfaces ...interface{}) {
 // Error checks an error given to it.  If it's a known error that we've made
 // we can show it to the user as a flash.  If it's unknown then we should tell
 // the user that something went wrong and report the error to rollbar.
-func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, interfaces ...interface{}) {
+func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, redirectPath string, interfaces ...interface{}) {
 	switch err.(type) {
 	case *models.ModelError:
 		modelError := err.(*models.ModelError)
@@ -433,7 +437,11 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		session.Save(r, w)
 
 		// Redirect to previous page
-		http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		if redirectPath != "" {
+			http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		}
 	default:
 		// Because we don't know how this error happened, we should report it on rollbar.
 		h.ErrReporter(append([]interface{}{err}, interfaces...)...)
@@ -441,6 +449,7 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		// This error could have come from anywhere, so we should just tell the user
 		// something went wrong so that we don't accidently expose something
 		// sensitive
+		// TODO this needs a page!
 		h.Templates.RenderTemplate(w, "500", nil)
 	}
 }

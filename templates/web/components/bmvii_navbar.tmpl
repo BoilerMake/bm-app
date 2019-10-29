@@ -15,17 +15,16 @@
 
 	<div id="nav-hamburger-menu" class="navbar-menu">
 		<div class="navbar-start">
-			<a class="navbar-item" href="/hackers">Hackers</a>
-			<a class="navbar-item" href="/sponsors">Sponsors</a>
 			<a class="navbar-item" href="/faq">FAQ</a>
+			<a class="navbar-item" href="/sponsors">Sponsors</a>
 			<a class="navbar-item" href="/about">About</a>
 		</div>
 
 		<div class="navbar-end">
-			<a class="navbar-item">
+			<a class="navbar-item" href="https://www.instagram.com/boilermake/">
 				<img src={{ static_path "instagram_logo.svg" }} alt="Instagram logo" width="25" height="25">
 			</a>
-			<a class="navbar-item">
+			<a class="navbar-item" href="https://twitter.com/BoilerMake1/">
 				<img src={{ static_path "twitter_logo.svg" }} alt="Twitter logo" width="25" height="25">
 			</a>
 			{{ if .IsAuthenticated }}

@@ -17,7 +17,8 @@ var (
 	ErrRequiredField           = &ModelError{"Required field is missing", flash.Info}
 	ErrIncorrectLogin          = &ModelError{"Email or password is incorrect", flash.Info}
 	ErrNotLoggedIn             = &ModelError{"Please create an account or log in first", flash.Info}
-	ErrInvalidConfirmationCode = &ModelError{"Invalid email confirmation code", flash.Info}
+	ErrAlreadyLoggedIn         = &ModelError{"You're already logged in", flash.Info}
+	ErrInvalidConfirmationCode = &ModelError{"Email confirmation code no longer valid", flash.Info}
 )
 
 // Validation errors
@@ -60,8 +61,6 @@ type User struct {
 	FirstName string `json:"firstName"` // NOT NULL
 	LastName  string `json:"lastName"`  // NOT NULL
 
-	Phone string `json:"phone"`
-
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
 }
@@ -94,8 +93,6 @@ func (u *User) FromFormData(r *http.Request) {
 
 	u.FirstName = r.FormValue("first-name")
 	u.LastName = r.FormValue("last-name")
-
-	u.Phone = r.FormValue("phone")
 }
 
 // Validate checks if a User has all the necessary fields.

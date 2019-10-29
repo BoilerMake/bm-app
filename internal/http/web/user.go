@@ -23,7 +23,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Signup", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -55,7 +55,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 		u.ID = id
@@ -71,7 +71,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
 		if err != nil {
-			h.Error(w, r, err, to, data)
+			h.Error(w, r, err, "", to, data)
 			return
 		}
 
@@ -80,7 +80,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -103,7 +103,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 		u, err := h.UserService.GetByCode(code)
 		if err != nil {
-			h.Error(w, r, err, code)
+			h.Error(w, r, err, "/", code)
 			return
 		}
 
@@ -111,7 +111,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		u.ConfirmationCode = ""
 		err = h.UserService.Update(u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "/")
 			return
 		}
 
@@ -134,7 +134,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Forgot Password", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -164,7 +164,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -178,7 +178,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
 		if err != nil {
-			h.Error(w, r, err, to, data)
+			h.Error(w, r, err, "", to, data)
 			return
 		}
 
@@ -201,7 +201,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -223,7 +223,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -250,7 +250,7 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -273,7 +273,7 @@ func (h *Handler) getLogin() http.HandlerFunc {
 		p, ok := NewPage(w, r, "BoilerMake - Login", status, session)
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -296,7 +296,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 		err := h.UserService.Login(&u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -305,7 +305,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -331,7 +331,7 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 		err := session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -353,19 +353,19 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
 		u, err := h.UserService.GetByEmail(email)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
 		p, ok := NewPage(w, r, "BoilerMake - Account", status, session)
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -388,13 +388,13 @@ func (h *Handler) postAccount() http.HandlerFunc {
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
 		u, err := h.UserService.GetByEmail(email)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -403,7 +403,7 @@ func (h *Handler) postAccount() http.HandlerFunc {
 
 		err = h.UserService.Update(u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 

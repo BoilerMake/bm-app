@@ -14,7 +14,8 @@ var (
 	ErrMissingGraduationYear = errors.New("please enter your graduation year")
 	ErrMissingGender         = errors.New("please enter your gender")
 	ErrMissingRace           = errors.New("please enter your race")
-	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake?")
+	ErrMissingReferrer       = errors.New("please enter where you heard about BoilerMake")
+	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake")
 	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
 
 	// Validation errors when form paring
@@ -36,22 +37,25 @@ const (
 
 // An Application is an application.  What do you want from me?
 type Application struct {
-	ID                   int
-	Decision             int
-	EmailedDecision      bool
-	UserID               int
-	RSVP                 bool
-	CheckedInAt          time.Time
+	ID              int
+	Decision        int
+	EmailedDecision bool
+	UserID          int
+	RSVP            bool
+	CheckedInAt     time.Time
+
 	School               string
 	Major                string
 	GraduationYear       string
 	ResumeFile           string
 	Resume               *multipart.FileHeader // Stored in S3, not db
+	Phone                string
 	Gender               string
 	Race                 string
 	DietaryRestrictions  string
 	Github               string
-	Linkedin             string
+	IsFirstHackathon     bool
+	Referrer             string
 	WhyBM                string
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
@@ -71,6 +75,8 @@ func (a *Application) Validate() error {
 		return ErrMissingGender
 	} else if a.Race == "" {
 		return ErrMissingRace
+	} else if a.Referrer == "" {
+		return ErrMissingReferrer
 	} else if a.WhyBM == "" {
 		return ErrMissingWhyBM
 	} else if !a.Is18OrOlder || !a.MLHCodeOfConduct || !a.MLHContestAndPrivacy {
@@ -90,7 +96,8 @@ func (a *Application) FromFormData(r *http.Request) error {
 	a.Race = r.FormValue("race")
 	a.DietaryRestrictions = r.FormValue("dietary-restrictions")
 	a.Github = r.FormValue("github")
-	a.Linkedin = r.FormValue("linkedin")
+	a.Phone = r.FormValue("phone-number")
+	a.Referrer = r.FormValue("referrer")
 	a.WhyBM = r.FormValue("why-bm")
 
 	// If no file was uploaded then set ResumeFile to empty string and let
@@ -121,6 +128,7 @@ func (a *Application) FromFormData(r *http.Request) error {
 		}
 	}
 
+	a.IsFirstHackathon = r.FormValue("is-first-hackathon") == "on"
 	a.Is18OrOlder = r.FormValue("is-18-or-older") == "on"
 	a.MLHCodeOfConduct = r.FormValue("mlh-code-of-conduct") == "on"
 	a.MLHContestAndPrivacy = r.FormValue("mlh-contest-and-privacy") == "on"
