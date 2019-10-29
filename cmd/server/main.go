@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/BoilerMake/new-backend/internal/http"
@@ -35,7 +36,8 @@ func main() {
 			log.Fatalf("environment variable not set: %v", "LOG_PATH")
 		}
 
-		logFile, err := os.Create(logPath + "/" + time.Now().String())
+		timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+		logFile, err := os.Create(logPath + "/" + timestamp)
 		if err != nil {
 			log.Fatalf("failed to create log file: %v", err)
 		}
