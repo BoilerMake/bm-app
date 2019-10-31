@@ -1,0 +1,109 @@
+{{ define "bmvii hackers" }}
+{{ template "head" . }}
+
+{{ template "navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section bm-vii-hero" style='background-color: #FFA13C; background-image: url({{ static_path "bmvii_why_clouds.svg" }});'>
+	<div class="container" style="padding-bottom: 2.5rem; padding-top: 2.5rem;">
+		<div class="columns is-centered content">
+			<div class="column is-6">
+				<img  alt="A Weekend Full of Hacking" src={{ static_path "bmvii_hackers_hero.png" }}>
+			</div>
+		</div>
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-5 has-text-white has-text-centered">Build that project idea you've had, learn a new technology, or anything you  set your mind to. We'll provide the food and space, you just make cool stuff.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5 has-text-centered">
+				<h2 class="subtitle">We want to give the best experience to the creative minds of the tech community.</h2>
+				<iframe class="full-size" width="600vw" height="200vh" src="https://youtube.com/embed/Wgs1nLJKqNY" allowfullscreen></iframe>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-6">
+				<div class="columns content" style="margin-bottom: 0;">
+					<div class="column is-6 is-8-mobile" style="padding-bottom: 0;">
+						<img alt="Create Amazing Things" src={{ static_path "bmvii_hackers_create_amazing_things.png" }}>
+					</div>
+				</div>
+				<p>Here at BoilerMake, we provide you with the resources (and snacks) to build that dream project you’ve been dying to create. You can share your work with hundreds of other hackers and corporate sponsors, while potentially getting a share of our $10,000 prize pool at the end of a wild 36 hours. Give yourself a chance to add to the legacy of great projects made at BoilerMake, including VR DDR, Skittles Launcher, and more.</p>
+				<a href="https://boilermake-vi.devpost.com"><button class="button is-info">Past Hacks</button></a>
+			</div>
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_build.jpg" }}' alt="build">
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_friends.jpg" }}' alt="friends">
+			</div>
+			<div class="column is-6">
+				<div class="columns content" style="margin-bottom: 0;">
+					<div class="column is-5 is-6-mobile" style="padding-bottom: 0;">
+						<img alt="Create Amazing Things" src={{ static_path "bmvii_hackers_make_new_friends.png" }}>
+					</div>
+				</div>
+				<p>BoilerMake is a great place to meet a group of people with a diverse set of skills and backgrounds. Every year, over 500 hackers from schools across the nation come together to hack and have fun. Don’t have a team? No worries, BoilerMake’s team building activities will help you come together to form the perfect group of people to build that dank idea.</p>
+			</div>
+		</div>
+	</div>
+</section>
+</div>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-6">
+				<div class="columns content" style="margin-bottom: 0;">
+					<div class="column is-6 is-8-mobile" style="padding-bottom: 0;">
+						<img alt="Create Amazing Things" src={{ static_path "bmvii_hackers_connect_with_sponsors.png" }}>
+					</div>
+				</div>
+				<p>Come talk to the people who inspire us to hack harder. Come talk to the people who make it all possible. BoilerMake may be the place where you find your dream company. Sponsor booths are a great place to learn about new technologies and real-world applications of your skills. Some sponsors may even provide fun activities or free swag!</p>
+			</div>
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_connecting.jpg" }}' alt="connecting">
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_activities.jpg" }}' alt="activities">
+			</div>
+			<div class="column is-6">
+				<div class="columns content" style="margin-bottom: 0;">
+					<div class="column is-6 is-8-mobile" style="padding-bottom: 0;">
+						<img alt="Create Amazing Things" src={{ static_path "bmvii_hackers_participate_in_activities.png" }}>
+					</div>
+				</div>
+				<p>Need a break from hacking? We’ve got that covered. At several points throughout the day, we will have activities open to any hacker. These include tech talks, workshops, yoga, MLH cup stacking, and more!</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "footer" . }}
+{{ end }}
