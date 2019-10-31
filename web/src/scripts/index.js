@@ -42,9 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
 						sib = sib.nextElementSibling
 					}
 
-					// Do some client side size checking
+					console.log(el.files[0].name.substr(el.files[0].name.length - 4))
+					// Do some client side size and type checking
 					if (el.files[0].size >= (20<<20)) {
 						sib.textContent = "Error: file too large"
+
+						el.parentNode.parentNode.classList.add("is-danger")
+						el.value = ""
+						el.required = true
+					} else if (el.files[0].name.substr(el.files[0].name.length - 4).toLowerCase() != ".pdf") {
+						sib.textContent = "Error: only PDFs are accepted"
 
 						el.parentNode.parentNode.classList.add("is-danger")
 						el.value = ""
