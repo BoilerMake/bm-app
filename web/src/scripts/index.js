@@ -105,6 +105,21 @@ document.addEventListener('DOMContentLoaded', () => {
 			}, 150);
 		}
 	}, 6000);
+
+
+	// Spin pin
+	var spinner = document.getElementById("footer-pindrop");
+	if (spinner) {
+		spinner.addEventListener('click', () => {
+			if (!spinner.classList.contains('animate-spin')) {
+				spinner.classList.toggle('animate-spin');
+
+				setTimeout(function() {
+					spinner.classList.toggle('animate-spin');
+				}, 500);
+			}
+		})
+	}
 });
 
 var hammers = 

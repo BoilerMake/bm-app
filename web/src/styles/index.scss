@@ -169,3 +169,19 @@ $dark: #231F20;
 .bmvii-section-header {
 	padding-top: 2rem;
 }
+
+.animate-spin {
+	animation-name: spin-y;
+	animation-duration: 0.5s;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes spin-y {
+	0%, 100% {
+		transform: rotateY(0deg) translateY(0rem);
+	}
+
+	50% {
+		transform: rotateY(180deg) translateY(-1rem);
+	}
+}
