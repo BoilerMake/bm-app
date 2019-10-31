@@ -14,6 +14,7 @@ var (
 	ErrMissingGraduationYear = errors.New("please enter your graduation year")
 	ErrMissingGender         = errors.New("please enter your gender")
 	ErrMissingRace           = errors.New("please enter your race")
+	ErrMissingGithub         = errors.New("please enter your GitHub username")
 	ErrMissingReferrer       = errors.New("please enter where you heard about BoilerMake")
 	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake")
 	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
@@ -75,6 +76,8 @@ func (a *Application) Validate() error {
 		return ErrMissingGender
 	} else if a.Race == "" {
 		return ErrMissingRace
+	} else if a.Github == "" {
+		return ErrMissingGithub
 	} else if a.Referrer == "" {
 		return ErrMissingReferrer
 	} else if a.WhyBM == "" {
