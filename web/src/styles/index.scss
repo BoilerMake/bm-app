@@ -1,3 +1,12 @@
+// Bulma defaults to always showing a scrollbar, no thanks
+$body-overflow-y: auto;
+
+// Use dark hammer logo colors instead of Bulma's default
+$dark: #231F20;
+
+// Shadows
+//$box-shadow: 0 5px 10px rgba(109, 133, 236, 0.1), 0 15px 40px rgba(185, 192, 221, 0.25);
+
 html {
 	scroll-behavior:smooth;
 }
@@ -44,15 +53,21 @@ body {
 	font-size: 10rem;
 }
 
-iframe.full-size {
-	height: 308px !important;
+.youtube-container {
+	position: relative;
+	// ~16:9, but we cut off a little to avoid black bars
+	padding-bottom: 54%;
+	height: 0;
+
+	iframe {
+		border-radius: 6px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 }
-
-// Bulma defaults to always showing a scrollbar, no thanks
-$body-overflow-y: auto;
-
-// Use dark hammer logo colors instead of Bulma's default
-$dark: #231F20;
 
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
