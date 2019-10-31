@@ -72,7 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		notifications.forEach(el => {
 			var notification = el.parentNode;
 			el.addEventListener('click', () => {
-				notification.parentNode.removeChild(notification);
+				// Fade out
+				notification.style.transition = '0.15s';
+				notification.style.opacity = 0;
+
+				// Actually delete
+				setTimeout(function() {
+					notification.parentNode.removeChild(notification);
+				}, 150);
 
 				// If there's no more notificaitons left, remove the container for them
 				const newNotifications = document.querySelectorAll('.notification .delete')
@@ -83,4 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	}
+
+	// Clear flashes after 6 seconds
+	setTimeout(function() {
+		var flashes = document.getElementById("flashes");
+		if (flashes) {
+			// Fade out
+			flashes.style.transition = '0.15s';
+			flashes.style.opacity = 0;
+
+			// Actually delete
+			setTimeout(function() {
+				flashes.parentNode.removeChild(flashes);
+			}, 150);
+		}
+	}, 6000);
 });
