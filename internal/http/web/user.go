@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/new-backend/pkg/flash"
 
 	"github.com/go-chi/chi"
 )
@@ -144,6 +145,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -181,6 +183,15 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			h.Error(w, r, err, "", to, data)
 			return
 		}
+
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		// Show flash that they should be sent a reset email
+		session.AddFlash(flash.Flash{
+			Type:    flash.Info,
+			Message: "We've emailed you instructions on how to reset your password.  If you don't see it in the next few mintues be sure to check your spam folder.",
+		})
+		session.Save(r, w)
 
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -237,6 +248,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -254,8 +266,17 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 			return
 		}
 
-		// Redirect to homepage if activation was successful
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		session, _ := h.SessionStore.Get(r, sessionCookieName)
+
+		// Show flash that everything went well
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Your password has been reset",
+		})
+		session.Save(r, w)
+
+		// Redirect to login if reset was successful
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 }
 

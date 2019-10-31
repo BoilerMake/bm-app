@@ -3,6 +3,8 @@
 
 {{ template "navbar" . }}
 
+{{ template "flashes" .Flashes }}
+
 <section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(168, 70, 226, 0.7), rgba(154, 150, 242, 0.7)), url({{ static_path "sponsors_header.jpg" }})'>
 	<div class="hero-body">
 		<div class="container has-text-centered">
@@ -11,8 +13,6 @@
 		</div>
 	</div>
 </section>
-
-{{ template "flashes" .Flashes }}
 
 <section class="section">
 	<div class="container">
