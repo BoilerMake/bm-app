@@ -21,13 +21,18 @@ body {
 }
 
 .bm-flashes {
-	position: fixed;
+	position: absolute;
 	margin: 0 auto;
 	width: 100%;
 	top: 5rem;
 	padding: 0 0.75rem;
 
 	z-index: 99;
+}
+
+.sticky-flash {
+	top: 1.75rem;
+	position: fixed;
 }
 
 // Make sure background image fills width and stays centered

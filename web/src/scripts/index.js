@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Check if there are any navbar burgers
 	if (navbarBurgers.length > 0) {
 		// Add a click event on each of them
-		navbarBurgers.forEach( el => {
+		navbarBurgers.forEach(el => {
 			el.addEventListener('click', () => {
 
 				// Get the target from the "data-target" attribute
@@ -119,6 +119,23 @@ document.addEventListener('DOMContentLoaded', () => {
 				}, 500);
 			}
 		})
+	}
+
+	// Make flashes stick only once you scroll past the navbar height
+	const navbar = document.querySelector('.navbar');
+	// Make sure there's a navbar
+	if (navbar) {
+		const navbarHeight = navbar.offsetHeight;
+		const flashes = document.getElementById("flashes");
+		// Add a click event on each of them
+		window.onscroll = () => {
+			console.log(123)
+			if (window.pageYOffset > navbarHeight) {
+				flashes.classList.add("sticky-flash");
+			} else {
+				flashes.classList.remove("sticky-flash");
+			}
+		}
 	}
 });
 
