@@ -121,19 +121,31 @@ document.addEventListener('DOMContentLoaded', () => {
 		})
 	}
 
-	// Make flashes stick only once you scroll past the navbar height
+	// Make flashes and mlh badge stick only once you scroll past the navbar height
 	const navbar = document.querySelector('.navbar');
 	// Make sure there's a navbar
 	if (navbar) {
 		const navbarHeight = navbar.offsetHeight;
 		const flashes = document.getElementById("flashes");
+		const mlhBadge = document.querySelector(".mlh-badge");
 		// Add a click event on each of them
 		window.onscroll = () => {
-			console.log(123)
 			if (window.pageYOffset > navbarHeight) {
-				flashes.classList.add("sticky-flash");
+				if (flashes) {
+					flashes.classList.add("sticky-flash");
+				}
+
+				if (mlhBadge) {
+					mlhBadge.classList.add("sticky-badge");
+				}
 			} else {
-				flashes.classList.remove("sticky-flash");
+				if (flashes) {
+					flashes.classList.remove("sticky-flash");
+				}
+
+				if (mlhBadge) {
+					mlhBadge.classList.remove("sticky-badge");
+				}
 			}
 		}
 	}
