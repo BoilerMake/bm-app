@@ -5,7 +5,7 @@ $body-overflow-y: auto;
 $dark: #231F20;
 
 html {
-	scroll-behavior:smooth;
+	scroll-behavior: smooth;
 }
 
 // Keeps footer at bottom even on pages with less than a full page of content
@@ -94,6 +94,11 @@ body {
 	background-color: transparent;
 	border-color: #AC333B;
 	color: $black;
+
+	&:hover {
+		background-color: #AC333B;
+		color: $white;
+	}
 }
 
 .bmvii-why__img {
