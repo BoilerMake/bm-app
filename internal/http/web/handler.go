@@ -47,7 +47,8 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(w http.ResponseWriter, r *http.Request, title string, status string, session *sessions.Session) (*Page, bool) {
+func (h *Handler) NewPage(w http.ResponseWriter, r *http.Request, title string) (*Page, bool) {
+	session, _ := h.SessionStore.Get(r, h.SessionCookieName)
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
 		// It's ok to ignore if this errors (for example when a user doesn't have a
@@ -67,7 +68,7 @@ func NewPage(w http.ResponseWriter, r *http.Request, title string, status string
 
 	return &Page{
 		Title:           title,
-		Status:          status,
+		Status:          h.Status,
 		Email:           email,
 		IsAuthenticated: email != "",
 		Flashes:         flashes,
@@ -102,6 +103,9 @@ type Handler struct {
 
 	// Name cookie that stores sessions
 	SessionCookieName string
+
+	// Holds the current application status
+	Status string
 }
 
 // NewHandler creates a handler for web requests.
@@ -187,6 +191,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Get("/static/*", fs.ServeHTTP)
 	}
 
+	r.NotFound(h.get404())
+
 	// Only log to rollbar in production
 	rollbarEnv := mustGetEnv("ROLLBAR_ENVIRONMENT")
 
@@ -218,7 +224,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	h.SessionCookieName = sessionCookieName
 
-	r.NotFound(h.get404())
+	h.Status = mustGetEnv("APP_STATUS")
 
 	h.Mux = r
 	return &h
@@ -226,12 +232,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -244,12 +246,8 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Hackers")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -262,12 +260,8 @@ func (h *Handler) getHackers() http.HandlerFunc {
 
 // getSponsors renders the sponsors template.
 func (h *Handler) getSponsors() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Sponsors", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Sponsors")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -280,12 +274,8 @@ func (h *Handler) getSponsors() http.HandlerFunc {
 
 // getAbout renders the about template.
 func (h *Handler) getAbout() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - About")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -298,12 +288,8 @@ func (h *Handler) getAbout() http.HandlerFunc {
 
 // getFaq renders the faq template.
 func (h *Handler) getFaq() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - FAQ")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -317,12 +303,8 @@ func (h *Handler) getFaq() http.HandlerFunc {
 // get404 handles requests that couldn't find a valid route by rendering the
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - 404")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -449,7 +431,13 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, redir
 		// This error could have come from anywhere, so we should just tell the user
 		// something went wrong so that we don't accidently expose something
 		// sensitive
-		// TODO this needs a page!
-		h.Templates.RenderTemplate(w, "500", nil)
+		p, ok := h.NewPage(w, r, "500")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "500", p)
 	}
 }

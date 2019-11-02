@@ -39,7 +39,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Apply")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return

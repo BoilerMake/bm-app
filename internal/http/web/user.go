@@ -12,7 +12,6 @@ import (
 
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -20,8 +19,7 @@ func (h *Handler) getSignup() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Signup", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Signup")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -123,7 +121,6 @@ func (h *Handler) getActivate() http.HandlerFunc {
 
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -131,8 +128,7 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Forgot Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Forgot Password")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -200,7 +196,6 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -208,8 +203,7 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Reset Password")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -222,7 +216,6 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -230,8 +223,7 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Reset Password")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -282,7 +274,6 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -290,8 +281,7 @@ func (h *Handler) getLogin() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Login", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Login")
 
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
@@ -384,7 +374,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 			return
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Account", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Account")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
