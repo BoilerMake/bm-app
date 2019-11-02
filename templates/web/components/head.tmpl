@@ -14,6 +14,7 @@
 		<meta property="og:description" content="BoilerMake is a hackathon that brings over 500 hackers from across the country under one roof for one incredible weekend.">
 		<meta property="og:type" content="website">
 		<meta property="og:url" content="https://boilermake.org">
+
 		{{ if and (.Status) (or (lt .Status 2) (gt .Status 4)) }}
 		<meta property="og:image" content='{{ static_path `logo_black.png` }}'>
 
@@ -21,7 +22,7 @@
 		<link rel="icon" type="image/png" sizes="32x32" href='{{ static_path "favicon-32x32.png" }}'>
 		<link rel="icon" type="image/png" sizes="96x96" href='{{ static_path "favicon-96x96.png" }}'>
 		{{ else }}
-		<meta property="og:image" content='{{ static_path `bmvii_hammers.png` }}'>
+		<meta property="og:image" content='{{ static_path `bmvii_unfurl.jpg` }}'>
 
 		<link rel="icon" type="image/png" sizes="16x16" href='{{ static_path "bmvii_favicon-16x16.png" }}'>
 		<link rel="icon" type="image/png" sizes="32x32" href='{{ static_path "bmvii_favicon-32x32.png" }}'>
