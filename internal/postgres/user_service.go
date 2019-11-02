@@ -1,7 +1,3 @@
-// TODO If there's no rows altered does it return an err?
-// TODO When using them right, transactions are usually a better way to deal
-// with actions in the database.  You get rollback and some other cool stuff.
-// Something to consider if you're looking for something to do.
 package postgres
 
 import (
@@ -29,7 +25,6 @@ type UserService struct {
 // A dbUser is like a models.User, but it can read in null fields from the
 // database without panicking.
 type dbUser struct {
-	// TODO do we still need sql.Null* types for NOT NULL columns? I would guess no
 	ID           sql.NullInt64
 	Role         sql.NullInt64
 	Email        sql.NullString
@@ -57,11 +52,6 @@ func (u *dbUser) toModel() *models.User {
 	}
 }
 
-// Signup inserts a new user into the database.
-// TODO test cases:
-// - Empty fields
-// - Same email
-// - nil user
 func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 	// Generate confirmation code
 	code, err = GenerateRandomString(32)

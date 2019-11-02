@@ -1,6 +1,6 @@
 {{ define "hackers" }}
 
-{{ if or (eq .Status "1") (eq .Status "5") }}
+{{ if or (lt .Status 2) (gt .Status 4) }}
 	{{ template "offseason hackers" . }}
 {{ else }}
 	{{ template "bmvii hackers" . }}

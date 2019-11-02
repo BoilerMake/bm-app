@@ -11,12 +11,6 @@ import (
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := h.getSession(r)
 
@@ -53,12 +47,6 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ok bool
 		var a models.Application

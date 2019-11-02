@@ -1,9 +1,9 @@
 {{ define "home" }}
 
-{{ if and (ge .Status "2") (le .Status "4") }}
-	{{ template "bmvii home" . }}
-{{ else }}
+{{ if or (lt .Status 2) (gt .Status 4) }}
 	{{ template "offseason home" . }}
+{{ else }}
+	{{ template "bmvii home" . }}
 {{ end }}
 
 {{ end }}

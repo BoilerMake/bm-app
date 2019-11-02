@@ -14,6 +14,7 @@ import (
 	"github.com/BoilerMake/new-backend/internal/mail"
 	"github.com/BoilerMake/new-backend/internal/models"
 	"github.com/BoilerMake/new-backend/internal/s3"
+	"github.com/BoilerMake/new-backend/internal/status"
 	"github.com/BoilerMake/new-backend/pkg/flash"
 	"github.com/BoilerMake/new-backend/pkg/template"
 
@@ -29,7 +30,7 @@ type Page struct {
 	Title string
 
 	// Current status of app
-	Status string
+	Status status.Status
 
 	// A generic place to put unstructured data
 	Data interface{}
@@ -105,7 +106,7 @@ type Handler struct {
 	SessionCookieName string
 
 	// Holds the current application status
-	Status string
+	Status status.Status
 }
 
 // NewHandler creates a handler for web requests.
@@ -137,52 +138,59 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Use(h.Templates.ReloadTemplates)
 	}
 
-	/* WEB ROUTES */
+	// On and off season routes
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
 	r.Get("/sponsors", h.getSponsors())
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
 
-	/* USER ROUTES */
-	r.Group(func(r chi.Router) {
-		r.Use(middleware.MustNotBeAuthenticated)
-
-		r.Get("/signup", h.getSignup())
-		r.Post("/signup", h.postSignup())
-
-		r.Get("/login", h.getLogin())
-		r.Post("/login", h.postLogin())
-	})
-
-	r.Get("/activate/{code}", h.getActivate())
-
-	r.Get("/forgot", h.getForgotPassword())
-	r.Post("/forgot", h.postForgotPassword())
-	r.Get("/reset", h.getResetPassword())
-	r.Get("/reset/{token}", h.getResetPasswordWithToken())
-	r.Post("/reset/{token}", h.postResetPassword())
-
-	r.Get("/logout", h.getLogout())
-
-	// Must have auth
+	// Exec routes
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.MustBeAuthenticated)
+		r.Use(middleware.MustBeExec)
+		r.Get("/exec", h.getExec())
+	})
 
-		r.Get("/account", h.getAccount())
-		r.Post("/account", h.postAccount())
+	// On sesaon only routes
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.OnSeasonOnly)
 
-		/* APPLICATION ROUTES */
-		r.Get("/apply", h.getApply())
-		r.Post("/apply", h.postApply())
-
-		/* EXEC ROUTES */
+		// User routes
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.MustBeExec)
+			r.Use(middleware.MustNotBeAuthenticated)
 
-			r.Get("/exec", h.getExec())
+			r.Get("/signup", h.getSignup())
+			r.Post("/signup", h.postSignup())
+
+			r.Get("/login", h.getLogin())
+			r.Post("/login", h.postLogin())
+		})
+
+		r.Get("/activate/{code}", h.getActivate())
+
+		r.Get("/forgot", h.getForgotPassword())
+		r.Post("/forgot", h.postForgotPassword())
+		r.Get("/reset", h.getResetPassword())
+		r.Get("/reset/{token}", h.getResetPasswordWithToken())
+		r.Post("/reset/{token}", h.postResetPassword())
+
+		r.Get("/logout", h.getLogout())
+
+		// Must have auth
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.MustBeAuthenticated)
+
+			r.Get("/account", h.getAccount())
+			r.Post("/account", h.postAccount())
+
+			// Application routes
+			r.Get("/apply", h.getApply())
+			r.Post("/apply", h.postApply())
 		})
 	})
+
+	r.NotFound(h.get404())
 
 	if mode == "development" {
 		// In prod we serve static items through a CDN, in development just serve
@@ -190,8 +198,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		fs := http.StripPrefix("/static", http.FileServer(http.Dir("web/static")))
 		r.Get("/static/*", fs.ServeHTTP)
 	}
-
-	r.NotFound(h.get404())
 
 	// Only log to rollbar in production
 	rollbarEnv := mustGetEnv("ROLLBAR_ENVIRONMENT")
@@ -211,20 +217,23 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	// Prevents CSRF attacks (on browsers that support SameSite)
 	store.Options.SameSite = http.SameSiteStrictMode
-
 	// Prevents XSS attacks (JS isn't allowed to access cookie)
 	store.Options.HttpOnly = true
-
 	if mode != "development" {
 		// Only transfer cookie over https
 		store.Options.Secure = true
 	}
 	h.SessionStore = store
 
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	h.SessionCookieName = sessionCookieName
+	h.SessionCookieName = mustGetEnv("SESSION_COOKIE_NAME")
 
-	h.Status = mustGetEnv("APP_STATUS")
+	// Set up status to feed to pages
+	statusString := mustGetEnv("APP_STATUS")
+	statusInt, err := strconv.Atoi(statusString)
+	if err != nil {
+		log.Fatalf("Failed to convert status to int: %v", err)
+	}
+	h.Status = status.Status(statusInt)
 
 	h.Mux = r
 	return &h
