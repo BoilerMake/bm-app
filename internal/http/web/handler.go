@@ -48,7 +48,7 @@ type Page struct {
 }
 
 func (h *Handler) NewPage(w http.ResponseWriter, r *http.Request, title string) (*Page, bool) {
-	session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+	session := h.getSession(r)
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
 		// It's ok to ignore if this errors (for example when a user doesn't have a
@@ -382,6 +382,12 @@ func onSeasonOnly(status string) error {
 	return nil
 }
 
+// getSession returns the session associated with a request's cookies.
+func (h *Handler) getSession(r *http.Request) *sessions.Session {
+	session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+	return session
+}
+
 // rollbarReportError reports an error to rollbar and logs it locally.  It
 // should only be reporting errors in production.  You should not call this
 // function directly, instead call h.Error(...) and let that handle it.
@@ -407,10 +413,9 @@ func logReportError(interfaces ...interface{}) {
 func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, redirectPath string, interfaces ...interface{}) {
 	switch err.(type) {
 	case *models.ModelError:
-		modelError := err.(*models.ModelError)
-
 		// This is an error we know about and should let the user know what happened
-		session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+		modelError := err.(*models.ModelError)
+		session := h.getSession(r)
 
 		session.AddFlash(flash.Flash{
 			Type:    modelError.GetType(),

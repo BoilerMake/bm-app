@@ -32,7 +32,6 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -48,7 +47,6 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO check if login is valid (i.e. account exists), if so log them in
 		var u models.User
 		u.FromFormData(r)
 
@@ -74,7 +72,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
@@ -141,7 +139,6 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -180,7 +177,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		// Show flash that they should be sent a reset email
 		session.AddFlash(flash.Flash{
@@ -240,7 +237,6 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -258,7 +254,7 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		// Show flash that everything went well
 		session.AddFlash(flash.Flash{
@@ -294,7 +290,6 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -311,7 +306,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
@@ -327,7 +322,6 @@ func (h *Handler) postLogin() http.HandlerFunc {
 
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -335,7 +329,7 @@ func (h *Handler) getLogout() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		// This expires the token
 		session.Options.MaxAge = -1
@@ -352,7 +346,6 @@ func (h *Handler) getLogout() http.HandlerFunc {
 
 // getAccount shows a user their account.
 func (h *Handler) getAccount() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -360,7 +353,7 @@ func (h *Handler) getAccount() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {
@@ -392,10 +385,8 @@ func (h *Handler) getAccount() http.HandlerFunc {
 
 // postAccount updates a user's account.
 func (h *Handler) postAccount() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok {

@@ -11,7 +11,6 @@ import (
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -19,7 +18,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
@@ -54,7 +53,6 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	status := mustGetEnv("APP_STATUS")
 	err := onSeasonOnly(status)
 	if err != nil {
@@ -71,7 +69,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		a.UserID, ok = session.Values["ID"].(int)
 		if !ok {
