@@ -1,28 +1,29 @@
 package models
 
 import (
-	"errors"
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	"github.com/BoilerMake/new-backend/pkg/flash"
 )
 
 // Validation errors
 var (
-	ErrMissingSchool         = errors.New("Please enter your school's name")
-	ErrMissingMajor          = errors.New("Please enter your major")
-	ErrMissingGraduationYear = errors.New("Please enter your graduation year")
-	ErrMissingGender         = errors.New("Please enter your gender")
-	ErrMissingRace           = errors.New("Please enter your race")
-	ErrMissingGithub         = errors.New("Please enter your GitHub username")
-	ErrMissingPhone          = errors.New("Please enter your phone number")
-	ErrMissingReferrer       = errors.New("Please enter where you heard about BoilerMake")
-	ErrMissingWhyBM          = errors.New("Please enter why you want to come to BoilerMake")
-	ErrMissingTACAgree       = errors.New("Please agree to the terms and conditions")
+	ErrMissingSchool         = &ModelError{"Please enter your school's name", flash.Info}
+	ErrMissingMajor          = &ModelError{"Please enter your major", flash.Info}
+	ErrMissingGraduationYear = &ModelError{"Please enter your graduation year", flash.Info}
+	ErrMissingGender         = &ModelError{"Please enter your gender", flash.Info}
+	ErrMissingRace           = &ModelError{"Please enter your race", flash.Info}
+	ErrMissingGithub         = &ModelError{"Please enter your GitHub username", flash.Info}
+	ErrMissingPhone          = &ModelError{"Please enter your phone number", flash.Info}
+	ErrMissingReferrer       = &ModelError{"Please enter where you heard about BoilerMake", flash.Info}
+	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake", flash.Info}
+	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions", flash.Info}
 
 	// Validation errors when form paring
-	ErrMissingResume  = errors.New("Please upload a resume")
-	ErrResumeTooLarge = errors.New("Resume upload is too large")
+	ErrMissingResume  = &ModelError{"Please upload a resume", flash.Info}
+	ErrResumeTooLarge = &ModelError{"Resume upload is too large", flash.Info}
 )
 
 const (
