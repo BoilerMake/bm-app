@@ -4,8 +4,8 @@ type Status int
 
 const (
 	Offseaon = iota + 1
-	StatusApplicationsOpen
-	StatusApplicationsClosed
-	StatusLive
-	StatusPostseason
+	ApplicationsOpen
+	ApplicationsClosed
+	Live
+	Postseason
 )

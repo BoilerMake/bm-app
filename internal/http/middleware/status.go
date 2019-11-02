@@ -19,7 +19,7 @@ func OnSeasonOnly(h http.Handler) http.Handler {
 	st := status.Status(statusInt)
 
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		if st < 2 || st > 4 {
+		if st < status.ApplicationsOpen || st > status.Live {
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}
