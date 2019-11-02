@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/BoilerMake/new-backend/internal/status"
+	"github.com/BoilerMake/bm-app/internal/status"
 )
 
 // OnSeasonOnly make sure the APP_STATUS environment variable is between 2 and 4, if

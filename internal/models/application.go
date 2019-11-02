@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // Validation errors

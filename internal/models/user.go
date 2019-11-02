@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BoilerMake/new-backend/pkg/argon2"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/pkg/argon2"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )

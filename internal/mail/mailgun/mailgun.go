@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/template"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/template"
 
 	"github.com/mailgun/mailgun-go/v3"
 )

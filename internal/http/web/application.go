@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // getApply renders the apply template.
