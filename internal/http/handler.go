@@ -45,9 +45,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 // getRobotsTxt serves the plain text robots.txt file for web crawlers.
 // The file itself is defined as a string in the handler.
 func (h *Handler) getRobotsTxt() http.HandlerFunc {
-	robotsTxt := `User-agent: *
-Disallow:
-Crawl-delay: 10`
+	robotsTxt := "User-agent: *\n" +
+		"Disallow:\n" +
+		"Crawl-delay: 10"
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, robotsTxt)
