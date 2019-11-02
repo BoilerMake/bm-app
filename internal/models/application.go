@@ -9,19 +9,20 @@ import (
 
 // Validation errors
 var (
-	ErrMissingSchool         = errors.New("please enter your school's name")
-	ErrMissingMajor          = errors.New("please enter your major")
-	ErrMissingGraduationYear = errors.New("please enter your graduation year")
-	ErrMissingGender         = errors.New("please enter your gender")
-	ErrMissingRace           = errors.New("please enter your race")
-	ErrMissingGithub         = errors.New("please enter your GitHub username")
-	ErrMissingReferrer       = errors.New("please enter where you heard about BoilerMake")
-	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake")
-	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
+	ErrMissingSchool         = errors.New("Please enter your school's name")
+	ErrMissingMajor          = errors.New("Please enter your major")
+	ErrMissingGraduationYear = errors.New("Please enter your graduation year")
+	ErrMissingGender         = errors.New("Please enter your gender")
+	ErrMissingRace           = errors.New("Please enter your race")
+	ErrMissingGithub         = errors.New("Please enter your GitHub username")
+	ErrMissingPhone          = errors.New("Please enter your phone number")
+	ErrMissingReferrer       = errors.New("Please enter where you heard about BoilerMake")
+	ErrMissingWhyBM          = errors.New("Please enter why you want to come to BoilerMake")
+	ErrMissingTACAgree       = errors.New("Please agree to the terms and conditions")
 
 	// Validation errors when form paring
-	ErrMissingResume  = errors.New("please upload a resume")
-	ErrResumeTooLarge = errors.New("resume upload is too large")
+	ErrMissingResume  = errors.New("Please upload a resume")
+	ErrResumeTooLarge = errors.New("Resume upload is too large")
 )
 
 const (
@@ -78,6 +79,8 @@ func (a *Application) Validate() error {
 		return ErrMissingRace
 	} else if a.Github == "" {
 		return ErrMissingGithub
+	} else if a.Phone == "" {
+		return ErrMissingPhone
 	} else if a.Referrer == "" {
 		return ErrMissingReferrer
 	} else if a.WhyBM == "" {
