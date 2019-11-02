@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )

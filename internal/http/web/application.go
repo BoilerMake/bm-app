@@ -5,21 +5,14 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
@@ -39,7 +32,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			}
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Apply")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
@@ -54,13 +47,6 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		var ok bool
 		var a models.Application
@@ -71,7 +57,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		a.UserID, ok = session.Values["ID"].(int)
 		if !ok {

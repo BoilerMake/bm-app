@@ -4,7 +4,7 @@ package mock
 import (
 	"log"
 
-	"github.com/BoilerMake/new-backend/pkg/template"
+	"github.com/BoilerMake/bm-app/pkg/template"
 )
 
 type Mailer struct {

@@ -1,11 +1,14 @@
 package http
 
 import (
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
-	"github.com/BoilerMake/new-backend/internal/http/web"
-	"github.com/BoilerMake/new-backend/internal/mail"
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/internal/s3"
+	"fmt"
+	"net/http"
+
+	"github.com/BoilerMake/bm-app/internal/http/middleware"
+	"github.com/BoilerMake/bm-app/internal/http/web"
+	"github.com/BoilerMake/bm-app/internal/mail"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/internal/s3"
 
 	"github.com/go-chi/chi"
 )
@@ -33,6 +36,20 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	r.Mount("/", h.WebHandler)
 
+	r.Get("/robots.txt", h.getRobotsTxt())
+
 	h.Mux = r
 	return &h
+}
+
+// getRobotsTxt serves the plain text robots.txt file for web crawlers.
+// The file itself is defined as a string in the handler.
+func (h *Handler) getRobotsTxt() http.HandlerFunc {
+	robotsTxt := "User-agent: *\n" +
+		"Disallow:\n" +
+		"Crawl-delay: 10"
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, robotsTxt)
+	}
 }

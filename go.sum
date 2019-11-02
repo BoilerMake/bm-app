@@ -1,3 +1,5 @@
+github.com/BoilerMake/bm-app v0.0.0-20191029203913-ea8537eab8b2 h1:OX4TNkJ9WgRgijfiVBv0pHOGxh61papNYlqrLlo629Y=
+github.com/BoilerMake/bm-app v0.0.0-20191029203913-ea8537eab8b2/go.mod h1:aDESLLEQkuP/fdEeay/1b4LgQT7CztUPo1uhUjpAD34=
 github.com/aws/aws-sdk-go v1.20.20 h1:OAR/GtjMOhenkp1NNKr1N1FgIP3mQXHeGbRhvVIAQp0=
 github.com/aws/aws-sdk-go v1.20.20/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927/go.mod h1:h/aW8ynjgkuj+NQRlZcDbAbM1ORAbXjXX77sX7T289U=

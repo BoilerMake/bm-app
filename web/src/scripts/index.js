@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Check if there are any navbar burgers
 	if (navbarBurgers.length > 0) {
 		// Add a click event on each of them
-		navbarBurgers.forEach( el => {
+		navbarBurgers.forEach(el => {
 			el.addEventListener('click', () => {
 
 				// Get the target from the "data-target" attribute
@@ -42,9 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
 						sib = sib.nextElementSibling
 					}
 
-					// Do some client side size checking
+					console.log(el.files[0].name.substr(el.files[0].name.length - 4))
+					// Do some client side size and type checking
 					if (el.files[0].size >= (20<<20)) {
 						sib.textContent = "Error: file too large"
+
+						el.parentNode.parentNode.classList.add("is-danger")
+						el.value = ""
+						el.required = true
+					} else if (el.files[0].name.substr(el.files[0].name.length - 4).toLowerCase() != ".pdf") {
+						sib.textContent = "Error: only PDFs are accepted"
 
 						el.parentNode.parentNode.classList.add("is-danger")
 						el.value = ""
@@ -65,7 +72,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		notifications.forEach(el => {
 			var notification = el.parentNode;
 			el.addEventListener('click', () => {
-				notification.parentNode.removeChild(notification);
+				// Fade out
+				notification.style.transition = '0.15s';
+				notification.style.opacity = 0;
+
+				// Actually delete
+				setTimeout(function() {
+					notification.parentNode.removeChild(notification);
+				}, 150);
 
 				// If there's no more notificaitons left, remove the container for them
 				const newNotifications = document.querySelectorAll('.notification .delete')
@@ -76,4 +90,103 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	}
+
+	// Clear flashes after 6 seconds
+	setTimeout(function() {
+		var flashes = document.getElementById("flashes");
+		if (flashes) {
+			// Fade out
+			flashes.style.transition = '0.15s';
+			flashes.style.opacity = 0;
+
+			// Actually delete
+			setTimeout(function() {
+				flashes.parentNode.removeChild(flashes);
+			}, 150);
+		}
+	}, 6000);
+
+
+	// Spin pin
+	var spinner = document.getElementById("footer-pindrop");
+	if (spinner) {
+		spinner.addEventListener('click', () => {
+			if (!spinner.classList.contains('animate-spin')) {
+				spinner.classList.toggle('animate-spin');
+
+				setTimeout(function() {
+					spinner.classList.toggle('animate-spin');
+				}, 500);
+			}
+		})
+	}
+
+	// Make flashes and mlh badge stick only once you scroll past the navbar height
+	const navbar = document.querySelector('.navbar');
+	// Make sure there's a navbar
+	if (navbar) {
+		const navbarHeight = navbar.offsetHeight;
+		const flashes = document.getElementById("flashes");
+		const mlhBadge = document.querySelector(".mlh-badge");
+		// Add a click event on each of them
+		window.onscroll = () => {
+			if (window.pageYOffset > navbarHeight) {
+				if (flashes) {
+					flashes.classList.add("sticky-flash");
+				}
+
+				if (mlhBadge) {
+					mlhBadge.classList.add("sticky-badge");
+				}
+			} else {
+				if (flashes) {
+					flashes.classList.remove("sticky-flash");
+				}
+
+				if (mlhBadge) {
+					mlhBadge.classList.remove("sticky-badge");
+				}
+			}
+		}
+	}
 });
+
+var hammers = 
+`                %&&&&&&&&&&&&&&%,             ,%&&&&&&&&&&&&&&%
+             &&&&&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&
+           %&&&&&&&&&&&&&&&&&&&&&&&&       &&&&&&&&&&&&&&&&&&&&&&&&%
+         %&&&&&&&&&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&&&&&&&&&&&&&&%
+       %&&&&&&&&&&&&&&&&&&&&&&&&&%           %&&&&&&&&&&&&&&&&&&&&&&&&&%
+     %&&&&&&&&&&&&&&&&&&&&&&&&&%               %&&&&&&&&&&&&&&&&&&&&&&&&&%
+   %&&&&&&&&&&&&&&&&&&&&&&&&&&                   &&&&&&&&&&&&&&&&&&&&&&&&&&%
+ &&&&&&&&&&&&&&&&&&&&&&&&&&&&&                   &&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&(               (&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&            (&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+/&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&           (&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&/
+  /&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&        (&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&/
+    /&&&&&&&&&&&&&    &&&&&&&&&        ,&&&&&&&&&&&&&&&&&    &&&&&&&&&&&&&/
+      *&&&&&&&&%        &&&&%        *&&&&&&&&&&&&&&&&&        %&&&&&&&&*
+        .&&&&*                     #&&&&&&&&&&&&&&&&&            *&&&&.
+                                 #&&&&&&&&&&&&&&&&&
+                               #&&&&&&&&&&&&&&&&&
+                             #&&&&&&&&&&&&&&&&&
+                           #&&&&&&&&&&&&&&&&&
+                         *&&&&&&&&&&&&&&&&&
+                       *&&&&&&&&&&&&&&&&&         &&&&&*
+                     #&&&&&&&&&&&&&&&&&         &&&&&&&&
+                   #&&&&&&&&&&&&&&&&&         &&&&&&&&&&&&
+                 #&&&&&&&&&&&&&&&&&          #&&&&&&&&&&&&&&
+               #&&&&&&&&&&&&&&&&&             &&&&&&&&&&&&&&&&
+             #&&&&&&&&&&&&&&&&&                 &&&&&&&&&&&&&&&&
+           *&&&&&&&&&&&&&&&&&                     &&&&&&&&&&&&&&&&&*
+         #&&&&&&&&&&&&&&&&&                         &&&&&&&&&&&&&&&&
+        &&&&&&&&&&&&&&&&&                             &&&&&&&&&&&&&&&&&
+        /&&&&&&&&&&&&&&                                 &&&&&&&&&&&&&&/
+          &&&&&&&&&&&                                     &&&&&&&&&&&
+            &&&&&&&                                         &&&&&&&
+
+                         BoilerMake – Forge the Future
+             Notice something weird? Email us at dev@boilermake.org!`
+
+
+console.log(hammers);

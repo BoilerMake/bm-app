@@ -129,7 +129,7 @@
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="tel" name="phone-number" class="input" maxlength="17" value="{{ .FormRefill.Phone }}">
+									<input type="tel" name="phone-number" class="input" minlength="7" maxlength="32" value="{{ .FormRefill.Phone }}" required>
 								</div>
 							</div>
 						</div>
@@ -246,24 +246,38 @@
 
 					<div class="field is-horizontal">
 						<div class="field-label is-normal">
-							<label for="github" class="label">GitHub</label>
+							<label for="github" class="label">GitHub Username</label>
 						</div>
 						<div class="field-body">
 							<div class="field">
 								<div class="control">
-									<input type="text" name="github" class="input" maxlength="512" value="{{ .FormRefill.Github }}">
+									<input type="text" name="github" class="input" maxlength="512" value="{{ .FormRefill.Github }}" required>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="field">
-						{{ if .FormRefill.IsFirstHackathon }}
-						<input type="checkbox" name="is-first-hackathon" class="checkbox" checked>
-						{{ else }}
-						<input type="checkbox" name="is-first-hackathon" class="checkbox">
-						{{ end }}
-						<label for="is-first-hackathon" class="checkbox">This is my first hackathon</label>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="is-first-hackathon" class="label">Is this your first hackathon?</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="is-first-hackathon" required>
+											{{ if not .FormRefill.IsFirstHackathon }}
+											<option value="off" selected="true">No</option>
+											<option value="on">Yes</option>
+											{{ else }}
+											<option value="off">No</option>
+											<option value="on" selected="true">Yes</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 
 					<div class="field is-horizontal">
@@ -294,9 +308,9 @@
 											{{ end }}
 
 											{{ if eq .FormRefill.Referrer "Poster" }}
-											<option value="Poster" selected>Poster</option>
+											<option value="Poster" selected>Campus Poster</option>
 											{{ else }}
-											<option value="Poster">Poster</option>
+											<option value="Poster">Campus Poster</option>
 											{{ end }}
 
 											{{ if eq .FormRefill.Referrer "Class visit" }}
@@ -333,30 +347,36 @@
 					</div>
 
 					<div class="field">
-						{{ if .FormRefill.Is18OrOlder }}
-						<input type="checkbox" name="is-18-or-older" class="checkbox" checked required>
-						{{ else }}
-						<input type="checkbox" name="is-18-or-older" class="checkbox" required>
-						{{ end }}
-						<label for="mlh-code-of-conduct" class="checkbox">I am 18 years old or older</label>
+						<label class="checkbox">
+							{{ if .FormRefill.Is18OrOlder }}
+							<input type="checkbox" name="is-18-or-older" checked required>
+							{{ else }}
+							<input type="checkbox" name="is-18-or-older" required>
+							{{ end }}
+							I am 18 years old or older
+						</label>
 					</div>
 
 					<div class="field">
-						{{ if .FormRefill.MLHCodeOfConduct }}
-						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" checked required>
-						{{ else }}
-						<input type="checkbox" name="mlh-code-of-conduct" class="checkbox" required>
-						{{ end }}
-						<label for="mlh-code-of-conduct" class="checkbox">I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of Conduct</a></label>
+						<label class="checkbox">
+							{{ if .FormRefill.MLHCodeOfConduct }}
+							<input type="checkbox" name="mlh-code-of-conduct" checked required>
+							{{ else }}
+							<input type="checkbox" name="mlh-code-of-conduct" required>
+							{{ end }}
+							I agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of Conduct</a>
+						</label>
 					</div>
 
 					<div class="field">
-						{{ if .FormRefill.MLHContestAndPrivacy }}
-						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" checked required>
-						{{ else }}
-						<input type="checkbox" name="mlh-contest-and-privacy" class="checkbox" required>
-						{{ end }}
-						<label for="mlh-code-of-conduct">I agree to the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a></label>
+						<label class="checkbox">
+							{{ if .FormRefill.MLHContestAndPrivacy }}
+							<input type="checkbox" name="mlh-contest-and-privacy" checked required>
+							{{ else }}
+							<input type="checkbox" name="mlh-contest-and-privacy" required>
+							{{ end }}
+							I agree to the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy">MLH Privacy Policy</a>
+						</label>
 					</div>
 
 					<div class="field has-text-centered">

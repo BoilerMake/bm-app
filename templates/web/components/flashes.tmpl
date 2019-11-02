@@ -5,17 +5,19 @@
 	<div class="container">
 		{{ range . }} 
 			<div class="columns is-centered content" style="padding-bottom: 2rem;">
-				{{ if eq .Type 0 }}
-				<div class="notification is-error">
-				{{ else if eq .Type 1 }}
-				<div class="notification is-warning">
-				{{ else if eq .Type 2 }}
-				<div class="notification is-info">
-				{{ else if eq .Type 3 }}
-				<div class="notification is-success">
-				{{ end }}
-					<button class="delete"></button>
-					{{ .Message }}
+				<div class="column is-8 has-text-centered">
+					{{ if eq .Type 0 }}
+					<div class="notification is-error">
+					{{ else if eq .Type 1 }}
+					<div class="notification is-warning">
+					{{ else if eq .Type 2 }}
+					<div class="notification is-info">
+					{{ else if eq .Type 3 }}
+					<div class="notification is-success">
+					{{ end }}
+						<button class="delete"></button>
+						{{ .Message }}
+					</div>
 				</div>
 			</div>
 		{{ end }}

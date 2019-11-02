@@ -1,5 +1,11 @@
+// Bulma defaults to always showing a scrollbar, no thanks
+$body-overflow-y: auto;
+
+// Use dark hammer logo colors instead of Bulma's default
+$dark: #231F20;
+
 html {
-	scroll-behavior:smooth;
+	scroll-behavior: smooth;
 }
 
 // Keeps footer at bottom even on pages with less than a full page of content
@@ -14,13 +20,36 @@ body {
 	flex: 1;
 }
 
+.mlh-badge {
+	display: block;
+	max-width: 100px;
+	min-width: 60px;
+	position: absolute;
+	right: 25px;
+	top: 3.25rem;
+	width: 10%;
+
+	z-index: 98;
+}
+
 .bm-flashes {
-	position: fixed;
+	position: absolute;
 	margin: 0 auto;
 	width: 100%;
 	top: 5rem;
+	padding: 0 0.75rem;
 
 	z-index: 99;
+}
+
+.sticky-badge {
+	top: 0;
+	position: fixed;
+}
+
+.sticky-flash {
+	top: 1.75rem;
+	position: fixed;
 }
 
 // Make sure background image fills width and stays centered
@@ -43,17 +72,21 @@ body {
 	font-size: 10rem;
 }
 
-iframe.full-size {
-	height: 308px !important;
+.youtube-container {
+	position: relative;
+	// ~16:9, but we cut off a little to avoid black bars
+	padding-bottom: 54%;
+	height: 0;
+
+	iframe {
+		border-radius: 6px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
 }
-
-// Bulma defaults to always showing a scrollbar, no thanks
-$body-overflow-y: auto;
-
-// Use dark hammer logo colors instead of Bulma's default
-$dark: #231F20;
-
-// Custom red color
 
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
@@ -78,6 +111,11 @@ $dark: #231F20;
 	background-color: transparent;
 	border-color: #AC333B;
 	color: $black;
+
+	&:hover {
+		background-color: #AC333B;
+		color: $white;
+	}
 }
 
 .bmvii-why__img {
@@ -169,4 +207,20 @@ $dark: #231F20;
 
 .bmvii-section-header {
 	padding-top: 2rem;
+}
+
+.animate-spin {
+	animation-name: spin-y;
+	animation-duration: 0.5s;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes spin-y {
+	0%, 100% {
+		transform: rotateY(0deg) translateY(0rem);
+	}
+
+	50% {
+		transform: rotateY(180deg) translateY(-1rem);
+	}
 }

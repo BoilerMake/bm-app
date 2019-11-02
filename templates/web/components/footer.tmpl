@@ -1,6 +1,6 @@
 {{ define "footer" }}
 
-{{ if or (eq .Status "1") (eq .Status "5") }}
+{{ if or (lt .Status 2) (gt .Status 4) }}
 	{{ template "offseason footer" . }}
 {{ else }}
 	{{ template "bmvii footer" . }}

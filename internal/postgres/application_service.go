@@ -3,7 +3,7 @@ package postgres
 import (
 	"database/sql"
 
-	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/lib/pq"
 )
 
