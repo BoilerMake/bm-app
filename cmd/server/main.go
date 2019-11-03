@@ -8,12 +8,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/BoilerMake/new-backend/internal/http"
-	"github.com/BoilerMake/new-backend/internal/mail"
-	"github.com/BoilerMake/new-backend/internal/postgres"
-	"github.com/BoilerMake/new-backend/internal/s3"
-	"github.com/BoilerMake/new-backend/pkg/env"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/http"
+	"github.com/BoilerMake/bm-app/internal/mail"
+	"github.com/BoilerMake/bm-app/internal/postgres"
+	"github.com/BoilerMake/bm-app/internal/s3"
+	"github.com/BoilerMake/bm-app/pkg/env"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/rollbar/rollbar-go"
 )

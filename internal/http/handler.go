@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
-	"github.com/BoilerMake/new-backend/internal/http/web"
-	"github.com/BoilerMake/new-backend/internal/mail"
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/internal/s3"
+	"github.com/BoilerMake/bm-app/internal/http/middleware"
+	"github.com/BoilerMake/bm-app/internal/http/web"
+	"github.com/BoilerMake/bm-app/internal/mail"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/internal/s3"
 
 	"github.com/go-chi/chi"
 )

@@ -6,9 +6,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/BoilerMake/new-backend/internal/mail/mailgun"
-	"github.com/BoilerMake/new-backend/internal/mail/mock"
-	"github.com/BoilerMake/new-backend/pkg/template"
+	"github.com/BoilerMake/bm-app/internal/mail/mailgun"
+	"github.com/BoilerMake/bm-app/internal/mail/mock"
+	"github.com/BoilerMake/bm-app/pkg/template"
 )
 
 // A Mailer defines an interface for sending mail.

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/argon2"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/argon2"
 
 	"github.com/lib/pq"
 )
