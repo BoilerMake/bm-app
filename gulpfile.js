@@ -77,7 +77,7 @@ function publish() {
 	};
 
 	var publisher = awspublish.create(aws);
-	var headers = {"Cache-Control": "max-age=315360000, no-transform, public"};
+	var headers = {"Cache-Control": "max-age=180, no-transform, public, must-revalidate"};
 
 	gulp
 		.src("web/static/**")
