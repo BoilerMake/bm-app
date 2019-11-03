@@ -3,6 +3,7 @@ package postgres
 import (
 	"crypto/rand"
 	"database/sql"
+	"log"
 	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -351,10 +352,9 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if pgerr, ok := err.(*pq.Error); ok {
 		switch pgerr.Code.Name() {
 		case "not_null_violation":
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return "", rollbackErr
-			}
-			return "", nil
+			// the users's email was not found in our db
+			log.Println("Email not found.")
+			return "", models.ErrEmailNotFound
 		}
 	}
 
@@ -385,20 +385,35 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		return models.ErrPasswordTooShort
 	}
 
+	// Multiple people can have the same tokenID
+	// Must check all
+	rows, err := s.DB.Query("SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1", tokenID)
+	if err != nil {
+		return models.ErrInvalidToken
+	}
+	defer rows.Close()
 	id := -1
 	var uid int
 	var hashedToken string
 	var createdAt time.Time
 	var now time.Time
-	// TODO check all rows with the same tokenID
-	// Multiple people can have the same tokenID
-	row := s.DB.QueryRow(`SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
-	err := row.Scan(&id, &uid, &hashedToken, &createdAt, &now)
-	elapsed := now.Sub(createdAt).Minutes()
+	for rows.Next() {
+		err = rows.Scan(&id, &uid, &hashedToken, &createdAt, &now)
+		if err != nil {
+			return models.ErrInvalidToken
+		}
+		elapsed := now.Sub(createdAt).Minutes()
+		// Check if token is expired
+		if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
+			// The tokenID may belong to another user
+			continue
+		}
 
-	// Check if token is expired
-	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
-		return models.ErrExpiredToken
+		// Check if hash is correct
+		if argon2.CheckPassword(userToken, hashedToken) {
+			s.TokenChangePassword(id, uid, password)
+			return nil
+		}
 	}
 
 	// Not sure what error to return
@@ -412,11 +427,6 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		default:
 			return pgerr
 		}
-	}
-
-	if argon2.CheckPassword(userToken, hashedToken) {
-		s.TokenChangePassword(id, uid, password)
-		return nil
 	}
 
 	return models.ErrInvalidToken

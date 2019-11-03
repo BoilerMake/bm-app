@@ -130,6 +130,8 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
 			h.Error(w, r, err, "")
+			// TODO tell user that password reset has been sent
+			http.Redirect(w, r, "/forgot", http.StatusSeeOther)
 			return
 		}
 
