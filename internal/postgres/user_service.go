@@ -403,6 +403,8 @@ func (s *UserService) ResetPassword(token string, password string) error {
 			return models.ErrInvalidToken
 		}
 		elapsed := now.Sub(createdAt).Minutes()
+		// TODO tell the user if they have at least 1 expired token
+		// reason: we can't tell if the user has no tokens or if they are just expired
 		// Check if token is expired
 		if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
 			// The tokenID may belong to another user
