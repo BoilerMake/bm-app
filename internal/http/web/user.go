@@ -135,7 +135,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 	resetMessage :=
 		`Hey there,
 
-We got a request to reset your BoilerMake account's password, If you made this request then please click the button below.  If you didn't then feel free to ignore this email.
+We got a request to reset your BoilerMake account's password. If you made this request, please click the button below to reset your password. Otherwise, please ignore this email.
 
 %s
 
