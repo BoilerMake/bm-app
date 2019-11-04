@@ -144,7 +144,13 @@
 								<div class="control">
 									<div class="select is-fullwidth">
 										<select name="gender" required>
-											{{ if or (eq .FormRefill.Gender "Female") (not .FormRefill.Gender) }}
+											{{ if not .FormRefill.Gender }}
+											<option disabled selected="true">Select an option</option>
+											{{ else }}
+											<option disabled>Select an option</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Gender "Female" }}
 											<option value="Female" selected>Female</option>
 											{{ else }}
 											<option value="Female">Female</option>
@@ -183,7 +189,13 @@
 								<div class="control">
 									<div class="select is-fullwidth">
 										<select name="race" required>
-											{{ if or (eq .FormRefill.Race "Asian or Pacific Islander") (not .FormRefill.Race) }}
+											{{ if not .FormRefill.Race }}
+											<option disabled selected="true">Select an option</option>
+											{{ else }}
+											<option disabled>Select an option</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Race "Asian or Pacific Islander" }}
 											<option value="Asian or Pacific Islander" selected>Asian or Pacific Islander</option>
 											{{ else }}
 											<option value="Asian or Pacific Islander">Asian or Pacific Islander</option>
@@ -289,7 +301,13 @@
 								<div class="control">
 									<div class="select is-fullwidth">
 										<select name="referrer" required>
-											{{ if or (eq .FormRefill.Referrer "Facebook") (not .FormRefill.Referrer) }}
+											{{ if not .FormRefill.Referrer }}
+											<option disabled selected="true">Select an option</option>
+											{{ else }}
+											<option disabled>Select an option</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.Referrer "Facebook" }}
 											<option value="Facebook" selected>Facebook</option>
 											{{ else }}
 											<option value="Facebook">Facebook</option>
