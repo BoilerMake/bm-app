@@ -34,7 +34,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			// Show flash that app has been saved
 			session.AddFlash(flash.Flash{
 				Type:    flash.Success,
-				Message: "Your application has been submitted! feel free to update it here until applications close.",
+				Message: "Your application has been submitted! Feel free to update it here until applications close.",
 			})
 			session.Save(r, w)
 		}
