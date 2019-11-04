@@ -10,20 +10,20 @@ import (
 
 // Validation errors
 var (
-	ErrMissingSchool         = &ModelError{"Please enter your school's name", flash.Info}
-	ErrMissingMajor          = &ModelError{"Please enter your major", flash.Info}
-	ErrMissingGraduationYear = &ModelError{"Please enter your graduation year", flash.Info}
-	ErrMissingGender         = &ModelError{"Please enter your gender", flash.Info}
-	ErrMissingRace           = &ModelError{"Please enter your race", flash.Info}
-	ErrMissingGithub         = &ModelError{"Please enter your GitHub username", flash.Info}
-	ErrMissingPhone          = &ModelError{"Please enter your phone number", flash.Info}
-	ErrMissingReferrer       = &ModelError{"Please enter where you heard about BoilerMake", flash.Info}
-	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake", flash.Info}
-	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions", flash.Info}
+	ErrMissingSchool         = &ModelError{"Please enter your school's name.", flash.Info}
+	ErrMissingMajor          = &ModelError{"Please enter your major.", flash.Info}
+	ErrMissingGraduationYear = &ModelError{"Please enter your graduation year.", flash.Info}
+	ErrMissingGender         = &ModelError{"Please enter your gender.", flash.Info}
+	ErrMissingRace           = &ModelError{"Please enter your race.", flash.Info}
+	ErrMissingGithub         = &ModelError{"Please enter your GitHub username.", flash.Info}
+	ErrMissingPhone          = &ModelError{"Please enter your phone number.", flash.Info}
+	ErrMissingReferrer       = &ModelError{"Please enter where you heard about BoilerMake.", flash.Info}
+	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake.", flash.Info}
+	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions.", flash.Info}
 
 	// Validation errors when form paring
-	ErrMissingResume  = &ModelError{"Please upload a resume", flash.Info}
-	ErrResumeTooLarge = &ModelError{"Resume upload is too large", flash.Info}
+	ErrMissingResume  = &ModelError{"Please upload a resume.", flash.Info}
+	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
 )
 
 const (
