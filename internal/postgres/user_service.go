@@ -3,7 +3,6 @@ package postgres
 import (
 	"crypto/rand"
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -176,7 +175,7 @@ func (s *UserService) GetById(id int) (u *models.User, err error) {
 		}
 
 		if err == sql.ErrNoRows {
-			return nil, models.ErrIncorrectLogin
+			return nil, models.ErrUserNotFound
 		} else {
 			return nil, err
 		}
@@ -213,7 +212,7 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		}
 
 		if err == sql.ErrNoRows {
-			return nil, models.ErrIncorrectLogin
+			return nil, models.ErrEmailNotFound
 		} else {
 			return nil, err
 		}
@@ -308,7 +307,7 @@ func (s *UserService) Update(u *models.User) error {
 		}
 
 		if err == sql.ErrNoRows {
-			return models.ErrIncorrectLogin
+			return models.ErrUserNotFound
 		} else {
 			return err
 		}
@@ -322,6 +321,11 @@ func (s *UserService) Update(u *models.User) error {
 func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if email == "" {
 		return "", models.ErrEmptyEmail
+	}
+
+	dbu, err := s.GetByEmail(email)
+	if err != nil {
+		return "", err
 	}
 
 	token, err := GenerateRandomString(passwordResetTokenLength)
@@ -342,24 +346,11 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 		return "", err
 	}
 
-	_, err = tx.Exec(`
-	INSERT INTO
+	_, err = tx.Exec(`INSERT INTO
 		password_reset_tokens (uid, tokenID, hashedToken)
 	VALUES
-		((SELECT id FROM users WHERE email = LOWER($1)), $2, $3);`, email, tokenID, hashedToken)
+		($1, $2, $3);`, dbu.ID, tokenID, hashedToken)
 
-	// User should not know if the email exists
-	if pgerr, ok := err.(*pq.Error); ok {
-		switch pgerr.Code.Name() {
-		case "not_null_violation":
-			// the users's email was not found in our db
-			log.Println("Email not found.")
-			return "", models.ErrEmailNotFound
-		}
-	}
-
-	// Switch statement above only checks for postgres specific errors, so here we'll check
-	// for a generic error
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return "", rollbackErr
@@ -392,7 +383,8 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		return models.ErrInvalidToken
 	}
 	defer rows.Close()
-	id := -1
+
+	var id int
 	var uid int
 	var hashedToken string
 	var createdAt time.Time
@@ -403,31 +395,17 @@ func (s *UserService) ResetPassword(token string, password string) error {
 			return models.ErrInvalidToken
 		}
 		elapsed := now.Sub(createdAt).Minutes()
-		// TODO tell the user if they have at least 1 expired token
-		// reason: we can't tell if the user has no tokens or if they are just expired
+
 		// Check if token is expired
 		if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
-			// The tokenID may belong to another user
+			// The tokenID may belong to another user, so don't modify it
 			continue
 		}
 
 		// Check if hash is correct
 		if argon2.CheckPassword(userToken, hashedToken) {
-			s.TokenChangePassword(id, uid, password)
-			return nil
-		}
-	}
-
-	// Not sure what error to return
-	// User should not know if the email exists
-	if pgerr, ok := err.(*pq.Error); ok {
-		switch pgerr.Code.Name() {
-		// User not in db (log internally)
-		// No error should be returned to user
-		case "not_null_violation":
-			return nil
-		default:
-			return pgerr
+			err = s.TokenChangePassword(id, uid, password)
+			return err
 		}
 	}
 

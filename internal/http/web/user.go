@@ -129,9 +129,7 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
-			h.Error(w, r, err, "")
-			// TODO tell user that password reset has been sent
-			http.Redirect(w, r, "/forgot", http.StatusSeeOther)
+			h.Error(w, r, err, "/forgot")
 			return
 		}
 
@@ -217,8 +215,14 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 		})
 		session.Save(r, w)
 
-		// Redirect to login if reset was successful
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		// If they're already logged in then redirect to homepage, otherwise
+		// redirect to login page
+		_, ok := session.Values["EMAIL"].(string)
+		if !ok {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
 	}
 }
 
