@@ -30,6 +30,13 @@ func (h *Handler) getApply() http.HandlerFunc {
 				h.Error(w, r, err, "")
 				return
 			}
+		} else {
+			// Show flash that app has been saved
+			session.AddFlash(flash.Flash{
+				Type:    flash.Success,
+				Message: "Your application has been submitted! Feel free to update it here until applications close.",
+			})
+			session.Save(r, w)
 		}
 
 		p, ok := h.NewPage(w, r, "BoilerMake - Apply")
@@ -80,14 +87,6 @@ func (h *Handler) postApply() http.HandlerFunc {
 				return
 			}
 		}
-
-		// Redirect back to application page if successful
-		// Also show a success flash
-		session.AddFlash(flash.Flash{
-			Type:    flash.Success,
-			Message: "Your application has been saved! You can make changes here until applications close.",
-		})
-		session.Save(r, w)
 
 		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}

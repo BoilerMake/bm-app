@@ -2,6 +2,7 @@ package web
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -34,6 +35,18 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		domain = "https://" + domain
 	}
 
+	confirmMessage :=
+		`Hey %s,
+
+Thanks for creating a BoilerMake.org account! We're excited that you're interested in attending our hackathon.  Click the link below to confirm your email.
+
+Be sure to check 'My Application' to ensure you've applied to BoilerMake VII.  This email only confirms that you've created a BoilerMake.org account – the application is separate.
+
+%s
+
+BoilerMake
+Hack Your Own Adventure`
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -49,14 +62,10 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		to := u.Email
 		subject := "Confirm your email"
 		link := domain + "/activate/" + confirmationCode
-		data := map[string]interface{}{
-			"Name":        u.FirstName,
-			"ConfirmLink": link,
-		}
 
-		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
+		err = h.Mailer.Send(to, subject, fmt.Sprintf(confirmMessage, u.FirstName, link))
 		if err != nil {
-			h.Error(w, r, err, "", to, data)
+			h.Error(w, r, err, "", to, link)
 			return
 		}
 
@@ -123,6 +132,16 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		domain = "https://" + domain
 	}
 
+	resetMessage :=
+		`Hey there,
+
+We got a request to reset your BoilerMake account's password. If you made this request, please click the button below to reset your password. Otherwise, please ignore this email.
+
+%s
+
+BoilerMake
+Hack Your Own Adventure`
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
@@ -136,14 +155,10 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		to := u.Email
 		subject := "Password Reset"
 		link := domain + "/reset/" + token
-		data := map[string]interface{}{
-			"Name":      u.FirstName,
-			"ResetLink": link,
-		}
 
-		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
+		err = h.Mailer.Send(to, subject, fmt.Sprintf(resetMessage, link))
 		if err != nil {
-			h.Error(w, r, err, "", to, data)
+			h.Error(w, r, err, "", to, link)
 			return
 		}
 
