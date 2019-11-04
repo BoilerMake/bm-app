@@ -35,6 +35,14 @@ func (m Mailer) Send(to string, subject string, body string) error {
 	// Send the message	with a 10 second timeout
 	_, _, err := m.mg.Send(ctx, message)
 	if err != nil {
+		// Mailgun's kinda annoying how it handles errors, so we'll just convert it to a string and
+		// see if it's the kind we're worried about.  We do a little bit of client side email
+		// validation (just what the HTML element with type="email" does) but it seems like
+		// mailgun is more strict.
+		if strings.Contains(err.Error(), "'to' parameter is not a valid address. please check documentation") {
+			return models.ErrInvalidEmail
+		}
+
 		return err
 	}
 
