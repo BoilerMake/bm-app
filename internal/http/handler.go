@@ -37,6 +37,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Mount("/", h.WebHandler)
 
 	r.Get("/robots.txt", h.getRobotsTxt())
+	r.Get("/service-worker.js", h.getInvalidateServiceWorker())
 
 	h.Mux = r
 	return &h
@@ -51,5 +52,18 @@ func (h *Handler) getRobotsTxt() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, robotsTxt)
+	}
+}
+
+// getInvalidateServiceWorker a really bad service worker.  But hey, at least
+// it makes things less broken.
+func (h *Handler) getInvalidateServiceWorker() http.HandlerFunc {
+	badServiceWorker := []byte(`self.addEventListener('install', () => {
+	self.skipWaiting();
+});`)
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+		w.Write(badServiceWorker)
 	}
 }
