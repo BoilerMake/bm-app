@@ -25,6 +25,7 @@ var (
 var (
 	ErrEmptyEmail           = &ModelError{"Email is empty", flash.Info}
 	ErrInvalidEmail         = &ModelError{"Email is invalid", flash.Info}
+	ErrEmailNotFound        = &ModelError{"We don't recognize that email.", flash.Info}
 	ErrEmptyPassword        = &ModelError{"Password is empty", flash.Info}
 	ErrEmptyPasswordConfirm = &ModelError{"Password confirmation is empty", flash.Info}
 	ErrEmptyFirstName       = &ModelError{"First name is empty", flash.Info}

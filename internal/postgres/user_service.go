@@ -175,7 +175,7 @@ func (s *UserService) GetById(id int) (u *models.User, err error) {
 		}
 
 		if err == sql.ErrNoRows {
-			return nil, models.ErrIncorrectLogin
+			return nil, models.ErrUserNotFound
 		} else {
 			return nil, err
 		}
@@ -212,7 +212,7 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		}
 
 		if err == sql.ErrNoRows {
-			return nil, models.ErrIncorrectLogin
+			return nil, models.ErrEmailNotFound
 		} else {
 			return nil, err
 		}
@@ -307,7 +307,7 @@ func (s *UserService) Update(u *models.User) error {
 		}
 
 		if err == sql.ErrNoRows {
-			return models.ErrIncorrectLogin
+			return models.ErrUserNotFound
 		} else {
 			return err
 		}
@@ -321,6 +321,11 @@ func (s *UserService) Update(u *models.User) error {
 func (s *UserService) GetPasswordReset(email string) (string, error) {
 	if email == "" {
 		return "", models.ErrEmptyEmail
+	}
+
+	dbu, err := s.GetByEmail(email)
+	if err != nil {
+		return "", err
 	}
 
 	token, err := GenerateRandomString(passwordResetTokenLength)
@@ -341,25 +346,11 @@ func (s *UserService) GetPasswordReset(email string) (string, error) {
 		return "", err
 	}
 
-	_, err = tx.Exec(`
-	INSERT INTO
+	_, err = tx.Exec(`INSERT INTO
 		password_reset_tokens (uid, tokenID, hashedToken)
 	VALUES
-		((SELECT id FROM users WHERE email = LOWER($1)), $2, $3);`, email, tokenID, hashedToken)
+		($1, $2, $3);`, dbu.ID, tokenID, hashedToken)
 
-	// User should not know if the email exists
-	if pgerr, ok := err.(*pq.Error); ok {
-		switch pgerr.Code.Name() {
-		case "not_null_violation":
-			if rollbackErr := tx.Rollback(); rollbackErr != nil {
-				return "", rollbackErr
-			}
-			return "", nil
-		}
-	}
-
-	// Switch statement above only checks for postgres specific errors, so here we'll check
-	// for a generic error
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return "", rollbackErr
@@ -385,38 +376,37 @@ func (s *UserService) ResetPassword(token string, password string) error {
 		return models.ErrPasswordTooShort
 	}
 
-	id := -1
+	// Multiple people can have the same tokenID
+	// Must check all
+	rows, err := s.DB.Query("SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1", tokenID)
+	if err != nil {
+		return models.ErrInvalidToken
+	}
+	defer rows.Close()
+
+	var id int
 	var uid int
 	var hashedToken string
 	var createdAt time.Time
 	var now time.Time
-	// TODO check all rows with the same tokenID
-	// Multiple people can have the same tokenID
-	row := s.DB.QueryRow(`SELECT id, uid, hashedToken, created_at, current_timestamp FROM password_reset_tokens WHERE tokenID = $1`, tokenID)
-	err := row.Scan(&id, &uid, &hashedToken, &createdAt, &now)
-	elapsed := now.Sub(createdAt).Minutes()
-
-	// Check if token is expired
-	if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
-		return models.ErrExpiredToken
-	}
-
-	// Not sure what error to return
-	// User should not know if the email exists
-	if pgerr, ok := err.(*pq.Error); ok {
-		switch pgerr.Code.Name() {
-		// User not in db (log internally)
-		// No error should be returned to user
-		case "not_null_violation":
-			return nil
-		default:
-			return pgerr
+	for rows.Next() {
+		err = rows.Scan(&id, &uid, &hashedToken, &createdAt, &now)
+		if err != nil {
+			return models.ErrInvalidToken
 		}
-	}
+		elapsed := now.Sub(createdAt).Minutes()
 
-	if argon2.CheckPassword(userToken, hashedToken) {
-		s.TokenChangePassword(id, uid, password)
-		return nil
+		// Check if token is expired
+		if elapsed > float64(tokenExpiryTime) || elapsed < 0 {
+			// The tokenID may belong to another user, so don't modify it
+			continue
+		}
+
+		// Check if hash is correct
+		if argon2.CheckPassword(userToken, hashedToken) {
+			err = s.TokenChangePassword(id, uid, password)
+			return err
+		}
 	}
 
 	return models.ErrInvalidToken
