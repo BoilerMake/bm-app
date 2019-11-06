@@ -3,6 +3,7 @@ package postgres
 import (
 	"crypto/rand"
 	"database/sql"
+	"strings"
 	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -187,6 +188,7 @@ func (s *UserService) GetById(id int) (u *models.User, err error) {
 
 // GetByEmail returns a single user with the given email.
 func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
+	email = strings.ToLower(email)
 	var dbu dbUser
 
 	tx, err := s.DB.Begin()
@@ -267,6 +269,8 @@ func (s *UserService) Update(u *models.User) error {
 		return err
 	}
 
+	u.Email = strings.ToLower(u.Email)
+
 	_, err = tx.Exec(`UPDATE users
 	SET
 		role = $1,
@@ -319,6 +323,8 @@ func (s *UserService) Update(u *models.User) error {
 
 // Creates the user's token for a password reset
 func (s *UserService) GetPasswordReset(email string) (string, error) {
+	email = strings.ToLower(email)
+
 	if email == "" {
 		return "", models.ErrEmptyEmail
 	}

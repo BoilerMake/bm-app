@@ -88,6 +88,7 @@ func (u *User) SetSession(session *sessions.Session) {
 // struct.
 func (u *User) FromFormData(r *http.Request) {
 	u.Email = r.FormValue("email")
+	u.Email = strings.ToLower(u.Email)
 
 	u.Password = r.FormValue("password")
 	u.PasswordConfirm = r.FormValue("password-confirm")
