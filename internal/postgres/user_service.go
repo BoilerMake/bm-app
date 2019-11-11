@@ -247,7 +247,7 @@ func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
-			return u, rollbackErr
+			return nil, rollbackErr
 		}
 
 		if err == sql.ErrNoRows {
@@ -257,6 +257,7 @@ func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 		}
 	}
 
+	err = tx.Commit()
 	return dbu.toModel(), err
 }
 
@@ -455,8 +456,8 @@ func (s *UserService) TokenChangePassword(id int, uid int, password string) erro
 		}
 		return err
 	}
-	err = tx.Commit()
 
+	err = tx.Commit()
 	return err
 }
 
