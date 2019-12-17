@@ -299,41 +299,39 @@ func (h *Handler) getLogout() http.HandlerFunc {
 	}
 }
 
-// getAccount shows a user their account.
-func (h *Handler) getAccount() http.HandlerFunc {
+// getDashboard shows a user their account.
+func (h *Handler) getDashboard() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := h.getSession(r)
 
-		email, ok := session.Values["EMAIL"].(string)
+		id, ok := session.Values["ID"].(int)
 		if !ok {
 			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
-		u, err := h.UserService.GetByEmail(email)
+		a, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
 			h.Error(w, r, err, "")
 			return
 		}
 
-		p, ok := h.NewPage(w, r, "BoilerMake - Account")
+		p, ok := h.NewPage(w, r, "BoilerMake - Dashboard")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
-		p.FormRefill = map[string]interface{}{
-			"FirstName": u.FirstName,
-			"LastName":  u.LastName,
-			"Email":     u.Email,
+		p.Data = map[string]interface{}{
+			"Application": a,
 		}
 
-		h.Templates.RenderTemplate(w, "account", p)
+		h.Templates.RenderTemplate(w, "dashboard", p)
 	}
 }
 
-// postAccount updates a user's account.
-func (h *Handler) postAccount() http.HandlerFunc {
+// postDashboard updates a user's account.
+func (h *Handler) postDashboard() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := h.getSession(r)
 
@@ -358,6 +356,6 @@ func (h *Handler) postAccount() http.HandlerFunc {
 			return
 		}
 
-		http.Redirect(w, r, "/account", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }

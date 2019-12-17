@@ -1,0 +1,131 @@
+{{ define "rsvp" }}
+{{ template "head" . }}
+
+{{ template "bmvii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="box column is-5">
+
+				<form action="" method="post" enctype="multipart/form-data">
+          <h2>RSVP</h2>
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="will-attend" class="label">Will you be attending BoilerMake?</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="will-attend" required>
+											{{ if not .FormRefill.WillAttend }}
+											<option value="off" selected="true">No</option>
+											<option value="on">Yes</option>
+											{{ else }}
+											<option value="off">No</option>
+											<option value="on" selected="true">Yes</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+          <div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="accommodations" class="label">Required accommodations</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="accommodations" class="input" maxlength="1024" value="{{ .FormRefill.Accommodations}}" required>
+								</div>
+							</div>
+						</div>
+					</div>
+
+          <div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="allergies" class="label">Allergies</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="text" name="allergies" class="input" maxlength="1024" value="{{ .FormRefill.Allergies}}" required>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="shirt-size" class="label">Shirt Size</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="shirt-size" required>
+											{{ if not .FormRefill.ShirtSize }}
+											<option disabled selected="true">Choose a size</option>
+											{{ else }}
+											<option disabled>Choose a size</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "XS" }}
+											<option value="XS" selected>XS</option>
+											{{ else }}
+											<option value="XS">XS</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "S" }}
+											<option value="S" selected>S</option>
+											{{ else }}
+											<option value="S">S</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "M" }}
+											<option value="M" selected>M</option>
+											{{ else }}
+											<option value="M">M</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "L" }}
+											<option value="L" selected>L</option>
+											{{ else }}
+											<option value="L">L</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "XL" }}
+											<option value="XL" selected>XL</option>
+											{{ else }}
+											<option value="XL">XL</option>
+											{{ end }}
+
+											{{ if eq .FormRefill.ShirtSize "XXL" }}
+											<option value="XXL" selected>XXL</option>
+											{{ else }}
+											<option value="XXL">XXL</option>
+											{{ end }}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field has-text-centered">
+						<button class="button is-red" type="submit">Submit RSVP</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "bmvii footer" . }}
+{{ end }}
