@@ -398,8 +398,7 @@
 	</div>
 </section>
 
-{{/*
-<section class="section" style='background-color: #2D2045;'>
+<section class="section has-background-image" style='background-color: #2D2045; background-image: url({{ static_path "bmvii_home_sponsors_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-3 bmvii-section-header">
@@ -414,13 +413,55 @@
 		</div>
 
 		<div class="columns is-centered content">
+			<div class="column is-8 box" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
+        <div class="columns is-mobile is-centered is-vcentered content">
+          <div class="column is-4">
+            <img src={{ static_path "sponsors_sfab.jpg" }} alt="SFAB">
+          </div>
+          <div class="column is-4">
+            <img src={{ static_path "sponsors_cs.svg" }} alt="Purdue Computer Science">
+          </div>
+        </div>
+        <div class="columns is-mobile is-centered is-vcentered content">
+          <div class="column is-5">
+            <img src={{ static_path "sponsors_qualcomm.png" }} alt="Qualcomm">
+          </div>
+          <div class="column is-5">
+            <img src={{ static_path "sponsors_ecolab.jpg" }} alt="Ecolab">
+          </div>
+        </div>
+        <div class="columns is-mobile is-centered is-vcentered content">
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_polytech.png" }} alt="Purdue Polytechnic Institute">
+          </div>
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_delmar.png" }} alt="DelMar">
+          </div>
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_engineering.jpg" }} alt="Purdue Engineering">
+          </div>
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_google_cloud.png" }} alt="Google Cloud">
+          </div>
+        </div>
+        <div class="columns is-mobile is-centered is-vcentered content">
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_sketch.svg" }} alt="Sketch">
+          </div>
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_wolfram.svg" }} alt="Wolfram Language">
+          </div>
+        </div>
+      </div>
+    </div>
+
+		<div class="columns is-centered content">
 			<div class="column is-8 has-text-centered">
 				<a class="button is-4 title has-text-centered is-white is-outlined" href="/sponsors">Become a Sponsor →</a>
 			</div>
 		</div>
 	</div>
 </section>
-*/}}
 
 {{ template "bmvii footer" . }}
 {{ end }}
