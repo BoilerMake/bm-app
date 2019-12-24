@@ -34,7 +34,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 			// Show flash that app has been saved
 			session.AddFlash(flash.Flash{
 				Type:    flash.Success,
-				Message: "Your application has been submitted! Feel free to update it here until applications close.",
+				Message: "Your application has already been submitted! Feel free to update it here until applications close.",
 			})
 			session.Save(r, w)
 		}
@@ -88,6 +88,12 @@ func (h *Handler) postApply() http.HandlerFunc {
 			}
 		}
 
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Your application has been submitted! Check here later to see your decision.",
+		})
+		session.Save(r, w)
+
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }

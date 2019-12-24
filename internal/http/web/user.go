@@ -1,6 +1,7 @@
 package web
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
@@ -79,7 +80,7 @@ Hack Your Own Adventure`
 		}
 
 		// Redirect to application if signup was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -104,7 +105,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		}
 
 		// Redirect to application if activation was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -277,7 +278,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		}
 
 		// Redirect to application if login was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -312,8 +313,15 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 
 		a, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
-			h.Error(w, r, err, "")
-			return
+			// User hasn't submitted an app
+			if err == sql.ErrNoRows {
+				a = &models.Application{}
+				// Mark decision as invalid value for template
+				a.Decision = -1
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
 		p, ok := h.NewPage(w, r, "BoilerMake - Dashboard")
