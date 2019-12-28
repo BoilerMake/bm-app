@@ -299,6 +299,7 @@ func (s *ApplicationService) GetUserCount() int {
 	}
 
 	rows, err := tx.Query("SELECT COUNT(*) FROM users")
+	fmt.Println(rows)
 	if err != nil {
 		return -1
 	}
@@ -310,6 +311,7 @@ func (s *ApplicationService) GetUserCount() int {
 		if err := rows.Scan(&count); err != nil {
 			return -1
 		}
+		count++
 	}
 
 	fmt.Printf("Number of users are %v\n", count)
@@ -334,6 +336,7 @@ func (s *ApplicationService) GetApplicationCount() int {
 		if err := rows.Scan(&count); err != nil {
 			return -1
 		}
+		count++
 	}
 
 	fmt.Printf("Number of applications are %v\n", count)
