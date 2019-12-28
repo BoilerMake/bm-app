@@ -80,7 +80,7 @@ Hack Your Own Adventure`
 		}
 
 		// Redirect to application if signup was successful
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 	}
 }
 
