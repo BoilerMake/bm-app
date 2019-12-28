@@ -149,4 +149,5 @@ func (a *Application) FromFormData(r *http.Request) error {
 type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
+	GetApplicationCount() int
 }

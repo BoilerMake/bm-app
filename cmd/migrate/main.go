@@ -43,6 +43,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
+	
 	defer db.Close()
 
 	err = db.Ping()

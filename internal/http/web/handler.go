@@ -146,11 +146,12 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/faq", h.getFaq())
 
 	// Exec routes
-	r.Group(func(r chi.Router) {
-		r.Use(middleware.MustBeAuthenticated)
-		r.Use(middleware.MustBeExec)
-		r.Get("/exec", h.getExec())
-	})
+	// r.Group(func(r chi.Router) {
+	// 	r.Use(middleware.MustBeAuthenticated)
+	// 	r.Use(middleware.MustBeExec)
+	// 	r.Get("/exec", h.getExec())
+	// })
+	r.Get("/exec", h.getExec())
 
 	// On sesaon only routes
 	r.Group(func(r chi.Router) {
@@ -255,6 +256,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := h.NewPage(w, r, "BoilerMake - Hackers")
 

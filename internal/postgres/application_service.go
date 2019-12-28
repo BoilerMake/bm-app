@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/lib/pq"
@@ -289,4 +290,52 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 
 	err = tx.Commit()
 	return dba.toModel(), err
+}
+
+func (s *ApplicationService) getUserCount() int {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return -1
+	}
+
+	rows, err := tx.Query("SELECT COUNT(*) FROM users")
+	if err != nil {
+		return -1
+	}
+	defer rows.Close()
+
+	var count int
+
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			return -1
+		}
+	}
+
+	fmt.Printf("Number of users are %s\n", count)
+	return count
+}
+
+func (s *ApplicationService) GetApplicationCount() int {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return -1
+	}
+
+	rows, err := tx.Query("SELECT COUNT(*) FROM bm7_applications")
+	if err != nil {
+		return -1
+	}
+	defer rows.Close()
+
+	var count int
+
+	for rows.Next() {
+		if err := rows.Scan(&count); err != nil {
+			return -1
+		}
+	}
+
+	fmt.Printf("Number of applications are %v\n", count)
+	return count
 }
