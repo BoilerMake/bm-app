@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/BoilerMake/bm-app/pkg/flash"
@@ -321,6 +322,13 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 			} else {
 				h.Error(w, r, err, "")
 				return
+			}
+		}
+
+		// Only show to accepted users
+		if a.Decision == models.DecisionAccepted {
+			if !a.AcceptedAt.IsZero() && time.Now().Sub(a.AcceptedAt) > models.RSVPExpiryTime {
+				a.Decision = -2
 			}
 		}
 

@@ -2,13 +2,17 @@ package models
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 var (
 	ErrMissingShirtSize = &ModelError{"Please enter your shirt size.", flash.Info}
+	ErrExpired          = &ModelError{"Your RSVP has expired.  Contact team@boilermake.org if you think this was in error.", flash.Error}
 )
+
+const RSVPExpiryTime = 3 * 24 * time.Hour
 
 type RSVP struct {
 	ID     int
