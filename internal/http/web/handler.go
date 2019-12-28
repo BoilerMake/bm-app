@@ -150,12 +150,11 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/faq", h.getFaq())
 
 	// Exec routes
-	// r.Group(func(r chi.Router) {
-	// 	r.Use(middleware.MustBeAuthenticated)
-	// 	r.Use(middleware.MustBeExec)
-	// 	r.Get("/exec", h.getExec())
-	// })
-	r.Get("/exec", h.getExec())
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustBeAuthenticated)
+		r.Use(middleware.MustBeExec)
+		r.Get("/exec", h.getExec())
+	})
 
 	// On sesaon only routes
 	r.Group(func(r chi.Router) {
