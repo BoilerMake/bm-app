@@ -292,7 +292,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	return dba.toModel(), err
 }
 
-func (s *ApplicationService) getUserCount() int {
+func (s *ApplicationService) GetUserCount() int {
 	tx, err := s.DB.Begin()
 	if err != nil {
 		return -1
@@ -312,7 +312,7 @@ func (s *ApplicationService) getUserCount() int {
 		}
 	}
 
-	fmt.Printf("Number of users are %s\n", count)
+	fmt.Printf("Number of users are %v\n", count)
 	return count
 }
 

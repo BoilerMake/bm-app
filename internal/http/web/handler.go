@@ -46,6 +46,10 @@ type Page struct {
 	// The user's email, blank if user not logged in
 	Email           string
 	IsAuthenticated bool
+
+	// For the exec page
+	ApplicationCount int
+	UserCount        int
 }
 
 func (h *Handler) NewPage(w http.ResponseWriter, r *http.Request, title string) (*Page, bool) {
@@ -146,12 +150,11 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	r.Get("/faq", h.getFaq())
 
 	// Exec routes
-	// r.Group(func(r chi.Router) {
-	// 	r.Use(middleware.MustBeAuthenticated)
-	// 	r.Use(middleware.MustBeExec)
-	// 	r.Get("/exec", h.getExec())
-	// })
-	r.Get("/exec", h.getExec())
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.MustBeAuthenticated)
+		r.Use(middleware.MustBeExec)
+		r.Get("/exec", h.getExec())
+	})
 
 	// On sesaon only routes
 	r.Group(func(r chi.Router) {
