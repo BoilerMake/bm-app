@@ -40,13 +40,19 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 		}
 
 		// Now make sure RSVP has not expired
-		if time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
-			session.AddFlash(flash.Flash{
-				Type:    flash.Error,
-				Message: "Your RSVP has expired.",
-			})
-			session.Save(r, w)
+		if app.Decision == models.DecisionAccepted {
+			if !app.AcceptedAt.IsZero() && time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
+				session.AddFlash(flash.Flash{
+					Type:    flash.Error,
+					Message: "Your RSVP has expired.",
+				})
+				session.Save(r, w)
 
+				http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+				return
+			}
+		} else {
+			// User hasn't been accepted, turn them away
 			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 			return
 		}
@@ -63,7 +69,7 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 			// Show flash that we have RSVP on file
 			session.AddFlash(flash.Flash{
 				Type:    flash.Success,
-				Message: "Your RSVP has been submitted!",
+				Message: "Your RSVP has already been submitted, but feel free to update it here.",
 			})
 			session.Save(r, w)
 		}
@@ -83,22 +89,59 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 // postRSVP renders the RSVP template.
 func (h *Handler) postRSVP() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ok bool
 		var rsvp models.RSVP
 
-		err := rsvp.FromFormData(r)
+		session := h.getSession(r)
+
+		id, ok := session.Values["ID"].(int)
+		if !ok {
+			h.Error(w, r, errors.New("invalid session value"), "")
+			return
+		}
+
+		// First make sure they've submitted an application
+		app, err := h.ApplicationService.GetByUserID(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				session.AddFlash(flash.Flash{
+					Type:    flash.Error,
+					Message: "Please submit an application first.",
+				})
+				session.Save(r, w)
+
+				http.Redirect(w, r, "/apply", http.StatusSeeOther)
+				return
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
+		}
+
+		// Now make sure RSVP has not expired
+		if app.Decision == models.DecisionAccepted {
+			if !app.AcceptedAt.IsZero() && time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
+				session.AddFlash(flash.Flash{
+					Type:    flash.Error,
+					Message: "Your RSVP has expired.",
+				})
+				session.Save(r, w)
+
+				http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+				return
+			}
+		} else {
+			// User hasn't been accepted, turn them away
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+			return
+		}
+
+		err = rsvp.FromFormData(r)
 		if err != nil {
 			h.Error(w, r, err, "")
 			return
 		}
 
-		session := h.getSession(r)
-
-		rsvp.UserID, ok = session.Values["ID"].(int)
-		if !ok {
-			h.Error(w, r, errors.New("invalid session value"), "")
-			return
-		}
+		rsvp.UserID = id
 
 		err = h.RSVPService.CreateOrUpdate(&rsvp)
 		if err != nil {

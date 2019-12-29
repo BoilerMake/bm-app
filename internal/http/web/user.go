@@ -338,40 +338,25 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 			return
 		}
 
+		// See if user has submitted an RSVP
+		hasRSVP := true
+		rsvp, err := h.RSVPService.GetByUserID(id)
+		if err != nil {
+			hasRSVP = false
+			if err == sql.ErrNoRows {
+				rsvp = &models.RSVP{}
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
+		}
+
 		p.Data = map[string]interface{}{
 			"Application": a,
+			"HasRSVP":     hasRSVP,
+			"RSVP":        rsvp,
 		}
 
 		h.Templates.RenderTemplate(w, "dashboard", p)
-	}
-}
-
-// postDashboard updates a user's account.
-func (h *Handler) postDashboard() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		session := h.getSession(r)
-
-		email, ok := session.Values["EMAIL"].(string)
-		if !ok {
-			h.Error(w, r, errors.New("invalid session value"), "")
-			return
-		}
-
-		u, err := h.UserService.GetByEmail(email)
-		if err != nil {
-			h.Error(w, r, err, "")
-			return
-		}
-
-		u.FirstName = r.FormValue("first-name")
-		u.LastName = r.FormValue("last-name")
-
-		err = h.UserService.Update(u)
-		if err != nil {
-			h.Error(w, r, err, "")
-			return
-		}
-
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
