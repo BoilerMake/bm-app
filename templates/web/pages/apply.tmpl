@@ -397,9 +397,11 @@
 						</label>
 					</div>
 
+          {{ if eq .FormRefill.Decision 0 }}
 					<div class="field has-text-centered">
 						<button class="button is-red" id="submit-app" type="submit">Submit Application</button>
 					</div>
+          {{ end }}
 				</form>
 			</div>
 		</div>

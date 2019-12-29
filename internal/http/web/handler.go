@@ -186,7 +186,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 			r.Use(middleware.MustBeAuthenticated)
 
 			r.Get("/dashboard", h.getDashboard())
-			r.Post("/dashboard", h.postDashboard())
 
 			r.Get("/apply", h.getApply())
 			r.Post("/apply", h.postApply())
