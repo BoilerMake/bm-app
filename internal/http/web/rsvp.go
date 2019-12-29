@@ -3,8 +3,8 @@ package web
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/BoilerMake/bm-app/pkg/flash"
@@ -21,8 +21,37 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 			return
 		}
 
+		// First make sure they've submitted an application
+		app, err := h.ApplicationService.GetByUserID(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				session.AddFlash(flash.Flash{
+					Type:    flash.Error,
+					Message: "Please submit an application first.",
+				})
+				session.Save(r, w)
+
+				http.Redirect(w, r, "/apply", http.StatusSeeOther)
+				return
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
+		}
+
+		// Now make sure RSVP has not expired
+		if time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
+			session.AddFlash(flash.Flash{
+				Type:    flash.Error,
+				Message: "Your RSVP has expired.",
+			})
+			session.Save(r, w)
+
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+			return
+		}
+
 		rsvp, err := h.RSVPService.GetByUserID(id)
-		fmt.Printf("stuff: %+v, %v\n", rsvp, err)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				rsvp = &models.RSVP{}

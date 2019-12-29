@@ -11,7 +11,14 @@
 			<div class="column box is-5">
         <h2>Your Dashboard</h2>
         <div style="margin: 2em 0;">
-          {{ if eq .Data.Application.Decision -1 }}
+          {{ if eq .Data.Application.Decision -2 }}
+          <div class="level" style="margin-bottom: 1em;">
+            <p class="level-left is-5 title is-marginless">Your RSVP has expired!</p>
+            <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
+          </div>
+          <p>The time limit on your RSVP has expired.  If you think this was an error feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a>.</p>
+
+          {{ else if eq .Data.Application.Decision -1 }}
           <div class="level" style="margin-bottom: 1em;">
             <p class="level-left is-5 title is-marginless">You haven't applied yet!</p>
             <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-awaiting"></div>
