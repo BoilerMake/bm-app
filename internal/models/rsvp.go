@@ -26,7 +26,7 @@ type RSVP struct {
 
 // Validate checks if an RSVP has all the necessary fields.
 func (rsvp *RSVP) Validate() error {
-	if rsvp.ShirtSize == "" {
+	if rsvp.WillAttend && rsvp.ShirtSize == "" {
 		return ErrMissingShirtSize
 	}
 

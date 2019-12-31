@@ -15,6 +15,10 @@ body {
 	flex-direction: column;
 }
 
+.is-hidden {
+  display: none;
+}
+
 .section {
 	// Make page take up at least 100vh (So footer is never awkwardly in the middle)
 	flex: 1;
