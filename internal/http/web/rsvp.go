@@ -61,6 +61,7 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 		if err != nil {
 			if err == sql.ErrNoRows {
 				rsvp = &models.RSVP{}
+				rsvp.WillAttend = true
 			} else {
 				h.Error(w, r, err, "")
 				return
