@@ -1,0 +1,101 @@
+{{ define "dashboard" }}
+{{ template "head" . }}
+
+{{ template "navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column box is-5">
+        <h2>Your Dashboard</h2>
+        <div style="margin: 2em 0;">
+          {{ if .Data.HasRSVP }}
+            {{ if .Data.RSVP.WillAttend }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">You're all set!</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
+            </div>
+            <p>We can't wait to see what you make at BoilerMake VII. Check back here and your email for more in the coming weeks. In the meantime, feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions.</p>
+            {{ else }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">We wish you could make it!</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
+            </div>
+            <p>We're sad you couldn't make it to BoilerMake VII, but we hope you'll attend next year. Feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions. Hack on!</p>
+            {{ end }}
+          {{ else }}
+            {{ if eq .Data.Application.Decision -2 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">Your RSVP has expired</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
+            </div>
+            <p>Unfortunately, your RSVP has expired. If you think this was an error, feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a>.</p>
+						<p>We hope you apply next year for BoilerMake VIII. As always, Hack on.</p>
+
+            {{ else if eq .Data.Application.Decision -1 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">You haven't applied yet!</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-awaiting"></div>
+            </div>
+            <p>First thing's first - we need you to apply! Head to the application page with the button below.</p>
+
+            {{ else if eq .Data.Application.Decision 0 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">Application Status: Awaiting Decision</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-awaiting"></div>
+            </div>
+            <p>We haven't made a decision yet, but keep an eye on your email in the coming weeks! If you have any questions, feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a>.</p>
+
+            {{ else if eq .Data.Application.Decision 1 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">Application Status: Rejected</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
+            </div>
+            <p>Unfortunately, we won't be able to reserve a space for you at BoilerMake VII. 
+							We realize this outcome may be disappointing, but we do our best to accomodate as many people as possible at our venue.
+							We may accept walk-ins on a rolling basis at the event - ask us at check-in or visit your dashboard on January 24th.</p>
+						 <p>We hope you apply next year for BoilerMake VIII. As always, Hack on.</p>
+
+            {{ else if eq .Data.Application.Decision 2 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">Application Status: Waitlist</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-waitlisted"></div>
+            </div>
+            <p>We're working on finding space for you! We do our best to accomodate as many people as possible at our venue. Keep an eye on your email for a follow up.</p>
+
+            {{ else if eq .Data.Application.Decision 3 }}
+            <div class="level" style="margin-bottom: 1em;">
+              <p class="level-left is-5 title is-marginless">Application Status: Accepted!</p>
+              <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
+            </div>
+            <p>Congratulations! We are honored to invite you to BoilerMake VII on January 24th.
+							Get ready to hack your own adventure and learn new skills while enjoying yoga, games, and great food on the side.</p>
+						<p><strong>Please RSVP below to let us know if you can make it. Your acceptance will expire after 3 days.</strong></p>
+            {{ end }}
+          {{ end }}
+        </div>
+
+        {{ if .Data.HasRSVP }}
+          <a class="button is-red is-outlined is-fullwidth is-5 title" href="/rsvp">Update RSVP</a>
+        {{ else }}
+          {{ if eq .Data.Application.Decision -1 }}
+          <a class="button is-red is-fullwidth is-5 title" href="/apply">Apply Now</a>
+          {{ end }}
+
+          {{ if eq .Data.Application.Decision 0 }}
+          <a class="button is-red is-outlined is-fullwidth is-5 title" href="/apply">View application</a>
+          {{ end }}
+
+          {{ if eq .Data.Application.Decision 3 }}
+          <a class="button is-red is-fullwidth is-5 title" href="/rsvp">RSVP</a>
+          {{ end }}
+        {{ end }}
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "footer" . }}
+{{ end }}

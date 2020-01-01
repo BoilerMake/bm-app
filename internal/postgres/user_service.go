@@ -149,8 +149,8 @@ func (s *UserService) Login(u *models.User) error {
 	}
 }
 
-// GetById returns a single user with the given id.
-func (s *UserService) GetById(id int) (u *models.User, err error) {
+// GetByID returns a single user with the given id.
+func (s *UserService) GetByID(id int) (u *models.User, err error) {
 	var dbu dbUser
 
 	tx, err := s.DB.Begin()

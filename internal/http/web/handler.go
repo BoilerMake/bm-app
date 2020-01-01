@@ -81,11 +81,14 @@ type Handler struct {
 	// A Mux handles all routing and middleware.
 	*chi.Mux
 
-	// A UserService is the interface with the database.
+	// A UserService is the interface with the database for users
 	UserService models.UserService
 
-	// An ApplicationService is the interface with the databsae
+	// An ApplicationService is the interface with the database for applications
 	ApplicationService models.ApplicationService
+
+	// An RSVPService is the interface with the databsae for RSVPs
+	RSVPService models.RSVPService
 
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
@@ -110,10 +113,11 @@ type Handler struct {
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
 		UserService:        us,
 		ApplicationService: as,
+		RSVPService:        rs,
 		Mailer:             mailer,
 		S3:                 S3,
 	}
@@ -181,12 +185,13 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.MustBeAuthenticated)
 
-			r.Get("/account", h.getAccount())
-			r.Post("/account", h.postAccount())
+			r.Get("/dashboard", h.getDashboard())
 
-			// Application routes
 			r.Get("/apply", h.getApply())
 			r.Post("/apply", h.postApply())
+
+			r.Get("/rsvp", h.getRSVP())
+			r.Post("/rsvp", h.postRSVP())
 		})
 	})
 

@@ -149,6 +149,39 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 	}
+
+
+	var rsvpSelector = document.getElementById("will-attend");
+  if (rsvpSelector) {
+    var rsvpMoreInfo = document.getElementById("rsvp-yes-selected");
+    var rsvpLessInfo = document.getElementById("rsvp-no-selected");
+    var rsvpShirtSize = document.getElementById("rsvp-shirt-size");
+
+    // Initial hiding or showing
+    if (rsvpSelector.value == "on") {
+      // Show lower part and make shirt size required
+      rsvpLessInfo.classList.add('is-hidden');
+      rsvpMoreInfo.classList.remove('is-hidden');
+      rsvpShirtSize.required = true;
+    } else if (rsvpSelector.value == "off") {
+      rsvpMoreInfo.classList.add('is-hidden');
+      rsvpLessInfo.classList.remove('is-hidden');
+      rsvpShirtSize.required = false;
+    }
+
+    rsvpSelector.onchange = function() {
+      if (rsvpSelector.value == "on") {
+        // Show lower part and make shirt size required
+        rsvpLessInfo.classList.add('is-hidden');
+        rsvpMoreInfo.classList.remove('is-hidden');
+        rsvpShirtSize.required = true;
+      } else if (rsvpSelector.value == "off") {
+        rsvpMoreInfo.classList.add('is-hidden');
+        rsvpLessInfo.classList.remove('is-hidden');
+        rsvpShirtSize.required = false;
+      }
+    }
+  }
 });
 
 var hammers = 

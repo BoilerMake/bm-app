@@ -147,7 +147,7 @@ func (u *User) CheckPassword(password string) bool {
 type UserService interface {
 	Signup(u *User) (int, string, error)
 	Login(u *User) error
-	GetById(id int) (*User, error)
+	GetByID(id int) (*User, error)
 	GetByEmail(email string) (*User, error)
 	GetByCode(code string) (*User, error)
 	Update(u *User) error

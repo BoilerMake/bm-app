@@ -59,7 +59,7 @@ func MustNotBeAuthenticated(h http.Handler) http.Handler {
 
 			session.Save(r, w)
 
-			http.Redirect(w, r, "/apply", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 			return
 		}
 
