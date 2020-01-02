@@ -31,7 +31,7 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 
 			session.Save(r, w)
 
-			http.Redirect(w, r, "/signup", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
