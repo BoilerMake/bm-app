@@ -134,6 +134,13 @@ body {
 	width: 100%;
 }
 
+.bmvii-schedule__date {
+  width: 75%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
 .bmvii-schedule__day {
 	flex-basis: 0;
 	flex-grow: 1;
@@ -141,8 +148,8 @@ body {
 }
 
 .bmvii-schedule__item {
-	margin: 1rem 0;
-	padding: 0.75rem;
+	padding: 0.5rem 0;
+  border-radius: 6px;
 
 	&:nth-child(odd) {
 		background: #F5F5F5;
@@ -152,6 +159,8 @@ body {
 .bmvii-schedule__item_info {
 	display: flex;
 	justify-content: space-between;
+
+	padding: 0.5rem 0.75rem;
 }
 
 .bmvii-schedule__item_time {
