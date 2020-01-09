@@ -291,50 +291,28 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	return dba.toModel(), err
 }
 
-func (s *ApplicationService) GetUserCount() int {
-	tx, err := s.DB.Begin()
-	if err != nil {
-		return -1
-	}
-
-	rows, err := tx.Query("SELECT COUNT(*) FROM users")
-
-	if err != nil {
-		return -1
-	}
-	defer rows.Close()
-
-	var count int
-
-	for rows.Next() {
-		if err := rows.Scan(&count); err != nil {
-			return -1
-		}
-
-	}
-	return count
-}
-
+// returns number of applications in the database
 func (s *ApplicationService) GetApplicationCount() int {
+	var count int
+
 	tx, err := s.DB.Begin()
 	if err != nil {
 		return -1
 	}
 
-	rows, err := tx.Query("SELECT COUNT(*) FROM bm7_applications")
+	row := tx.QueryRow("SELECT COUNT(*) FROM bm7_applications")
+	err = row.Scan(&count)
+
+	if err != nil {
+		tx.Rollback()
+		return -1
+	}
+
+	err = tx.Commit()
+
+	// indicates commiting transaction failed
 	if err != nil {
 		return -1
 	}
-	defer rows.Close()
-
-	var count int
-
-	for rows.Next() {
-		if err := rows.Scan(&count); err != nil {
-			return -1
-		}
-
-	}
-
 	return count
 }

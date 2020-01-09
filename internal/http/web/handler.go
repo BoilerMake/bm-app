@@ -46,10 +46,6 @@ type Page struct {
 	// The user's email, blank if user not logged in
 	Email           string
 	IsAuthenticated bool
-
-	// For the exec page
-	ApplicationCount int
-	UserCount        int
 }
 
 func (h *Handler) NewPage(w http.ResponseWriter, r *http.Request, title string) (*Page, bool) {

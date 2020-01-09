@@ -55,7 +55,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		
+
 		var ok bool
 		var a models.Application
 
@@ -88,10 +88,8 @@ func (h *Handler) postApply() http.HandlerFunc {
 				return
 			}
 		}
-		
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 
-		
+		http.Redirect(w, r, "/apply", http.StatusSeeOther)
 
 	}
 }

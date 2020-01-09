@@ -17,8 +17,11 @@ func (h *Handler) getExec() http.HandlerFunc {
 		applicationCount := h.ApplicationService.GetApplicationCount()
 		userCount := h.ApplicationService.GetUserCount()
 
-		p.ApplicationCount = applicationCount
-		p.UserCount = userCount
+		p.Data = map[string]interface{}{
+			"ApplicationCount": applicationCount,
+			"UserCount":        userCount,
+		}
+
 		h.Templates.RenderTemplate(w, "exec", p)
 
 	}
