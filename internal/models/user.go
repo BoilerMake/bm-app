@@ -153,4 +153,5 @@ type UserService interface {
 	Update(u *User) error
 	GetPasswordReset(email string) (string, error)
 	ResetPassword(token string, newPassword string) error
+	GetUserCount() int
 }

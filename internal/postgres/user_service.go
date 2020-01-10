@@ -493,7 +493,7 @@ func GenerateRandomString(n int) (string, error) {
 }
 
 // Get number of users in the database
-func (s *ApplicationService) GetUserCount() int {
+func (s *UserService) GetUserCount() int {
 	var count int
 
 	tx, err := s.DB.Begin()

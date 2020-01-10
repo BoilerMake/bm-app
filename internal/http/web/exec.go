@@ -15,7 +15,7 @@ func (h *Handler) getExec() http.HandlerFunc {
 		}
 
 		applicationCount := h.ApplicationService.GetApplicationCount()
-		userCount := h.ApplicationService.GetUserCount()
+		userCount := h.UserService.GetUserCount()
 
 		p.Data = map[string]interface{}{
 			"ApplicationCount": applicationCount,

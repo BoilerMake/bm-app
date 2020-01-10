@@ -150,5 +150,4 @@ type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
-	GetUserCount() int
 }
