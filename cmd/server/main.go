@@ -75,9 +75,6 @@ func main() {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
 	defer db.Close()
-	
-
-	
 
 	us := &postgres.UserService{db}
 	as := &postgres.ApplicationService{db}
