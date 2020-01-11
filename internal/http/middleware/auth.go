@@ -69,7 +69,7 @@ func MustNotBeAuthenticated(h http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// MustBeExec only allows execs and admin roles to access a route
+// MustBeExec only allows execs roles to access a route
 func MustBeExec(h http.Handler) http.Handler {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	store := createCookieStore()
@@ -84,7 +84,7 @@ func MustBeExec(h http.Handler) http.Handler {
 			return
 		}
 
-		if role != models.RoleExec && role != models.RoleAdmin {
+		if role != models.RoleExec {
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}
