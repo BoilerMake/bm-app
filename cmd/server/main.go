@@ -78,9 +78,10 @@ func main() {
 
 	us := &postgres.UserService{db}
 	as := &postgres.ApplicationService{db}
+	rs := &postgres.RSVPService{db}
 	mailer := mail.NewMailer()
 	S3 := s3.NewS3()
-	h := http.NewHandler(us, as, mailer, S3)
+	h := http.NewHandler(us, as, rs, mailer, S3)
 
 	rollbarEnv, ok := os.LookupEnv("ROLLBAR_ENVIRONMENT")
 	if !ok {

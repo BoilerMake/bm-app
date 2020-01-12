@@ -1,9 +1,11 @@
 package web
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/BoilerMake/bm-app/pkg/flash"
@@ -78,8 +80,8 @@ Hack Your Own Adventure`
 			return
 		}
 
-		// Redirect to application if signup was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		// Redirect to dashboard if signup was successful
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -104,7 +106,7 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		}
 
 		// Redirect to application if activation was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -277,7 +279,7 @@ func (h *Handler) postLogin() http.HandlerFunc {
 		}
 
 		// Redirect to application if login was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -299,65 +301,62 @@ func (h *Handler) getLogout() http.HandlerFunc {
 	}
 }
 
-// getAccount shows a user their account.
-func (h *Handler) getAccount() http.HandlerFunc {
+// getDashboard shows a user their account.
+func (h *Handler) getDashboard() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		session := h.getSession(r)
 
-		email, ok := session.Values["EMAIL"].(string)
+		id, ok := session.Values["ID"].(int)
 		if !ok {
 			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
-		u, err := h.UserService.GetByEmail(email)
+		a, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
-			h.Error(w, r, err, "")
-			return
+			// User hasn't submitted an app
+			if err == sql.ErrNoRows {
+				a = &models.Application{}
+				// Mark decision as invalid value for template
+				a.Decision = -1
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
-		p, ok := h.NewPage(w, r, "BoilerMake - Account")
+		// Only show to accepted users
+		if a.Decision == models.DecisionAccepted {
+			if !a.AcceptedAt.IsZero() && time.Now().Sub(a.AcceptedAt) > models.RSVPExpiryTime {
+				a.Decision = -2
+			}
+		}
+
+		p, ok := h.NewPage(w, r, "BoilerMake - Dashboard")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
-		p.FormRefill = map[string]interface{}{
-			"FirstName": u.FirstName,
-			"LastName":  u.LastName,
-			"Email":     u.Email,
-		}
-
-		h.Templates.RenderTemplate(w, "account", p)
-	}
-}
-
-// postAccount updates a user's account.
-func (h *Handler) postAccount() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		session := h.getSession(r)
-
-		email, ok := session.Values["EMAIL"].(string)
-		if !ok {
-			h.Error(w, r, errors.New("invalid session value"), "")
-			return
-		}
-
-		u, err := h.UserService.GetByEmail(email)
+		// See if user has submitted an RSVP
+		hasRSVP := true
+		rsvp, err := h.RSVPService.GetByUserID(id)
 		if err != nil {
-			h.Error(w, r, err, "")
-			return
+			hasRSVP = false
+			if err == sql.ErrNoRows {
+				rsvp = &models.RSVP{}
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
-		u.FirstName = r.FormValue("first-name")
-		u.LastName = r.FormValue("last-name")
-
-		err = h.UserService.Update(u)
-		if err != nil {
-			h.Error(w, r, err, "")
-			return
+		p.Data = map[string]interface{}{
+			"Application": a,
+			"HasRSVP":     hasRSVP,
+			"RSVP":        rsvp,
 		}
 
-		http.Redirect(w, r, "/account", http.StatusSeeOther)
+		h.Templates.RenderTemplate(w, "dashboard", p)
 	}
 }

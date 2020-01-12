@@ -45,6 +45,7 @@ type Application struct {
 	EmailedDecision bool
 	UserID          int
 	RSVP            bool
+	AcceptedAt      time.Time
 	CheckedInAt     time.Time
 
 	School               string

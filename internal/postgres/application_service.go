@@ -19,6 +19,7 @@ type dbApplication struct {
 	UserID               sql.NullInt64
 	Decision             sql.NullInt64
 	EmailedDecision      sql.NullBool
+	AcceptedAt           pq.NullTime
 	CheckedInAt          pq.NullTime
 	RSVP                 sql.NullBool
 	School               sql.NullString
@@ -46,6 +47,7 @@ func (a *dbApplication) toModel() *models.Application {
 		UserID:               int(a.UserID.Int64),
 		Decision:             int(a.Decision.Int64),
 		EmailedDecision:      a.EmailedDecision.Bool,
+		AcceptedAt:           a.AcceptedAt.Time,
 		CheckedInAt:          a.CheckedInAt.Time,
 		RSVP:                 a.RSVP.Bool,
 		School:               a.School.String,
@@ -241,6 +243,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			id,
 			user_id,
 			decision,
+			accepted_at,
 			rsvp,
 			school,
 			major,
@@ -262,6 +265,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.ID,
 		&dba.UserID,
 		&dba.Decision,
+		&dba.AcceptedAt,
 		&dba.RSVP,
 		&dba.School,
 		&dba.Major,
