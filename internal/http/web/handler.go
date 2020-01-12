@@ -187,8 +187,12 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 			r.Get("/dashboard", h.getDashboard())
 
-			r.Get("/apply", h.getApply())
-			r.Post("/apply", h.postApply())
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.AppsOpenOnly)
+
+				r.Get("/apply", h.getApply())
+				r.Post("/apply", h.postApply())
+			})
 
 			r.Get("/rsvp", h.getRSVP())
 			r.Post("/rsvp", h.postRSVP())
