@@ -22,11 +22,7 @@
 		<div class="columns is-centered content has-text-centered">
 			<div class="column is-5">
 				<a class="title is-4 button is-white is-outlined" href="#why">Learn More</a>
-				{{ if .IsAuthenticated }}
-				<a class="title is-4 button is-red" href="/dashboard">Dashboard</a>
-				{{ else }}
-				<a class="title is-4 button is-red" href="/signup">Apply</a>
-				{{ end }}
+				<a class="title is-4 button is-red" href="#schedule">Schedule</a>
 			</div>
 		</div>
 		<div class="columns is-centered content">
@@ -119,7 +115,7 @@
 	<img src={{ static_path "bmvii_why_quarry.svg" }} class="bmvii-why__quarry" alt="Illustration of rolling hills">
 </section>
 
-<section class="section" style='background-color: #7B004E;'>
+<section class="section" style='background-color: #7B004E;' id="schedule">
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-3 bmvii-section-header">
@@ -131,7 +127,7 @@
 			<div class="column is-10">
 				<p class="subtitle is-5 has-text-white has-text-centered">
 					Oh, and by the way - we'll have free food, swag, and activities for you throughout the weekend!
-					The schedule will be released as we get closer to the event.</p>
+					Check out everything we've got planned for you!</p>
 			</div>
 		</div>
 
@@ -448,6 +444,9 @@
           </div>
         </div>
         <div class="columns is-mobile is-centered is-vcentered content">
+          <div class="column is-3">
+            <img src={{ static_path "sponsors_stickermule.svg" }} alt="Sticker Mule">
+          </div>
           <div class="column is-3">
             <img src={{ static_path "sponsors_genesys.png" }} alt="Genesys">
           </div>

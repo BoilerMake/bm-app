@@ -70,6 +70,7 @@ func main() {
 	// Bring together all our config bits and try to connect
 	connStr := fmt.Sprintf("host=%s dbname=%s user=%s password=%s %s", dbHost, dbName, dbUser, dbPassword, dbOptions)
 	db, err := postgres.Open(connStr)
+
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

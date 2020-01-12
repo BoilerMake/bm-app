@@ -44,7 +44,6 @@ const (
 	RoleHacker = iota
 	RoleSponsor
 	RoleExec
-	RoleAdmin
 )
 
 // A User is an account stored in the database.
@@ -153,4 +152,5 @@ type UserService interface {
 	Update(u *User) error
 	GetPasswordReset(email string) (string, error)
 	ResetPassword(token string, newPassword string) error
+	GetUserCount() int
 }
