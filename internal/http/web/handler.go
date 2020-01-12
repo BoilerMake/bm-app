@@ -169,6 +169,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 			r.Get("/login", h.getLogin())
 			r.Post("/login", h.postLogin())
+
 		})
 
 		r.Get("/activate/{code}", h.getActivate())
@@ -264,6 +265,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := h.NewPage(w, r, "BoilerMake - Hackers")
 

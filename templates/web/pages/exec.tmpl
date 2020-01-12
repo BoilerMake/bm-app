@@ -9,12 +9,15 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column is-7">
-				<h2 class="subtitle">Where exec things go</h2>
+				<h2 class="subtitle"> This is where the exec things go </h2>
+				<h3 class="subtitle"> Number of applications are {{.Data.ApplicationCount}} </h3>
+				<h3 class="subtitle"> Number of users are {{.Data.UserCount}} </h3>
+
+
 			</div>
 		</div>
 	</div>
 </section>
-
 
 {{ template "footer" . }}
 {{ end }}
