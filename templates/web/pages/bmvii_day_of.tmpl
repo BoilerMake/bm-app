@@ -1,0 +1,151 @@
+{{ define "bmvii day of" }}
+{{ template "head" . }}
+
+{{ template "bmvii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section" style='background-color: #6176CF;'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-8-desktop is-10-tablet">
+        <div class="columns content">
+          <div class="column is-12 grid">
+            <img class="live-pindrop" alt="BoilerMake Pin Logo" src={{ static_path "bmvii_pindrop.svg" }}>
+            <img class="live-greetings" alt="Greetings from BoilerMake" src={{ static_path "bmvii_greetings.svg" }}>
+            <div class="live-countdown is-hidden">
+              <div class="live-hours">
+                <p class="live--countdown__time hours-left">22</p>
+                <p class="live--countdown__unit">Hours</p>
+              </div>
+
+              <div class="live--countdown__colon">
+                <p class="live--countdown__time">:</p>
+              </div>
+
+              <div class="live-minutes">
+                <p class="live--countdown__time minutes-left">22</p>
+                <p class="live--countdown__unit">Minutes</p>
+              </div>
+
+              <div class="live--countdown__colon">
+                <p class="live--countdown__time">:</p>
+              </div>
+
+              <div class="live-seconds">
+                <p class="live--countdown__time seconds-left">22</p>
+                <p class="live--countdown__unit">Seconds</p>
+              </div>
+            </div>
+            <div class="box live--announcements__padding"></div>
+            <div class="box live--announcements">
+              <img class="live--announcements__header" src={{ static_path "bmvii_live_announcements.png" }}>
+              <p>Food from Potbelly's has arrived! When you have some time, take a break from hacking and stop by the cafe to grab a drink, sandwich, and some chips.</p>
+              <i>Posted at 5:00PM</i>
+            </div>
+          </div>
+        </div>
+        <div class="columns is-mobile is-centered content">
+          <div class="column is-12">
+            {{ template "schedule" }}
+          </div>
+          {{/*
+          <div class="column is-2">
+            <div class="columns is-mobile is-centered content">
+              <div class="column is-12 live--icon">
+                <a href="#map">
+                  <div class="box has-text-centered">
+                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
+                    <b>Map</b>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="columns is-mobile is-centered content">
+              <div class="column is-12 live--icon">
+                <a href="/faq">
+                  <div class="box has-text-centered">
+                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_info_icon.svg" }}>
+                    <b>Info</b>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="columns is-mobile is-centered content">
+              <div class="column is-12 live--icon">
+                <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
+                  <div class="box has-text-centered">
+                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
+                    <b>Slack</b>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="columns is-mobile is-centered content">
+              <div class="column is-12 live--icon">
+                <a href="devpost TODO">
+                  <div class="box has-text-centered">
+                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
+                    <b>Submit</b>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          */}}
+        </div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section has-background-image bmvii-faq" style='background-color: #BF435B; background-image: url({{ static_path "bmvii_faq_dunes.svg" }})'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-6 bmvii-section-header">
+				<img alt="Frequently Asked Questions" src={{ static_path "bmvii_faq.svg" }}>
+			</div>
+		</div>
+
+		<div class="columns is-centered content">
+			<div class="column is-10">
+				<div class="tile is-ancestor">
+					<div class="tile is-12 is-vertical is-parent">
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>What is a hackathon?</strong></h3>
+							<p>
+    							A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+									Anyone with or without a technical background can attend to learn, build, and share new things.
+									Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+							</p>
+						</div>
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>Is it free?</strong></h3>
+							<p>
+    							Yes! BoilerMake is an all-expense paid experience. We provide hackers with the venue, swag, and food throughout the weekend.
+							</p>
+						</div>
+						<div class="tile is-child box">
+							<h3 class="subtitle is-3 is-spaced"><strong>What if I don't know how to code?</strong></h3>
+							<p>
+								No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions, 
+								and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance 
+								to learn alongside so many other driven hackers.
+							</p>
+						</div>
+						<div class="columns is-centered content">
+							<div class="column is-8 has-text-centered">
+								<a class="button is-4 title has-text-centered is-white" href="/faq">Tell me more →</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "bmvii sponsors section" . }}
+
+{{ template "bmvii footer" . }}
+{{ end }}

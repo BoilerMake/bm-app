@@ -149,6 +149,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
 
+	r.Get("/live", h.getLive())
+
 	// Exec routes
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.MustBeAuthenticated)
@@ -317,6 +319,20 @@ func (h *Handler) getFaq() http.HandlerFunc {
 		}
 
 		h.Templates.RenderTemplate(w, "faq", p)
+	}
+}
+
+// getHackers renders the day of template.
+func (h *Handler) getLive() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p, ok := h.NewPage(w, r, "BoilerMake - Live")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "bmvii day of", p)
 	}
 }
 

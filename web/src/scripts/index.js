@@ -1,3 +1,6 @@
+const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
+const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
+
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -182,7 +185,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  const now = new Date().getTime()
+
+	const liveCountdown = document.querySelector('.live-countdown');
+  if (liveCountdown) {
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
 });
+
+function updateCountdown() {
+  const now = new Date().getTime()
+  var distance;
+
+  if (start > now || now > end) {
+    // Hide timer
+    document.querySelector('.live-countdown').classList.add('is-hidden');
+    return
+  } else {
+    // Make sure timer is showing
+    document.querySelector('.live-countdown').classList.remove('is-hidden');
+    distance = end - now
+  }
+
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+	document.querySelector('.hours-left').innerHTML = hours;
+	document.querySelector('.minutes-left').innerHTML = minutes;
+	document.querySelector('.seconds-left').innerHTML = seconds;
+}
 
 var hammers = 
 `                %&&&&&&&&&&&&&&%,             ,%&&&&&&&&&&&&&&%
