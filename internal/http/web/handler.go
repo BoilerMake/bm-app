@@ -158,7 +158,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Use(middleware.MustBeAuthenticated)
 		r.Use(middleware.MustBeExec)
 		r.Get("/exec", h.getExec())
-		// r.Post("/announcement", h.postAnnouncement())
+
+		r.Post("/announcement", h.postAnnouncement())
+		r.Delete("/announcement", h.deleteAnnouncement())
 	})
 
 	// On sesaon only routes
@@ -185,11 +187,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Get("/reset/{token}", h.getResetPasswordWithToken())
 		r.Post("/reset/{token}", h.postResetPassword())
 
-		// Annnouncement Routes
-		// NEEDS TO BE MOVED UNDER EXEC
-		r.Post("/announcement", h.postAnnouncement())
-		r.Delete("/announcement", h.deleteAnnouncement())
-		// NEEDS TO BE MOVED UNDER EXEC
+		// Public Annnouncement Route
 		r.Get("/announcement", h.getAnnouncement())
 
 		r.Get("/logout", h.getLogout())

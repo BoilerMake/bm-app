@@ -7,31 +7,22 @@ import (
 	"github.com/BoilerMake/bm-app/internal/models"
 )
 
-type announcementMessage struct {
-	Message string `json:"message"`
-}
-
 type idMessage struct {
 	ID int `json:"id"`
 }
 
 func (h *Handler) postAnnouncement() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var am announcementMessage
-		err := json.NewDecoder(r.Body).Decode(&am)
-		if err != nil {
-			h.Error(w, r, err, "")
-			return
-		}
-
+		var message string
+		message = r.FormValue("message")
 		// Check if message is empty or not
-		if am.Message == "" {
+		if message == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			h.Error(w, r, models.ErrAnnouncementMessageEmpty, "")
 			return
 		}
 
-		err = h.AnnouncementService.Create(am.Message)
+		err := h.AnnouncementService.Create(message)
 
 		if err != nil {
 			h.Error(w, r, err, "")
@@ -40,6 +31,8 @@ func (h *Handler) postAnnouncement() http.HandlerFunc {
 
 		// Indicate created resource
 		w.WriteHeader(http.StatusCreated)
+		// Redirect to dashboard
+		http.Redirect(w, r, "/dashboard", http.StatusOK)
 	}
 }
 
@@ -58,7 +51,6 @@ func (h *Handler) getAnnouncement() http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(currentAnnouncement)
 	}
 }
