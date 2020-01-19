@@ -31,8 +31,8 @@ func (h *Handler) postAnnouncement() http.HandlerFunc {
 
 		// Indicate created resource
 		w.WriteHeader(http.StatusCreated)
-		// Redirect to dashboard
-		http.Redirect(w, r, "/dashboard", http.StatusOK)
+		// Redirect to exec page
+		http.Redirect(w, r, "/exec", http.StatusCreated)
 	}
 }
 
