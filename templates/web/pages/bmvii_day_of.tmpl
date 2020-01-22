@@ -5,13 +5,13 @@
 
 {{ template "flashes" .Flashes }}
 
-<section class="section" style='background-color: #6176CF;'>
+<section class="section" style='background-color: #6176CF; background-image: url({{ static_path "bmvii_application_background.svg" }})'>
 	<div class="container">
 		<div class="columns is-centered content">
-			<div class="column is-8-desktop is-10-tablet">
+			<div class="column is-10-desktop is-12-tablet">
         <div class="columns content">
           <div class="column is-12 grid">
-            <img class="live-pindrop" alt="BoilerMake Pin Logo" src={{ static_path "bmvii_pindrop.svg" }}>
+            <img class="live-pindrop" id="live-pindrop" alt="BoilerMake Pin Logo" src={{ static_path "bmvii_pindrop.svg" }}>
             <img class="live-greetings" alt="Greetings from BoilerMake" src={{ static_path "bmvii_greetings.svg" }}>
             <div class="live-countdown is-hidden">
               <div class="live-hours">
@@ -40,59 +40,103 @@
             <div class="box live--announcements__padding"></div>
             <div class="box live--announcements">
               <img class="live--announcements__header" src={{ static_path "bmvii_live_announcements.png" }}>
-              <p>Food from Potbelly's has arrived! When you have some time, take a break from hacking and stop by the cafe to grab a drink, sandwich, and some chips.</p>
-              <i>Posted at 5:00PM</i>
+              <p id="announcement-text">Food from Potbelly's has arrived! When you have some time, take a break from hacking and stop by the cafe to grab a drink, sandwich, and some chips.</p>
+              <div class="level">
+                <i class="level-left" id="announcement-date">Posted at 5:00PM</i>
+              </div>
             </div>
+            <div class="live-schedule">
+              {{ template "schedule" }}
+            </div>
+            <div class="live-buttons-vertical is-hidden-touch">
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="#map">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
+                      <b>Map</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="/faq">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_info_icon.svg" }}>
+                      <b>Info</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
+                      <b>Slack</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="devpost TODO">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
+                      <b>Submit</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="live-buttons-horizontal is-hidden-desktop">
+              <div class="columns is-centered content">
+                <div class="column is-6" style="padding-bottom:0;">
+                  <div class="columns is-mobile is-centered content">
+                    <div class="column is-6 live--icon">
+                      <a href="#map">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
+                          <b>Map</b>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="column is-6 live--icon">
+                      <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
+                          <b>Slack</b>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-6">
+                  <div class="columns is-mobile is-centered content">
+                    <div class="column is-6 live--icon">
+                      <a href="/faq">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_info_icon.svg" }}>
+                          <b>Info</b>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="column is-6 live--icon">
+                      <a href="devpost TODO">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
+                          <b>Submit</b>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-        </div>
-        <div class="columns is-mobile is-centered content">
-          <div class="column is-12">
-            {{ template "schedule" }}
-          </div>
-          {{/*
-          <div class="column is-2">
-            <div class="columns is-mobile is-centered content">
-              <div class="column is-12 live--icon">
-                <a href="#map">
-                  <div class="box has-text-centered">
-                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
-                    <b>Map</b>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="columns is-mobile is-centered content">
-              <div class="column is-12 live--icon">
-                <a href="/faq">
-                  <div class="box has-text-centered">
-                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_info_icon.svg" }}>
-                    <b>Info</b>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="columns is-mobile is-centered content">
-              <div class="column is-12 live--icon">
-                <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
-                  <div class="box has-text-centered">
-                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
-                    <b>Slack</b>
-                  </div>
-                </a>
-              </div>
-            </div>
-            <div class="columns is-mobile is-centered content">
-              <div class="column is-12 live--icon">
-                <a href="devpost TODO">
-                  <div class="box has-text-centered">
-                    <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
-                    <b>Submit</b>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-          */}}
         </div>
 			</div>
 		</div>

@@ -123,6 +123,20 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 	}
+ 
+	// Big spin pin
+	var bigSpinner = document.getElementById("live-pindrop");
+	if (bigSpinner) {
+		bigSpinner.addEventListener('click', () => {
+			if (!bigSpinner.classList.contains('animate-spin')) {
+				bigSpinner.classList.toggle('animate-spin');
+
+				setTimeout(function() {
+					bigSpinner.classList.toggle('animate-spin');
+				}, 500);
+			}
+		})
+	}
 
 	// Make flashes and mlh badge stick only once you scroll past the navbar height
 	const navbar = document.querySelector('.navbar');
@@ -192,9 +206,47 @@ document.addEventListener('DOMContentLoaded', () => {
   if (liveCountdown) {
     updateCountdown();
     setInterval(updateCountdown, 1000);
+
+
+    // Just gonna piggy back off this, we should only be checking for announcements
+    // on the day of site.
+    // TODO change to 5000
+    setInterval(updateAnnouncements, 1000);
   }
 
 });
+
+var lastAnnouncementID = -1;
+
+function updateAnnouncements() {
+  fetch('/announcement')
+    .then((res) => {
+      return res.json();
+    })
+    .then((ann) => {
+      lastAnnouncementID = ann.id
+
+      const text = document.getElementById('announcement-text');
+      text.innerHTML = ann.message;
+
+      const date = document.getElementById('announcement-date');
+      const annDate = new Date(ann.createdAt);
+      const annDateDist = (new Date().getTime()) - annDate;
+      var dateStr = "Posted ";
+
+      if (annDateDist < 1000 * 60 * 60) {
+        dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
+      } else if (annDateDist < 1000 * 60 * 60 * 24) {
+        dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+      } else {
+        dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
+        dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+      }
+
+      date.innerHTML = dateStr;
+      console.log(ann);
+    });
+}
 
 function updateCountdown() {
   const now = new Date().getTime()
