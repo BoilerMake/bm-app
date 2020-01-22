@@ -176,6 +176,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 			r.Get("/login", h.getLogin())
 			r.Post("/login", h.postLogin())
+
 		})
 
 		r.Get("/activate/{code}", h.getActivate())
@@ -198,8 +199,12 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 			r.Get("/dashboard", h.getDashboard())
 
-			r.Get("/apply", h.getApply())
-			r.Post("/apply", h.postApply())
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.AppsOpenOnly)
+
+				r.Get("/apply", h.getApply())
+				r.Post("/apply", h.postApply())
+			})
 
 			r.Get("/rsvp", h.getRSVP())
 			r.Post("/rsvp", h.postRSVP())
@@ -271,6 +276,7 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		p, ok := h.NewPage(w, r, "BoilerMake - Hackers")
 

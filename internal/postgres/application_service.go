@@ -294,3 +294,29 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 	err = tx.Commit()
 	return dba.toModel(), err
 }
+
+// returns number of applications in the database
+func (s *ApplicationService) GetApplicationCount() int {
+	var count int
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return -1
+	}
+
+	row := tx.QueryRow("SELECT COUNT(*) FROM bm7_applications")
+	err = row.Scan(&count)
+
+	if err != nil {
+		tx.Rollback()
+		return -1
+	}
+
+	err = tx.Commit()
+
+	// indicates commiting transaction failed
+	if err != nil {
+		return -1
+	}
+	return count
+}

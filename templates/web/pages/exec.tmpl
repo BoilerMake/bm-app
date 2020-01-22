@@ -24,12 +24,19 @@
 							<button class="button is-red is-fullwidth" type="submit">Make Announcement</button>
 						</div>
 					</div>
+
+          <hr/>
+
+          <div class="column is-7">
+            <h3 class="subtitle">Users: {{.Data.UserCount}}</h3>
+            <h3 class="subtitle">Apps: {{.Data.ApplicationCount}}</h3>
+          </div>
+
 				</form>
-			</div>
+      </div>
 		</div>
 	</div>
 </section>
-
 
 {{ template "footer" . }}
 {{ end }}

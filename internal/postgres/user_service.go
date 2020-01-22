@@ -491,3 +491,30 @@ func GenerateRandomString(n int) (string, error) {
 	}
 	return string(bytes), nil
 }
+
+// Get number of users in the database
+func (s *UserService) GetUserCount() int {
+	var count int
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return -1
+	}
+
+	row := tx.QueryRow("SELECT COUNT(*) FROM users")
+	err = row.Scan(&count)
+
+	if err != nil {
+		tx.Rollback()
+		return -1
+	}
+
+	err = tx.Commit()
+
+	// indicates commiting transaction failed
+	if err != nil {
+		return -1
+	}
+
+	return count
+}
