@@ -90,6 +90,9 @@ type Handler struct {
 	// An RSVPService is the interface with the databsae for RSVPs
 	RSVPService models.RSVPService
 
+	// An AnnouncementService is the interface with the database for announcements
+	AnnouncementService models.AnnouncementService
+
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
 
@@ -113,13 +116,14 @@ type Handler struct {
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
-		UserService:        us,
-		ApplicationService: as,
-		RSVPService:        rs,
-		Mailer:             mailer,
-		S3:                 S3,
+		UserService:         us,
+		ApplicationService:  as,
+		RSVPService:         rs,
+		AnnouncementService: anns,
+		Mailer:              mailer,
+		S3:                  S3,
 	}
 
 	r := chi.NewRouter()
@@ -154,6 +158,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Use(middleware.MustBeAuthenticated)
 		r.Use(middleware.MustBeExec)
 		r.Get("/exec", h.getExec())
+
+		r.Post("/announcement", h.postAnnouncement())
+		r.Delete("/announcement", h.deleteAnnouncement())
 	})
 
 	// On sesaon only routes
@@ -174,11 +181,15 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 		r.Get("/activate/{code}", h.getActivate())
 
+		// Password Reset Routes
 		r.Get("/forgot", h.getForgotPassword())
 		r.Post("/forgot", h.postForgotPassword())
 		r.Get("/reset", h.getResetPassword())
 		r.Get("/reset/{token}", h.getResetPasswordWithToken())
 		r.Post("/reset/{token}", h.postResetPassword())
+
+		// Public Annnouncement Route
+		r.Get("/announcement", h.getAnnouncement())
 
 		r.Get("/logout", h.getLogout())
 
