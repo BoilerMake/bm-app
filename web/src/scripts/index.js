@@ -1,3 +1,6 @@
+const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
+const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
+
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -42,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
 						sib = sib.nextElementSibling
 					}
 
-					console.log(el.files[0].name.substr(el.files[0].name.length - 4))
 					// Do some client side size and type checking
 					if (el.files[0].size >= (20<<20)) {
 						sib.textContent = "Error: file too large"
@@ -120,6 +122,20 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		})
 	}
+ 
+	// Big spin pin
+	var bigSpinner = document.getElementById("live-pindrop");
+	if (bigSpinner) {
+		bigSpinner.addEventListener('click', () => {
+			if (!bigSpinner.classList.contains('animate-spin')) {
+				bigSpinner.classList.toggle('animate-spin');
+
+				setTimeout(function() {
+					bigSpinner.classList.toggle('animate-spin');
+				}, 500);
+			}
+		})
+	}
 
 	// Make flashes and mlh badge stick only once you scroll past the navbar height
 	const navbar = document.querySelector('.navbar');
@@ -182,7 +198,163 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  const now = new Date().getTime()
+
+	const liveCountdown = document.querySelector('.live-countdown');
+  if (liveCountdown) {
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+
+    // Just gonna piggy back off this, we should only be checking for announcements
+    // on the day of page.
+    setInterval(updateAnnouncements, 90000);
+    updateAnnouncements();
+  }
+
+	var back = document.getElementById("live--announcements__back");
+	var forward = document.getElementById("live--announcements__forward");
+  if (back && forward) {
+    back.addEventListener('click', () => {
+      if (currentAnnouncement.id > 1) {
+        getPrevAnnouncement(currentAnnouncement.id - 1, 0)
+      }
+    })
+
+    forward.addEventListener('click', () => {
+      if (currentAnnouncement.id < mostRecentAnnouncement.id) {
+        getNextAnnouncement(currentAnnouncement.id + 1, 0);
+      }
+    })
+  }
+
 });
+
+// These methods are to handle moving past deleted ids
+function getPrevAnnouncement(id, tries) {
+  // Exit out if we've tried too many times
+  if (tries > 5) {
+    return
+  }
+
+  fetch('/announcement/' + id)
+    .then((res) => {
+      return res.json();
+    })
+    .then((ann) => {
+      currentAnnouncement = ann;
+      repaintAnnouncements()
+    }).catch(() => {
+      // Try again if we failed but at the id before
+      getPrevAnnouncement(id - 1, tries + 1)
+    });
+}
+
+function getNextAnnouncement(id, tries) {
+  // Exit out if we've tried too many times
+  if (tries > 5) {
+    return
+  }
+
+  fetch('/announcement/' + id)
+    .then((res) => {
+      return res.json();
+    })
+    .then((ann) => {
+      currentAnnouncement = ann;
+      repaintAnnouncements()
+    }).catch(() => {
+      // Try again if we failed but at the id after
+      getPrevAnnouncement(id + 1, tries + 1)
+    });
+}
+
+var currentAnnouncement;
+var mostRecentAnnouncement;
+
+function updateAnnouncements() {
+    fetch('/announcement')
+      .then((res) => {
+        return res.json();
+      })
+      .then((ann) => {
+        // Only update if there was an announcement we didn't have before
+        if (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id) {
+          mostRecentAnnouncement = ann
+          // Always force update people so they don't get behind
+          currentAnnouncement = mostRecentAnnouncement;
+          repaintAnnouncements()
+        }
+      });
+}
+
+function repaintAnnouncements() {
+  const text = document.getElementById('announcement-text');
+  text.innerHTML = currentAnnouncement.message;
+
+  const date = document.getElementById('announcement-date');
+  const annDate = new Date(currentAnnouncement.createdAt);
+  const annDateDist = (new Date().getTime()) - annDate;
+  var dateStr = "Posted ";
+
+  if (annDateDist < 1000 * 60 * 60) {
+    dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
+  } else if (annDateDist < 1000 * 60 * 60 * 24) {
+    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  } else {
+    dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
+    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  }
+
+  date.innerHTML = dateStr;
+
+	var back = document.getElementById("live--announcements__back");
+	var forward = document.getElementById("live--announcements__forward");
+  if (back && forward) {
+    if (currentAnnouncement.id == mostRecentAnnouncement.id) {
+      // disable forward button
+      forward.classList.add('live--announcements__button_disabled');
+      forward.classList.remove('live--announcements__button_enabled');
+    } else if (currentAnnouncement.id < mostRecentAnnouncement.id) {
+      // enable forward button
+      forward.classList.remove('live--announcements__button_disabled');
+      forward.classList.add('live--announcements__button_enabled');
+    }
+
+    if (currentAnnouncement.id > 1) {
+      // enable backward button
+      back.classList.remove('live--announcements__button_disabled');
+      back.classList.add('live--announcements__button_enabled');
+    } else {
+      back.classList.add('live--announcements__button_disabled');
+      back.classList.remove('live--announcements__button_enabled');
+    }
+  }
+}
+
+function updateCountdown() {
+  const now = new Date().getTime()
+  var distance;
+
+  if (start > now || now > end) {
+    // Hide timer
+    document.querySelector('.live-countdown').classList.add('is-hidden');
+    return
+  } else {
+    // Make sure timer is showing
+    document.querySelector('.live-countdown').classList.remove('is-hidden');
+    distance = end - now
+  }
+
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+	document.querySelector('.hours-left').innerHTML = hours;
+	document.querySelector('.minutes-left').innerHTML = minutes;
+	document.querySelector('.seconds-left').innerHTML = seconds;
+}
 
 var hammers = 
 `                %&&&&&&&&&&&&&&%,             ,%&&&&&&&&&&&&&&%
