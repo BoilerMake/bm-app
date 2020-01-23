@@ -276,8 +276,8 @@ body {
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(80px, 1.25fr) minmax(80px, 1.25fr) 10px 4fr minmax(0px, 2fr) 3fr 1rem min-content;
-  grid-template-rows: 1fr 1rem min-content 1.5rem min-content;
+  grid-template-columns: minmax(50px, 0.8fr) minmax(50px, 0.8fr) 10px 4fr minmax(0px, 2fr) 3fr 1rem min-content;
+  grid-template-rows: 0.75fr 1rem min-content 1.5rem min-content;
 }
 
 .live-pindrop {
