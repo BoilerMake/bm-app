@@ -41,6 +41,39 @@ func (s *AnnouncementService) Create(message string) (err error) {
 	return err
 }
 
+// GetByID returns an announcement with the given ID.
+func (s *AnnouncementService) GetByID(id int) (a *models.Announcement, err error) {
+	var dbA models.Announcement
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return a, err
+	}
+
+	err = tx.QueryRow(`SELECT
+		id,
+		message,
+		created_at
+	FROM announcements
+	WHERE id = $1`, id).Scan(&dbA.ID, &dbA.Message, &dbA.CreatedAt)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Announcement with given ID doesn't exist
+			return nil, models.ErrNoAnnouncements
+		}
+
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
+
+		return nil, err
+	}
+
+	err = tx.Commit()
+	return &dbA, nil
+}
+
 // GetCurrent returns the most recent announcement (by timestamp)
 func (s *AnnouncementService) GetCurrent() (a *models.Announcement, err error) {
 	var dbA models.Announcement

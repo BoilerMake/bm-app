@@ -421,3 +421,14 @@ and (max-width: 600px) {
     grid-row: 5;
   }
 }
+
+.live--announcements__button_enabled {
+  cursor: pointer;
+  user-select: none;
+}
+
+.live--announcements__button_disabled {
+  cursor: default;
+  color: #aeb6c2;
+  user-select: none;
+}

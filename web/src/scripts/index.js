@@ -212,40 +212,104 @@ document.addEventListener('DOMContentLoaded', () => {
     // on the day of site.
     // TODO change to 5000
     setInterval(updateAnnouncements, 1000);
+    updateAnnouncements();
+  }
+
+	var back = document.getElementById("live--announcements__back");
+	var forward = document.getElementById("live--announcements__forward");
+  if (back && forward) {
+    back.addEventListener('click', () => {
+      if (currentAnnouncement.id > 1) {
+        var id = currentAnnouncement.id - 1;
+        fetch('/announcement/' + id)
+          .then((res) => {
+            return res.json();
+          })
+          .then((ann) => {
+            currentAnnouncement = ann;
+            repaintAnnouncements()
+          });
+      }
+    })
+
+    forward.addEventListener('click', () => {
+      if (currentAnnouncement.id < mostRecentAnnouncement.id) {
+        var id = currentAnnouncement.id + 1;
+        fetch('/announcement/' + id)
+          .then((res) => {
+            return res.json();
+          })
+          .then((ann) => {
+            currentAnnouncement = ann;
+            repaintAnnouncements()
+          });
+      }
+    })
   }
 
 });
 
-var lastAnnouncementID = -1;
+var currentAnnouncement;
+var mostRecentAnnouncement;
 
 function updateAnnouncements() {
-  fetch('/announcement')
-    .then((res) => {
-      return res.json();
-    })
-    .then((ann) => {
-      lastAnnouncementID = ann.id
+    fetch('/announcement')
+      .then((res) => {
+        return res.json();
+      })
+      .then((ann) => {
+        // Only update if there was an announcement we didn't have before
+        if (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id) {
+          mostRecentAnnouncement = ann
+          // Always force update people so they don't get behind
+          currentAnnouncement = mostRecentAnnouncement;
+          repaintAnnouncements()
+        }
+      });
+}
 
-      const text = document.getElementById('announcement-text');
-      text.innerHTML = ann.message;
+function repaintAnnouncements() {
+  const text = document.getElementById('announcement-text');
+  text.innerHTML = currentAnnouncement.message;
 
-      const date = document.getElementById('announcement-date');
-      const annDate = new Date(ann.createdAt);
-      const annDateDist = (new Date().getTime()) - annDate;
-      var dateStr = "Posted ";
+  const date = document.getElementById('announcement-date');
+  const annDate = new Date(currentAnnouncement.createdAt);
+  const annDateDist = (new Date().getTime()) - annDate;
+  var dateStr = "Posted ";
 
-      if (annDateDist < 1000 * 60 * 60) {
-        dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
-      } else if (annDateDist < 1000 * 60 * 60 * 24) {
-        dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-      } else {
-        dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
-        dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-      }
+  if (annDateDist < 1000 * 60 * 60) {
+    dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
+  } else if (annDateDist < 1000 * 60 * 60 * 24) {
+    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  } else {
+    dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
+    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  }
 
-      date.innerHTML = dateStr;
-      console.log(ann);
-    });
+  date.innerHTML = dateStr;
+
+	var back = document.getElementById("live--announcements__back");
+	var forward = document.getElementById("live--announcements__forward");
+  if (back && forward) {
+    if (currentAnnouncement.id == mostRecentAnnouncement.id) {
+      // disable forward button
+      forward.classList.add('live--announcements__button_disabled');
+      forward.classList.remove('live--announcements__button_enabled');
+    } else if (currentAnnouncement.id < mostRecentAnnouncement.id) {
+      // enable forward button
+      forward.classList.remove('live--announcements__button_disabled');
+      forward.classList.add('live--announcements__button_enabled');
+    }
+
+    if (currentAnnouncement.id > 1) {
+      // enable backward button
+      back.classList.remove('live--announcements__button_disabled');
+      back.classList.add('live--announcements__button_enabled');
+    } else {
+      back.classList.add('live--announcements__button_disabled');
+      back.classList.remove('live--announcements__button_enabled');
+    }
+  }
 }
 
 function updateCountdown() {

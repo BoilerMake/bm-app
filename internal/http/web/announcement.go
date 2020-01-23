@@ -3,8 +3,10 @@ package web
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/go-chi/chi"
 )
 
 type idMessage struct {
@@ -52,6 +54,32 @@ func (h *Handler) getAnnouncement() http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(currentAnnouncement)
+	}
+}
+
+func (h *Handler) getAnnouncementWithID() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+		if err != nil {
+			w.WriteHeader(http.StatusNoContent)
+			h.Error(w, r, err, "")
+			return
+		}
+
+		ann, err := h.AnnouncementService.GetByID(id)
+		if err == models.ErrNoAnnouncements {
+			w.WriteHeader(http.StatusNoContent)
+			h.Error(w, r, err, "")
+			return
+		}
+
+		if err != nil {
+			h.Error(w, r, err, "")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(ann)
 	}
 }
 

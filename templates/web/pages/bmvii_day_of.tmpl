@@ -40,9 +40,13 @@
             <div class="box live--announcements__padding"></div>
             <div class="box live--announcements">
               <img class="live--announcements__header" src={{ static_path "bmvii_live_announcements.png" }}>
-              <p id="announcement-text">Food from Potbelly's has arrived! When you have some time, take a break from hacking and stop by the cafe to grab a drink, sandwich, and some chips.</p>
-              <div class="level">
-                <i class="level-left" id="announcement-date">Posted at 5:00PM</i>
+              <p id="announcement-text">Loading announcements...</p>
+              <div class="level is-mobile">
+                <i class="level-left" id="announcement-date"></i>
+                <div>
+                  <span id="live--announcements__back" class="live--announcements__button_disabled">❮</span>
+                  <span id="live--announcements__forward" class="live--announcements__button_disabled">❯</span>
+                </div>
               </div>
             </div>
             <div class="live-schedule">
