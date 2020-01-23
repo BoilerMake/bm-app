@@ -1,9 +1,11 @@
 package web
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/BoilerMake/bm-app/pkg/flash"
@@ -14,7 +16,14 @@ type idMessage struct {
 	ID int `json:"id"`
 }
 
+type slackMessage struct {
+	Text string `json:"text"`
+}
+
 func (h *Handler) postAnnouncement() http.HandlerFunc {
+	webhookURL := mustGetEnv("SLACK_ANNOUNCEMENTS_WEBHOOK")
+	mode := mustGetEnv("ENV_MODE")
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var message string
 		message = r.FormValue("message")
@@ -29,6 +38,30 @@ func (h *Handler) postAnnouncement() http.HandlerFunc {
 		if err != nil {
 			h.Error(w, r, err, "")
 			return
+		}
+
+		if mode != "development" {
+			slackMsg, err := json.Marshal(slackMessage{Text: message})
+			req, err := http.NewRequest(http.MethodPost, webhookURL, bytes.NewBuffer(slackMsg))
+			if err != nil {
+				h.Error(w, r, err, "")
+				return
+			}
+			req.Header.Add("Content-Type", "application/json")
+
+			client := &http.Client{Timeout: 10 * time.Second}
+			resp, err := client.Do(req)
+			if err != nil {
+				h.Error(w, r, err, "")
+				return
+			}
+
+			buf := new(bytes.Buffer)
+			buf.ReadFrom(resp.Body)
+			if buf.String() != "ok" {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
 		session := h.getSession(r)
