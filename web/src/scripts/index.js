@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
 						sib = sib.nextElementSibling
 					}
 
-					console.log(el.files[0].name.substr(el.files[0].name.length - 4))
 					// Do some client side size and type checking
 					if (el.files[0].size >= (20<<20)) {
 						sib.textContent = "Error: file too large"
@@ -219,34 +218,57 @@ document.addEventListener('DOMContentLoaded', () => {
   if (back && forward) {
     back.addEventListener('click', () => {
       if (currentAnnouncement.id > 1) {
-        var id = currentAnnouncement.id - 1;
-        fetch('/announcement/' + id)
-          .then((res) => {
-            return res.json();
-          })
-          .then((ann) => {
-            currentAnnouncement = ann;
-            repaintAnnouncements()
-          });
+        getPrevAnnouncement(currentAnnouncement.id - 1, 0)
       }
     })
 
     forward.addEventListener('click', () => {
       if (currentAnnouncement.id < mostRecentAnnouncement.id) {
-        var id = currentAnnouncement.id + 1;
-        fetch('/announcement/' + id)
-          .then((res) => {
-            return res.json();
-          })
-          .then((ann) => {
-            currentAnnouncement = ann;
-            repaintAnnouncements()
-          });
+        getNextAnnouncement(currentAnnouncement.id + 1, 0);
       }
     })
   }
 
 });
+
+// These methods are to handle moving past deleted ids
+function getPrevAnnouncement(id, tries) {
+  // Exit out if we've tried too many times
+  if (tries > 5) {
+    return
+  }
+
+  fetch('/announcement/' + id)
+    .then((res) => {
+      return res.json();
+    })
+    .then((ann) => {
+      currentAnnouncement = ann;
+      repaintAnnouncements()
+    }).catch(() => {
+      // Try again if we failed but at the id before
+      getPrevAnnouncement(id - 1, tries + 1)
+    });
+}
+
+function getNextAnnouncement(id, tries) {
+  // Exit out if we've tried too many times
+  if (tries > 5) {
+    return
+  }
+
+  fetch('/announcement/' + id)
+    .then((res) => {
+      return res.json();
+    })
+    .then((ann) => {
+      currentAnnouncement = ann;
+      repaintAnnouncements()
+    }).catch(() => {
+      // Try again if we failed but at the id after
+      getPrevAnnouncement(id + 1, tries + 1)
+    });
+}
 
 var currentAnnouncement;
 var mostRecentAnnouncement;
