@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 	"github.com/go-chi/chi"
 )
 
@@ -25,16 +26,21 @@ func (h *Handler) postAnnouncement() http.HandlerFunc {
 		}
 
 		err := h.AnnouncementService.Create(message)
-
 		if err != nil {
 			h.Error(w, r, err, "")
 			return
 		}
 
-		// Indicate created resource
-		w.WriteHeader(http.StatusCreated)
+		session := h.getSession(r)
+		// Show flash that everything went well
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Announcement posted, you're doing great!",
+		})
+		session.Save(r, w)
+
 		// Redirect to exec page
-		http.Redirect(w, r, "/exec", http.StatusCreated)
+		http.Redirect(w, r, "/exec", http.StatusSeeOther)
 	}
 }
 

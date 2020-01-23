@@ -209,9 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Just gonna piggy back off this, we should only be checking for announcements
-    // on the day of site.
-    // TODO change to 5000
-    setInterval(updateAnnouncements, 1000);
+    // on the day of page.
+    setInterval(updateAnnouncements, 90000);
     updateAnnouncements();
   }
 
