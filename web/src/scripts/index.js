@@ -347,7 +347,7 @@ function updateCountdown() {
     distance = end - now
   }
 
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
   var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
