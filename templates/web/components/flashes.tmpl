@@ -3,22 +3,24 @@
 {{ if . }}
 <div class="bm-flashes" id="flashes">
 	<div class="container">
-		<div class="columns is-centered content">
-			{{ range . }} 
-			{{ if eq .Type 0 }}
-			<div class="notification is-error">
-			{{ else if eq .Type 1 }}
-			<div class="notification is-warning">
-			{{ else if eq .Type 2 }}
-			<div class="notification is-info">
-			{{ else if eq .Type 3 }}
-			<div class="notification is-success">
-			{{ end }}
-				<button class="delete"></button>
-				{{ .Message }}
+		{{ range . }} 
+			<div class="columns is-centered content" style="padding-bottom: 2rem;">
+				<div class="column is-8 has-text-centered">
+					{{ if eq .Type 0 }}
+					<div class="notification is-danger">
+					{{ else if eq .Type 1 }}
+					<div class="notification is-warning">
+					{{ else if eq .Type 2 }}
+					<div class="notification is-info">
+					{{ else if eq .Type 3 }}
+					<div class="notification is-success">
+					{{ end }}
+						<button class="delete"></button>
+						{{ .Message }}
+					</div>
+				</div>
 			</div>
-			{{ end }}
-		</div>
+		{{ end }}
 	</div>
 </div>
 {{ end }}

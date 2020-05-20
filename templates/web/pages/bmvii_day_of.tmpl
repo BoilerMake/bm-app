@@ -1,0 +1,137 @@
+{{ define "bmvii day of" }}
+{{ template "head" . }}
+
+{{ template "bmvii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section" style='background-color: #6176CF; background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-12">
+        <div class="columns content">
+          <div class="column is-12 grid">
+            <img class="live-pindrop" id="live-pindrop" alt="BoilerMake Pin Logo" src={{ static_path "bmvii_pindrop.svg" }}>
+            <img class="live-greetings" alt="Greetings from BoilerMake" src={{ static_path "bmvii_greetings.svg" }}>
+            <div class="live-countdown is-hidden">
+              <div class="live-hours">
+                <p class="live--countdown__time hours-left">22</p>
+                <p class="live--countdown__unit">Hours</p>
+              </div>
+
+              <div class="live--countdown__colon">
+                <p class="live--countdown__time">:</p>
+              </div>
+
+              <div class="live-minutes">
+                <p class="live--countdown__time minutes-left">22</p>
+                <p class="live--countdown__unit">Minutes</p>
+              </div>
+
+              <div class="live--countdown__colon">
+                <p class="live--countdown__time">:</p>
+              </div>
+
+              <div class="live-seconds">
+                <p class="live--countdown__time seconds-left">22</p>
+                <p class="live--countdown__unit">Seconds</p>
+              </div>
+            </div>
+            <div class="box live--announcements__padding"></div>
+            <div class="box live--announcements">
+              <img class="live--announcements__header" src={{ static_path "bmvii_live_announcements.png" }}>
+              <p id="announcement-text">Loading announcements...</p>
+              <div class="level is-mobile">
+                <i class="level-left" id="announcement-date"></i>
+                <div>
+                  <span id="live--announcements__back" class="live--announcements__button_disabled">❮</span>
+                  <span id="live--announcements__forward" class="live--announcements__button_disabled">❯</span>
+                </div>
+              </div>
+            </div>
+            <div class="live-schedule">
+              {{ template "schedule" }}
+            </div>
+            <div class="live-buttons-vertical is-hidden-touch">
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="#map">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
+                      <b>Map</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
+                      <b>Slack</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="columns is-mobile is-centered content">
+                <div class="column is-12 live--icon">
+                  <a href="https://boilermake-vii.devpost.com/">
+                    <div class="box has-text-centered">
+                      <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
+                      <b>Submit</b>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="live-buttons-horizontal is-hidden-desktop">
+              <div class="columns is-centered content">
+                <div class="column is-12">
+                  <div class="columns is-mobile is-centered content">
+                    <div class="column is-4 live--icon">
+                      <a href="#map">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_map_icon.svg" }}>
+                          <b>Map</b>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="column is-4 live--icon">
+                      <a href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_slack_icon.svg" }}>
+                          <b>Slack</b>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="column is-4 live--icon">
+                      <a href="https://boilermake-vii.devpost.com/">
+                        <div class="box has-text-centered">
+                          <img class="live--icon__image image is-48x48" alt="Pindrop" src={{ static_path "bmvii_live_submit_icon.svg" }}>
+                          <b>Submit</b>
+                        </div>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+			</div>
+		</div>
+
+    <div class="columns is-centered content" id="map">
+      <div class="column is-10">
+        <img src={{ static_path "bmvii_live_map.jpg" }} alt="Map of BoilerMake VII in the corec">
+      </div>
+    </div>
+	</div>
+</section>
+
+{{ template "bmvii sponsors section" . }}
+
+{{ template "bmvii footer" . }}
+{{ end }}

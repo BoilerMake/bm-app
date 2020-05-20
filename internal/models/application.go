@@ -1,25 +1,29 @@
 package models
 
 import (
-	"errors"
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // Validation errors
 var (
-	ErrMissingSchool         = errors.New("please enter your school's name")
-	ErrMissingMajor          = errors.New("please enter your major")
-	ErrMissingGraduationYear = errors.New("please enter your graduation year")
-	ErrMissingGender         = errors.New("please enter your gender")
-	ErrMissingRace           = errors.New("please enter your race")
-	ErrMissingWhyBM          = errors.New("please enter why you want to come to BoilerMake?")
-	ErrMissingTACAgree       = errors.New("please agree to the terms and conditions")
+	ErrMissingSchool         = &ModelError{"Please enter your school's name.", flash.Info}
+	ErrMissingMajor          = &ModelError{"Please enter your major.", flash.Info}
+	ErrMissingGraduationYear = &ModelError{"Please enter your graduation year.", flash.Info}
+	ErrMissingGender         = &ModelError{"Please enter your gender.", flash.Info}
+	ErrMissingRace           = &ModelError{"Please enter your race.", flash.Info}
+	ErrMissingGithub         = &ModelError{"Please enter your GitHub username.", flash.Info}
+	ErrMissingPhone          = &ModelError{"Please enter your phone number.", flash.Info}
+	ErrMissingReferrer       = &ModelError{"Please enter where you heard about BoilerMake.", flash.Info}
+	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake.", flash.Info}
+	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions.", flash.Info}
 
 	// Validation errors when form paring
-	ErrMissingResume  = errors.New("please upload a resume")
-	ErrResumeTooLarge = errors.New("resume upload is too large")
+	ErrMissingResume  = &ModelError{"Please upload a resume.", flash.Info}
+	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
 )
 
 const (
@@ -36,22 +40,26 @@ const (
 
 // An Application is an application.  What do you want from me?
 type Application struct {
-	ID                   int
-	Decision             int
-	EmailedDecision      bool
-	UserID               int
-	RSVP                 bool
-	CheckedInAt          time.Time
+	ID              int
+	Decision        int
+	EmailedDecision bool
+	UserID          int
+	RSVP            bool
+	AcceptedAt      time.Time
+	CheckedInAt     time.Time
+
 	School               string
 	Major                string
 	GraduationYear       string
 	ResumeFile           string
 	Resume               *multipart.FileHeader // Stored in S3, not db
+	Phone                string
 	Gender               string
 	Race                 string
 	DietaryRestrictions  string
 	Github               string
-	Linkedin             string
+	IsFirstHackathon     bool
+	Referrer             string
 	WhyBM                string
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
@@ -71,6 +79,12 @@ func (a *Application) Validate() error {
 		return ErrMissingGender
 	} else if a.Race == "" {
 		return ErrMissingRace
+	} else if a.Github == "" {
+		return ErrMissingGithub
+	} else if a.Phone == "" {
+		return ErrMissingPhone
+	} else if a.Referrer == "" {
+		return ErrMissingReferrer
 	} else if a.WhyBM == "" {
 		return ErrMissingWhyBM
 	} else if !a.Is18OrOlder || !a.MLHCodeOfConduct || !a.MLHContestAndPrivacy {
@@ -90,7 +104,8 @@ func (a *Application) FromFormData(r *http.Request) error {
 	a.Race = r.FormValue("race")
 	a.DietaryRestrictions = r.FormValue("dietary-restrictions")
 	a.Github = r.FormValue("github")
-	a.Linkedin = r.FormValue("linkedin")
+	a.Phone = r.FormValue("phone-number")
+	a.Referrer = r.FormValue("referrer")
 	a.WhyBM = r.FormValue("why-bm")
 
 	// If no file was uploaded then set ResumeFile to empty string and let
@@ -121,6 +136,7 @@ func (a *Application) FromFormData(r *http.Request) error {
 		}
 	}
 
+	a.IsFirstHackathon = r.FormValue("is-first-hackathon") == "on"
 	a.Is18OrOlder = r.FormValue("is-18-or-older") == "on"
 	a.MLHCodeOfConduct = r.FormValue("mlh-code-of-conduct") == "on"
 	a.MLHContestAndPrivacy = r.FormValue("mlh-contest-and-privacy") == "on"
@@ -134,4 +150,5 @@ func (a *Application) FromFormData(r *http.Request) error {
 type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
+	GetApplicationCount() int
 }

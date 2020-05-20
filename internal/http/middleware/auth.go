@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/gorilla/sessions"
 )
@@ -25,13 +25,13 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 		email, ok := session.Values["EMAIL"].(string)
 		if !ok || email == "" {
 			session.AddFlash(flash.Flash{
-				Type:    flash.Info,
+				Type:    models.ErrNotLoggedIn.GetType(),
 				Message: models.ErrNotLoggedIn.Error(),
 			})
 
 			session.Save(r, w)
 
-			http.Redirect(w, r, "/signup", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -41,7 +41,35 @@ func MustBeAuthenticated(h http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-// MustBeExec only allows execs and admin roles to access a route
+// MustNotBeAuthenticated is the same as MustBeAuthenticated but it does
+// the opposite.
+func MustNotBeAuthenticated(h http.Handler) http.Handler {
+	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
+	store := createCookieStore()
+
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		session, _ := store.Get(r, sessionCookieName)
+
+		email, ok := session.Values["EMAIL"].(string)
+		if ok && email != "" {
+			session.AddFlash(flash.Flash{
+				Type:    models.ErrAlreadyLoggedIn.GetType(),
+				Message: models.ErrAlreadyLoggedIn.Error(),
+			})
+
+			session.Save(r, w)
+
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	}
+
+	return http.HandlerFunc(fn)
+}
+
+// MustBeExec only allows execs roles to access a route
 func MustBeExec(h http.Handler) http.Handler {
 	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
 	store := createCookieStore()
@@ -56,7 +84,7 @@ func MustBeExec(h http.Handler) http.Handler {
 			return
 		}
 
-		if role != models.RoleExec && role != models.RoleAdmin {
+		if role != models.RoleExec {
 			http.Redirect(w, r, "/404", http.StatusSeeOther)
 			return
 		}

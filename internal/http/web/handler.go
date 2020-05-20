@@ -10,12 +10,13 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/BoilerMake/new-backend/internal/http/middleware"
-	"github.com/BoilerMake/new-backend/internal/mail"
-	"github.com/BoilerMake/new-backend/internal/models"
-	"github.com/BoilerMake/new-backend/internal/s3"
-	"github.com/BoilerMake/new-backend/pkg/flash"
-	"github.com/BoilerMake/new-backend/pkg/template"
+	"github.com/BoilerMake/bm-app/internal/http/middleware"
+	"github.com/BoilerMake/bm-app/internal/mail"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/internal/s3"
+	"github.com/BoilerMake/bm-app/internal/status"
+	"github.com/BoilerMake/bm-app/pkg/flash"
+	"github.com/BoilerMake/bm-app/pkg/template"
 
 	"github.com/go-chi/chi"
 	"github.com/gorilla/sessions"
@@ -29,7 +30,7 @@ type Page struct {
 	Title string
 
 	// Current status of app
-	Status string
+	Status status.Status
 
 	// A generic place to put unstructured data
 	Data interface{}
@@ -47,7 +48,8 @@ type Page struct {
 	IsAuthenticated bool
 }
 
-func NewPage(w http.ResponseWriter, r *http.Request, title string, status string, session *sessions.Session) (*Page, bool) {
+func (h *Handler) NewPage(w http.ResponseWriter, r *http.Request, title string) (*Page, bool) {
+	session := h.getSession(r)
 	email, ok := session.Values["EMAIL"].(string)
 	if !ok {
 		// It's ok to ignore if this errors (for example when a user doesn't have a
@@ -67,7 +69,7 @@ func NewPage(w http.ResponseWriter, r *http.Request, title string, status string
 
 	return &Page{
 		Title:           title,
-		Status:          status,
+		Status:          h.Status,
 		Email:           email,
 		IsAuthenticated: email != "",
 		Flashes:         flashes,
@@ -79,11 +81,17 @@ type Handler struct {
 	// A Mux handles all routing and middleware.
 	*chi.Mux
 
-	// A UserService is the interface with the database.
+	// A UserService is the interface with the database for users
 	UserService models.UserService
 
-	// An ApplicationService is the interface with the databsae
+	// An ApplicationService is the interface with the database for applications
 	ApplicationService models.ApplicationService
+
+	// An RSVPService is the interface with the databsae for RSVPs
+	RSVPService models.RSVPService
+
+	// An AnnouncementService is the interface with the database for announcements
+	AnnouncementService models.AnnouncementService
 
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
@@ -102,6 +110,9 @@ type Handler struct {
 
 	// Name cookie that stores sessions
 	SessionCookieName string
+
+	// Holds the current application status
+	Status status.Status
 }
 
 // A OAuthAccessResponse stores the returned access token from oauth request
@@ -110,12 +121,14 @@ type OAuthAccessResponse struct {
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
-		UserService:        us,
-		ApplicationService: as,
-		Mailer:             mailer,
-		S3:                 S3,
+		UserService:         us,
+		ApplicationService:  as,
+		RSVPService:         rs,
+		AnnouncementService: anns,
+		Mailer:              mailer,
+		S3:                  S3,
 	}
 
 	r := chi.NewRouter()
@@ -138,9 +151,10 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 		r.Use(h.Templates.ReloadTemplates)
 	}
 
-	/* WEB ROUTES */
+	// On and off season routes
 	r.Get("/", h.getRoot())
 	r.Get("/hackers", h.getHackers())
+	r.Get("/sponsors", h.getSponsors())
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
 
@@ -150,38 +164,68 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 	/* USER ROUTES */
 	r.Get("/signup", h.getSignup())
 	r.Post("/signup", h.postSignup())
+	r.Get("/live", h.getLive())
 
-	r.Get("/activate/{code}", h.getActivate())
-
-	r.Get("/forgot", h.getForgotPassword())
-	r.Post("/forgot", h.postForgotPassword())
-	r.Get("/reset", h.getResetPassword())
-	r.Get("/reset/{token}", h.getResetPasswordWithToken())
-	r.Post("/reset/{token}", h.postResetPassword())
-
-	r.Get("/login", h.getLogin())
-	r.Post("/login", h.postLogin())
-
-	r.Get("/logout", h.getLogout())
-
-	// Must have auth
+	// Exec routes
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.MustBeAuthenticated)
+		r.Use(middleware.MustBeExec)
+		r.Get("/exec", h.getExec())
 
-		r.Get("/account", h.getAccount())
-		r.Post("/account", h.postAccount())
+		r.Post("/announcement", h.postAnnouncement())
+		r.Delete("/announcement", h.deleteAnnouncement())
+	})
 
-		/* APPLICATION ROUTES */
-		r.Get("/apply", h.getApply())
-		r.Post("/apply", h.postApply())
+	// On sesaon only routes
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.OnSeasonOnly)
 
-		/* EXEC ROUTES */
+		// User routes
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.MustBeExec)
+			r.Use(middleware.MustNotBeAuthenticated)
 
-			r.Get("/exec", h.getExec())
+			r.Get("/signup", h.getSignup())
+			r.Post("/signup", h.postSignup())
+
+			r.Get("/login", h.getLogin())
+			r.Post("/login", h.postLogin())
+
+		})
+
+		r.Get("/activate/{code}", h.getActivate())
+
+		// Password Reset Routes
+		r.Get("/forgot", h.getForgotPassword())
+		r.Post("/forgot", h.postForgotPassword())
+		r.Get("/reset", h.getResetPassword())
+		r.Get("/reset/{token}", h.getResetPasswordWithToken())
+		r.Post("/reset/{token}", h.postResetPassword())
+
+		// Public Annnouncement Route
+		r.Get("/announcement", h.getAnnouncement())
+		r.Get("/announcement/{id}", h.getAnnouncementWithID())
+
+		r.Get("/logout", h.getLogout())
+
+		// Must have auth
+		r.Group(func(r chi.Router) {
+			r.Use(middleware.MustBeAuthenticated)
+
+			r.Get("/dashboard", h.getDashboard())
+
+			r.Group(func(r chi.Router) {
+				r.Use(middleware.AppsOpenOnly)
+
+				r.Get("/apply", h.getApply())
+				r.Post("/apply", h.postApply())
+			})
+
+			r.Get("/rsvp", h.getRSVP())
+			r.Post("/rsvp", h.postRSVP())
 		})
 	})
+
+	r.NotFound(h.get404())
 
 	if mode == "development" {
 		// In prod we serve static items through a CDN, in development just serve
@@ -208,20 +252,23 @@ func NewHandler(us models.UserService, as models.ApplicationService, mailer mail
 
 	// Prevents CSRF attacks (on browsers that support SameSite)
 	store.Options.SameSite = http.SameSiteStrictMode
-
 	// Prevents XSS attacks (JS isn't allowed to access cookie)
 	store.Options.HttpOnly = true
-
 	if mode != "development" {
 		// Only transfer cookie over https
 		store.Options.Secure = true
 	}
 	h.SessionStore = store
 
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	h.SessionCookieName = sessionCookieName
+	h.SessionCookieName = mustGetEnv("SESSION_COOKIE_NAME")
 
-	r.NotFound(h.get404())
+	// Set up status to feed to pages
+	statusString := mustGetEnv("APP_STATUS")
+	statusInt, err := strconv.Atoi(statusString)
+	if err != nil {
+		log.Fatalf("Failed to convert status to int: %v", err)
+	}
+	h.Status = status.Status(statusInt)
 
 	h.Mux = r
 	return &h
@@ -245,7 +292,7 @@ func (h *Handler) oauthRedirect() http.HandlerFunc {
 		}
 		code := r.FormValue("code")
 
-		// Next, lets for the HTTP request to call the github oauth enpoint
+		// Next, lets for the HTTP request to call the github oauth endpoint
 		// to get our access token
 		reqURL := fmt.Sprintf("https://github.com/login/oauth/access_token?client_id=%s&client_secret=%s&code=%s", clientID, clientSecret, code)
 		req, err := http.NewRequest(http.MethodPost, reqURL, nil)
@@ -313,15 +360,11 @@ func (h *Handler) oauthRedirect() http.HandlerFunc {
 
 // getRoot renders the index template.
 func (h *Handler) getRoot() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -331,15 +374,12 @@ func (h *Handler) getRoot() http.HandlerFunc {
 
 // getHackers renders the hackers template.
 func (h *Handler) getHackers() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Hackers", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Hackers")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -347,17 +387,27 @@ func (h *Handler) getHackers() http.HandlerFunc {
 	}
 }
 
-// getAbout renders the about template.
-func (h *Handler) getAbout() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
+// getSponsors renders the sponsors template.
+func (h *Handler) getSponsors() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - About", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Sponsors")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "sponsors", p)
+	}
+}
+
+// getAbout renders the about template.
+func (h *Handler) getAbout() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p, ok := h.NewPage(w, r, "BoilerMake - About")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -367,15 +417,11 @@ func (h *Handler) getAbout() http.HandlerFunc {
 
 // getFaq renders the faq template.
 func (h *Handler) getFaq() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - FAQ", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - FAQ")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -383,18 +429,28 @@ func (h *Handler) getFaq() http.HandlerFunc {
 	}
 }
 
+// getHackers renders the day of template.
+func (h *Handler) getLive() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p, ok := h.NewPage(w, r, "BoilerMake - Live")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "bmvii day of", p)
+	}
+}
+
 // get404 handles requests that couldn't find a valid route by rendering the
 // 404 template.
 func (h *Handler) get404() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - 404", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - 404")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -440,7 +496,12 @@ func staticFileReplace(mode string) func(path string) string {
 
 	return func(path string) string {
 		if manifest[path] != nil {
-			return cloudfrontURL + "/" + manifest[path].(string)
+			fullPath, ok := manifest[path].(string)
+			if !ok {
+				return "/404"
+			}
+
+			return cloudfrontURL + "/" + fullPath
 		}
 
 		return "/404"
@@ -462,6 +523,12 @@ func onSeasonOnly(status string) error {
 	}
 
 	return nil
+}
+
+// getSession returns the session associated with a request's cookies.
+func (h *Handler) getSession(r *http.Request) *sessions.Session {
+	session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+	return session
 }
 
 // rollbarReportError reports an error to rollbar and logs it locally.  It
@@ -486,13 +553,12 @@ func logReportError(interfaces ...interface{}) {
 // Error checks an error given to it.  If it's a known error that we've made
 // we can show it to the user as a flash.  If it's unknown then we should tell
 // the user that something went wrong and report the error to rollbar.
-func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, interfaces ...interface{}) {
+func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, redirectPath string, interfaces ...interface{}) {
 	switch err.(type) {
 	case *models.ModelError:
-		modelError := err.(*models.ModelError)
-
 		// This is an error we know about and should let the user know what happened
-		session, _ := h.SessionStore.Get(r, h.SessionCookieName)
+		modelError := err.(*models.ModelError)
+		session := h.getSession(r)
 
 		session.AddFlash(flash.Flash{
 			Type:    modelError.GetType(),
@@ -501,7 +567,11 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		session.Save(r, w)
 
 		// Redirect to previous page
-		http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		if redirectPath != "" {
+			http.Redirect(w, r, redirectPath, http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, r.URL.RequestURI(), http.StatusSeeOther)
+		}
 	default:
 		// Because we don't know how this error happened, we should report it on rollbar.
 		h.ErrReporter(append([]interface{}{err}, interfaces...)...)
@@ -509,6 +579,13 @@ func (h *Handler) Error(w http.ResponseWriter, r *http.Request, err error, inter
 		// This error could have come from anywhere, so we should just tell the user
 		// something went wrong so that we don't accidently expose something
 		// sensitive
-		h.Templates.RenderTemplate(w, "500", nil)
+		p, ok := h.NewPage(w, r, "500")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+
+		h.Templates.RenderTemplate(w, "500", p)
 	}
 }

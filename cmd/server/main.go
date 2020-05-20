@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"time"
 
-	"github.com/BoilerMake/new-backend/internal/http"
-	"github.com/BoilerMake/new-backend/internal/mail"
-	"github.com/BoilerMake/new-backend/internal/postgres"
-	"github.com/BoilerMake/new-backend/internal/s3"
-	"github.com/BoilerMake/new-backend/pkg/env"
-	"github.com/BoilerMake/new-backend/pkg/flash"
+	"github.com/BoilerMake/bm-app/internal/http"
+	"github.com/BoilerMake/bm-app/internal/mail"
+	"github.com/BoilerMake/bm-app/internal/postgres"
+	"github.com/BoilerMake/bm-app/internal/s3"
+	"github.com/BoilerMake/bm-app/pkg/env"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/rollbar/rollbar-go"
 )
@@ -20,6 +22,27 @@ func main() {
 	err := env.Load(true)
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	mode, ok := os.LookupEnv("ENV_MODE")
+	if !ok {
+		log.Fatalf("environment variable not set: %v. Did you update your .env file?", "ENV_MODE")
+	}
+
+	// Set up logging with a new file each time the server starts
+	if mode == "production" {
+		logPath, ok := os.LookupEnv("LOG_PATH")
+		if !ok {
+			log.Fatalf("environment variable not set: %v", "LOG_PATH")
+		}
+
+		timestamp := strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
+		logFile, err := os.Create(logPath + "/" + timestamp)
+		if err != nil {
+			log.Fatalf("failed to create log file: %v", err)
+		}
+
+		log.SetOutput(logFile)
 	}
 
 	// Register flash struct so it can be serialized later
@@ -47,6 +70,7 @@ func main() {
 	// Bring together all our config bits and try to connect
 	connStr := fmt.Sprintf("host=%s dbname=%s user=%s password=%s %s", dbHost, dbName, dbUser, dbPassword, dbOptions)
 	db, err := postgres.Open(connStr)
+
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
@@ -54,9 +78,11 @@ func main() {
 
 	us := &postgres.UserService{db}
 	as := &postgres.ApplicationService{db}
+	rs := &postgres.RSVPService{db}
+	anns := &postgres.AnnouncementService{db}
 	mailer := mail.NewMailer()
 	S3 := s3.NewS3()
-	h := http.NewHandler(us, as, mailer, S3)
+	h := http.NewHandler(us, as, rs, anns, mailer, S3)
 
 	rollbarEnv, ok := os.LookupEnv("ROLLBAR_ENVIRONMENT")
 	if !ok {

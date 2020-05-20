@@ -5,8 +5,8 @@ import (
 	"mime/multipart"
 	"os"
 
-	"github.com/BoilerMake/new-backend/internal/s3/aws"
-	"github.com/BoilerMake/new-backend/internal/s3/mock"
+	"github.com/BoilerMake/bm-app/internal/s3/aws"
+	"github.com/BoilerMake/bm-app/internal/s3/mock"
 )
 
 // An S3 defines an interface uploading files to S3 like services.

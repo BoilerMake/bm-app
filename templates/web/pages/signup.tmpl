@@ -9,47 +9,47 @@
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column box is-5-tablet is-4-desktop">
-				<h2>Signup</h2>
+				<h2>Sign up</h2>
 				<form action="" method="post">
 
 					<div class="field">
 						<label for="first-name" class="label">First Name</label>
 						<div class="control">
-							<input type="text" name="first-name" class="input" required>
+							<input type="text" name="first-name" class="input" maxlength="128" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="last-name" class="label">Last Name</label>
 						<div class="control">
-							<input type="text" name="last-name" class="input" required>
+							<input type="text" name="last-name" class="input" maxlength="128" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="email" class="label">Email</label>
 						<div class="control">
-							<input type="email" name="email" placeholder="you@school.edu" class="input" required>
+							<input type="email" name="email" placeholder="you@school.edu" class="input" maxlength="128" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="password" class="label">Password</label>
 						<div class="control">
-							<input type="password" name="password" placeholder="********" class="input" required>
+							<input type="password" name="password" minlength="3" placeholder="********" class="input" maxlength="128" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<label for="password-confirm" class="label">Confirm Password</label>
 						<div class="control">
-							<input type="password" name="password-confirm" placeholder="********" class="input" required>
+							<input type="password" name="password-confirm" minlength="3" maxlength="128" placeholder="********" class="input" required>
 						</div>
 					</div>
 
 					<div class="field">
 						<div class="control">
-							<button class="button is-fullwidth is-red" type="submit">Signup</button>
+							<button class="button is-fullwidth is-red" type="submit">Sign up</button>
 						</div>
 					</div>
 

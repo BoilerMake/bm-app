@@ -3,6 +3,8 @@
 version: "3"
 services:
   bm-app:
+    volumes:
+      - ../working/logs:/bm-app/working/logs
 
   database:
     volumes:
@@ -14,6 +16,7 @@ services:
     # variable expansion in its .toml files.
     command:
       - --acme.email=${TRAEFIK_EMAIL}
+      - --acme.domains=${DOMAIN},www.${DOMAIN}
     volumes:
       # So traefik can pay attention to docker activities
       - /var/run/docker.sock:/var/run/docker.sock

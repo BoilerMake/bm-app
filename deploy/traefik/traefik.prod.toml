@@ -12,6 +12,7 @@ defaultEntryPoints = ["http", "https"]
 		entryPoint = "https"
 	[entryPoints.https]
 	address = ":443"
+	compress = true
 	[entryPoints.https.tls]
 
 # Use acme to get our SSL certs.  Also requires an email for registration, but

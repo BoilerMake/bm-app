@@ -3,12 +3,12 @@
 
 {{ template "navbar" . }}
 
-<section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(0,0,0,0.7), rgba(155,155,200,0.7)), url({{ static_path "about_home_header.jpg" }})'>
+{{ template "flashes" .Flashes }}
+
+<section class="section bmvii-hero is-medium has-background-image" style='background-image: url({{ static_path "about_home_header.jpg" }})'>
 	<div class="hero-body">
 	</div>
 </section>
-
-{{ template "flashes" .Flashes }}
 
 <section class="section">
 	<div class="container">
@@ -16,20 +16,25 @@
 			<div class="column is-6">
 				<div class="content">
 					<p> BoilerMake is a hackathon that brings over 500 hackers
-						from across the country under one roof for one incredible weekend. As a team,
-						our mission is to empower each and every hacker to build anything that they can imagine,
-						we’ll pull out all the stops to make sure that dream becomes a reality.
-						We find happiness in knowing that every hacker will walk out of our doors with memories
+						from across the country under one roof for one incredible weekend. Since 2013, our team's mission has been to drive a 
+						culture of dedication to creativity, achievement, and innovation.
+						We seek to empower every hacker with the tools to build anything that they can imagine, and
+						we find happiness in knowing that hackers will walk out of our doors with memories
 						that will last a lifetime.</p>
 
-					<p> This year, 24 students from Purdue University have come
+					<p>This year, 28 undergraduate students from Purdue University have come
 						together to host an unforgettable hackathon. All the work that has gone into planning
-						this event—everything from setting up the venue to the annoying emails that we berate
-						your inboxes with—was accomplished by somebody just like you. </p>
+						this event - setting up the venue, organizing activities and catering, sending annoying emails - 
+						was accomplished by somebody just like you. </p>
 
-					<p> If this sort of stuff sounds like your thing, stay tuned for more updates!
+					<p>If you love hackathons and are interested in getting involved, come talk to us at BoilerMake!
 						We’ll be looking for new people to help us throw another successful hackathon in
-						2018! As always - if you have any questions, feel free to hit us up at team@boilermake.org! </p>
+						2020.</p>
+					<p>If you have any questions, feel free to hit us up at <a href="mailto:team@boilermake.org">team@boilermake.org</a>.</p>
+
+					<p>As always, hack on.</p>
+
+
 				</div>
 			</div>
 		</div>
@@ -39,7 +44,7 @@
 <section class="section">
 	<h1 class="title is-1 is-spaced has-text-centered">History</h1>
 	<div class="container">
-		<div class="columns is-mobile is-vcentered content">
+		<div class="columns is-vcentered content">
 			<div class="column">
 				<img alt="Hackers around a table at BoilerMake I" src='{{static_path "about_bm_1.jpg"}}' alt="">
 			</div>
@@ -60,7 +65,7 @@
 
 	</div>
 	<div class="container">
-		<div class="columns is-mobile is-vcentered content">
+		<div class="columns is-vcentered content">
 			<div class="column">
 				<h2 class="subtitle">BoilerMake II: Oct 17-19th, 2014</h2>
 				<p>BM II was the year of the BoilerMake Badges - custom Arduino boards for hackers to have fun with.
@@ -78,7 +83,7 @@
 
 	<div class="container">
 
-		<div class="columns is-mobile is-vcentered content">
+		<div class="columns is-vcentered content">
 
 			<div class="column">
 				<img alt="The lambert field house as the hacking space for BoilerMake III" src='{{static_path "about_bm_3.jpg"}}' alt="">
@@ -98,7 +103,7 @@
 
 	<div class="container">
 
-		<div class="columns is-mobile is-vcentered content">
+		<div class="columns is-vcentered content">
 			<div class="column">
 				<h2 class="subtitle">BoilerMake IV: January 20-22nd, 2017</h2>
 				<p>BM IV followed a space adventure theme as hackers became astronauts traveling through the stars. This event was once again held in the Cordova Recreational Sports Center among the basketball courts. 500 students came together once again to
@@ -114,7 +119,7 @@
 
 	<div class="container">
 
-		<div class="columns is-mobile is-vcentered content">
+		<div class="columns is-vcentered content">
 
 			<div class="column">
 				<img alt="The Co-Rec full of hackers during BoilerMake V" src='{{static_path "about_bm_5.jpg"}}' alt="">
@@ -125,6 +130,24 @@
 				<p>BM V came back to the Cordova Recreational Sports Center for another 36 hours of unadulterated hacking. With more yoga, coffee, and neon light than ever before, students put together projects with the help of mentors and friends alike to
 					exhibit to everyone at BoilerMake.</p>
 			</div>
+		</div>
+	</div>
+
+	<div class="container">
+
+		<div class="columns is-vcentered content">
+
+			<div class="column">
+				<h2 class="subtitle">BoilerMake VI: October 19-21nd, 2018</h2>
+				<p>BM VI was held in Hicks Undergraduate Library, where hackers could set up camp in rooms for uninterrupted hacking or hang out at our sponsor lounges.
+				Doughnut and shaved ice trucks, emotional support dogs, and tech talks from Facebook and Purdue entrepreneurs brought smiles to hackers' faces.
+				</p>
+			</div>
+
+			<div class="column">
+				<img alt="Hicks hackers during BoilerMake VI" src='{{static_path "about_bm_6.jpg"}}' alt="">
+			</div>
+
 		</div>
 	</div>
 

@@ -1,0 +1,112 @@
+{{ define "bmvii sponsors" }}
+{{ template "head" . }}
+
+{{ template "navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section bm-vii-hero" style='background-color: #2D2045; background-image: url({{ static_path "bmvii_sponsors_background.svg" }});'>
+	<div class="container" style="padding-bottom: 2.5rem; padding-top: 2.5rem;">
+		<div class="columns is-centered content">
+			<div class="column is-5">
+				<img alt="Sponsor A Weekend Full of Ideas" src={{ static_path "bmvii_sponsors_hero.png" }}>
+			</div>
+		</div>
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<p class="subtitle is-5 has-text-white has-text-centered">Help stimulate hacker culture and network with talented students.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<h2 class="subtitle has-text-centered">Foster a community of ideas</h2>
+				<p>
+				
+				With your support, BoilerMake brings hundreds of ambitious hackers together to work on projects that integrate their ideas with your company's technology. We want to make your company an essential part of the BoilerMake experience.</p>
+				<p>Sponsors have access to a driven community of highly motivated university students with fresh ideas that could be a beneficial part of your workplace. We're happy to facilitate varying degrees of involvement based on your company's goals.</p>
+
+				<p>Interacting with students during the hackathon also allows you to promote and help hackers use your company’s new technologies.
+				If you're looking to find qualified job and internship candidates and see them work as a team in a fast-paced setting, we hope you'll take the opportunity to join our event.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<div class="columns is-centered content">
+					<div class="column is-8 has-text-centered">
+						<h2 class="subtitle">Put your name on the BoilerMake Legacy</h2>
+					</div>
+				</div>
+				<div class="columns is-mobile is-centered is-vcentered content">
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_bloomberg.svg" }} alt="Bloomberg">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_google.png" }} alt="Google">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_capital_one.svg" }} alt="Capital One">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_mongodb.png" }} alt="MongoDB">
+					</div>
+				</div>
+				<div class="columns is-mobile is-centered is-vcentered content">
+					<div class="column is-1">
+						<img src={{ static_path "sponsors_mixmax.svg" }} alt="MixMax">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_microsoft.png" }} alt="Microsoft">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_sendgrid.png" }} alt="SendGrid">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_qualcomm.svg" }} alt="Qualcomm">
+					</div>
+					<div class="column is-1">
+						<img src={{ static_path "sponsors_ge.png" }} alt="General Electric">
+					</div>
+				</div>
+				<div class="columns is-mobile is-centered is-vcentered content">
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_twilio.png" }} alt="Twilio">
+					</div>
+					<div class="column is-3">
+						<img src={{ static_path "sponsors_walmart.png" }} alt="Walmart">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-8">
+				<h2>Additional Benefits</h2>
+				<ul>
+					<li>Gaining access to hackers’ resumes, emails, GitHubs, and LinkedIn profiles</li>
+					<li>Awarding custom prizes based your criteria</li>
+					<li>Promotion through giveaways and advertising</li>
+					<li>Demonstrating your APIs and new technologies</li>
+					<li>Reserving space for private events with hackers (tech talks, mentorship sessions, etc.)</li>
+				</ul>
+				<a class="button is-info" href="mailto:sponsorship@boilermake.org">Reach us at sponsorship@boilermake.org</a>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "footer" . }}
+{{ end }}

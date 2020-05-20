@@ -1,9 +1,9 @@
 {{ define "navbar" }}
 
-{{ if and (ge .Status "2") (le .Status "4") }}
-	{{ template "bmvii navbar" . }}
-{{ else }}
+{{ if or (lt .Status 2) (gt .Status 4) }}
 	{{ template "offseason navbar" . }}
+{{ else }}
+	{{ template "bmvii navbar" . }}
 {{ end }}
 
 {{ end }}

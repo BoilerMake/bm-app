@@ -1,29 +1,25 @@
 package web
 
 import (
+	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 
 	"github.com/go-chi/chi"
 )
 
 // getSignup renders the signup template.
 func (h *Handler) getSignup() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Signup", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Signup")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -50,13 +46,6 @@ func (h *Handler) getSignup() http.HandlerFunc {
 
 // postSignup tries to signup a user from a post request.
 func (h *Handler) postSignup() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -65,14 +54,25 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		domain = "https://" + domain
 	}
 
+	confirmMessage :=
+		`Hey %s,
+
+Thanks for creating a BoilerMake.org account! We're excited that you're interested in attending our hackathon.  Click the link below to confirm your email.
+
+Be sure to check 'My Application' to ensure you've applied to BoilerMake VII.  This email only confirms that you've created a BoilerMake.org account – the application is separate.
+
+%s
+
+BoilerMake
+Hack Your Own Adventure`
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO check if login is valid (i.e. account exists), if so log them in
 		var u models.User
 		u.FromFormData(r)
 
 		id, confirmationCode, err := h.UserService.Signup(&u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 		u.ID = id
@@ -81,46 +81,36 @@ func (h *Handler) postSignup() http.HandlerFunc {
 		to := u.Email
 		subject := "Confirm your email"
 		link := domain + "/activate/" + confirmationCode
-		data := map[string]interface{}{
-			"Name":        u.FirstName,
-			"ConfirmLink": link,
-		}
 
-		err = h.Mailer.SendTemplate(to, subject, "email confirm", data)
+		err = h.Mailer.Send(to, subject, fmt.Sprintf(confirmMessage, u.FirstName, link))
 		if err != nil {
-			h.Error(w, r, err, to, data)
+			h.Error(w, r, err, "", to, link)
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
-		// Redirect to application if signup was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		// Redirect to dashboard if signup was successful
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
 // getActivate activates the account that corresponds to the activation code
 // if there is such an account.
 func (h *Handler) getActivate() http.HandlerFunc {
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		code := chi.URLParam(r, "code")
 
 		u, err := h.UserService.GetByCode(code)
 		if err != nil {
-			h.Error(w, r, err, code)
+			h.Error(w, r, err, "/", code)
 			return
 		}
 
@@ -128,30 +118,22 @@ func (h *Handler) getActivate() http.HandlerFunc {
 		u.ConfirmationCode = ""
 		err = h.UserService.Update(u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "/")
 			return
 		}
 
 		// Redirect to application if activation was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
 // getForgotPassword renders the forgot password page.
 func (h *Handler) getForgotPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Forgot Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Forgot Password")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -161,12 +143,6 @@ func (h *Handler) getForgotPassword() http.HandlerFunc {
 
 // postForgotPassword sends the password reset email.
 func (h *Handler) postForgotPassword() http.HandlerFunc {
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	domain := mustGetEnv("DOMAIN")
 	mode := mustGetEnv("ENV_MODE")
 	if mode == "development" {
@@ -175,29 +151,44 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 		domain = "https://" + domain
 	}
 
+	resetMessage :=
+		`Hey there,
+
+We got a request to reset your BoilerMake account's password. If you made this request, please click the button below to reset your password. Otherwise, please ignore this email.
+
+%s
+
+BoilerMake
+Hack Your Own Adventure`
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
 
 		token, err := h.UserService.GetPasswordReset(u.Email)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "/forgot")
 			return
 		}
 
 		to := u.Email
 		subject := "Password Reset"
 		link := domain + "/reset/" + token
-		data := map[string]interface{}{
-			"Name":      u.FirstName,
-			"ResetLink": link,
-		}
 
-		err = h.Mailer.SendTemplate(to, subject, "email reset", data)
+		err = h.Mailer.Send(to, subject, fmt.Sprintf(resetMessage, link))
 		if err != nil {
-			h.Error(w, r, err, to, data)
+			h.Error(w, r, err, "", to, link)
 			return
 		}
+
+		session := h.getSession(r)
+
+		// Show flash that they should be sent a reset email
+		session.AddFlash(flash.Flash{
+			Type:    flash.Info,
+			Message: "We've emailed you instructions on how to reset your password.  If you don't see it in the next few mintues be sure to check your spam folder.",
+		})
+		session.Save(r, w)
 
 		// Redirect to homepage if activation was successful
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -206,19 +197,11 @@ func (h *Handler) postForgotPassword() http.HandlerFunc {
 
 // getResetPassword renders the reset password template.
 func (h *Handler) getResetPassword() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Reset Password")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -228,19 +211,11 @@ func (h *Handler) getResetPassword() http.HandlerFunc {
 
 // getResetPasswordWithToken renders the reset password template with the token filled in.
 func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Reset Password", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Reset Password")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -254,12 +229,6 @@ func (h *Handler) getResetPasswordWithToken() http.HandlerFunc {
 
 // postResetPassword resets the password with a valid token
 func (h *Handler) postResetPassword() http.HandlerFunc {
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		var passwordResetInfo models.PasswordResetPayload
 		passwordResetInfo.UserToken = r.FormValue("token")
@@ -267,30 +236,37 @@ func (h *Handler) postResetPassword() http.HandlerFunc {
 
 		err := h.UserService.ResetPassword(passwordResetInfo.UserToken, passwordResetInfo.NewPassword)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
-		// Redirect to homepage if activation was successful
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		session := h.getSession(r)
+
+		// Show flash that everything went well
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Your password has been reset",
+		})
+		session.Save(r, w)
+
+		// If they're already logged in then redirect to homepage, otherwise
+		// redirect to login page
+		_, ok := session.Values["EMAIL"].(string)
+		if !ok {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
 	}
 }
 
 // getLogin renders the login template.
 func (h *Handler) getLogin() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-		p, ok := NewPage(w, r, "BoilerMake - Login", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Login")
 
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -300,55 +276,41 @@ func (h *Handler) getLogin() http.HandlerFunc {
 
 // postLogin tries to log in a user.
 func (h *Handler) postLogin() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		u.FromFormData(r)
 
 		err := h.UserService.Login(&u)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		u.SetSession(session)
 		err = session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
 		// Redirect to application if login was successful
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
 // getLogout renders the login template.
 func (h *Handler) getLogout() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		// This expires the token
 		session.Options.MaxAge = -1
 
 		err := session.Save(r, w)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -356,74 +318,62 @@ func (h *Handler) getLogout() http.HandlerFunc {
 	}
 }
 
-// getAccount shows a user their account.
-func (h *Handler) getAccount() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
+// getDashboard shows a user their account.
+func (h *Handler) getDashboard() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
-		email, ok := session.Values["EMAIL"].(string)
+		id, ok := session.Values["ID"].(int)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
-		u, err := h.UserService.GetByEmail(email)
+		a, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
-			h.Error(w, r, err)
-			return
+			// User hasn't submitted an app
+			if err == sql.ErrNoRows {
+				a = &models.Application{}
+				// Mark decision as invalid value for template
+				a.Decision = -1
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Account", status, session)
+		// Only show to accepted users
+		if a.Decision == models.DecisionAccepted {
+			if !a.AcceptedAt.IsZero() && time.Now().Sub(a.AcceptedAt) > models.RSVPExpiryTime {
+				a.Decision = -2
+			}
+		}
+
+		p, ok := h.NewPage(w, r, "BoilerMake - Dashboard")
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
-		p.FormRefill = map[string]interface{}{
-			"FirstName": u.FirstName,
-			"LastName":  u.LastName,
-			"Email":     u.Email,
-		}
-
-		h.Templates.RenderTemplate(w, "account", p)
-	}
-}
-
-// postAccount updates a user's account.
-func (h *Handler) postAccount() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-
-		email, ok := session.Values["EMAIL"].(string)
-		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
-			return
-		}
-
-		u, err := h.UserService.GetByEmail(email)
+		// See if user has submitted an RSVP
+		hasRSVP := true
+		rsvp, err := h.RSVPService.GetByUserID(id)
 		if err != nil {
-			h.Error(w, r, err)
-			return
+			hasRSVP = false
+			if err == sql.ErrNoRows {
+				rsvp = &models.RSVP{}
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
 
-		u.FirstName = r.FormValue("first-name")
-		u.LastName = r.FormValue("last-name")
-
-		err = h.UserService.Update(u)
-		if err != nil {
-			h.Error(w, r, err)
-			return
+		p.Data = map[string]interface{}{
+			"Application": a,
+			"HasRSVP":     hasRSVP,
+			"RSVP":        rsvp,
 		}
 
-		http.Redirect(w, r, "/account", http.StatusSeeOther)
+		h.Templates.RenderTemplate(w, "dashboard", p)
 	}
 }

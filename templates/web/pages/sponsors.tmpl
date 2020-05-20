@@ -1,0 +1,9 @@
+{{ define "sponsors" }}
+
+{{ if or (lt .Status 2) (gt .Status 4) }}
+	{{ template "offseason sponsors" . }}
+{{ else }}
+	{{ template "bmvii sponsors" . }}
+{{ end }}
+
+{{ end }}

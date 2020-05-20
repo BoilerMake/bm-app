@@ -3,7 +3,7 @@ package postgres
 import (
 	"database/sql"
 
-	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/lib/pq"
 )
 
@@ -19,17 +19,20 @@ type dbApplication struct {
 	UserID               sql.NullInt64
 	Decision             sql.NullInt64
 	EmailedDecision      sql.NullBool
+	AcceptedAt           pq.NullTime
 	CheckedInAt          pq.NullTime
 	RSVP                 sql.NullBool
 	School               sql.NullString
 	Major                sql.NullString
 	GraduationYear       sql.NullString
 	ResumeFile           sql.NullString
+	Phone                sql.NullString
 	Gender               sql.NullString
 	Race                 sql.NullString
 	DietaryRestrictions  sql.NullString
 	Github               sql.NullString
-	Linkedin             sql.NullString
+	IsFirstHackathon     sql.NullBool
+	Referrer             sql.NullString
 	WhyBM                sql.NullString
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
@@ -44,17 +47,20 @@ func (a *dbApplication) toModel() *models.Application {
 		UserID:               int(a.UserID.Int64),
 		Decision:             int(a.Decision.Int64),
 		EmailedDecision:      a.EmailedDecision.Bool,
+		AcceptedAt:           a.AcceptedAt.Time,
 		CheckedInAt:          a.CheckedInAt.Time,
 		RSVP:                 a.RSVP.Bool,
 		School:               a.School.String,
 		Major:                a.Major.String,
 		GraduationYear:       a.GraduationYear.String,
 		ResumeFile:           a.ResumeFile.String,
+		Phone:                a.Phone.String,
 		Gender:               a.Gender.String,
 		Race:                 a.Race.String,
 		DietaryRestrictions:  a.DietaryRestrictions.String,
 		Github:               a.Github.String,
-		Linkedin:             a.Linkedin.String,
+		IsFirstHackathon:     a.IsFirstHackathon.Bool,
+		Referrer:             a.Referrer.String,
 		WhyBM:                a.WhyBM.String,
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
@@ -90,26 +96,30 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			major,
 			graduation_year,
 			resume_file,
+			phone,
 			gender,
 			race,
 			dietary_restrictions,
 			github,
-			linkedin,
+			is_first_hackathon,
+			referrer,
 			why_bm,
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);`,
 				newApp.UserID,
 				newApp.School,
 				newApp.Major,
 				newApp.GraduationYear,
 				newApp.ResumeFile,
+				newApp.Phone,
 				newApp.Gender,
 				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
-				newApp.Linkedin,
+				newApp.IsFirstHackathon,
+				newApp.Referrer,
 				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
@@ -143,25 +153,29 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 				major = $2,
 				graduation_year = $3,
 				resume_file = $4,
-				gender = $5,
-				race = $6,
-				dietary_restrictions = $7,
-				github = $8,
-				linkedin = $9,
-				why_bm = $10
-				tac_18_or_older = $11,
-				tac_mlh_code_of_conduct = $12,
-				tac_mlh_contest_and_privacy = $13
-			WHERE user_id = $14`,
+				phone = $5,
+				gender = $6,
+				race = $7,
+				dietary_restrictions = $8,
+				github = $9,
+				is_first_hackathon = $10,
+				referrer = $11,
+				why_bm = $12,
+				tac_18_or_older = $13,
+				tac_mlh_code_of_conduct = $14,
+				tac_mlh_contest_and_privacy = $15
+			WHERE user_id = $16`,
 				newApp.School,
 				newApp.Major,
 				newApp.GraduationYear,
 				newApp.ResumeFile,
+				newApp.Phone,
 				newApp.Gender,
 				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
-				newApp.Linkedin,
+				newApp.IsFirstHackathon,
+				newApp.Referrer,
 				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
@@ -174,24 +188,28 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 				school = $1,
 				major = $2,
 				graduation_year = $3,
-				gender = $4,
-				race = $5,
-				dietary_restrictions = $6,
-				github = $7,
-				linkedin = $8,
-				why_bm = $9,
-				tac_18_or_older = $10,
-				tac_mlh_code_of_conduct = $11,
-				tac_mlh_contest_and_privacy = $12
-			WHERE user_id = $13`,
+				phone = $4,
+				gender = $5,
+				race = $6,
+				dietary_restrictions = $7,
+				github = $8,
+				is_first_hackathon = $9,
+				referrer = $10,
+				why_bm = $11,
+				tac_18_or_older = $12,
+				tac_mlh_code_of_conduct = $13,
+				tac_mlh_contest_and_privacy = $14
+			WHERE user_id = $15`,
 				newApp.School,
 				newApp.Major,
 				newApp.GraduationYear,
+				newApp.Phone,
 				newApp.Gender,
 				newApp.Race,
 				newApp.DietaryRestrictions,
 				newApp.Github,
-				newApp.Linkedin,
+				newApp.IsFirstHackathon,
+				newApp.Referrer,
 				newApp.WhyBM,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
@@ -225,16 +243,19 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			id,
 			user_id,
 			decision,
+			accepted_at,
 			rsvp,
 			school,
 			major,
 			graduation_year,
 			resume_file,
+			phone,
 			gender,
 			race,
 			dietary_restrictions,
 			github,
-			linkedin,
+			is_first_hackathon,
+			referrer,
 			why_bm,
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
@@ -244,16 +265,19 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.ID,
 		&dba.UserID,
 		&dba.Decision,
+		&dba.AcceptedAt,
 		&dba.RSVP,
 		&dba.School,
 		&dba.Major,
 		&dba.GraduationYear,
 		&dba.ResumeFile,
+		&dba.Phone,
 		&dba.Gender,
 		&dba.Race,
 		&dba.DietaryRestrictions,
 		&dba.Github,
-		&dba.Linkedin,
+		&dba.IsFirstHackathon,
+		&dba.Referrer,
 		&dba.WhyBM,
 		&dba.Is18OrOlder,
 		&dba.MLHCodeOfConduct,
@@ -269,4 +293,30 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 
 	err = tx.Commit()
 	return dba.toModel(), err
+}
+
+// returns number of applications in the database
+func (s *ApplicationService) GetApplicationCount() int {
+	var count int
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return -1
+	}
+
+	row := tx.QueryRow("SELECT COUNT(*) FROM bm7_applications")
+	err = row.Scan(&count)
+
+	if err != nil {
+		tx.Rollback()
+		return -1
+	}
+
+	err = tx.Commit()
+
+	// indicates commiting transaction failed
+	if err != nil {
+		return -1
+	}
+	return count
 }

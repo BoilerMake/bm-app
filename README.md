@@ -1,4 +1,4 @@
-# new-backend
+# bm-app
 
 ## Development instructions
 ### Getting started

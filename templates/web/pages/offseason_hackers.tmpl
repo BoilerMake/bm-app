@@ -1,0 +1,92 @@
+{{ define "offseason hackers" }}
+{{ template "head" . }}
+
+{{ template "navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="hero is-medium has-background-image" style='background-image: linear-gradient(170deg, rgba(168, 70, 226, 0.7), rgba(154, 150, 242, 0.7)), url({{ static_path "hackers_hacker.jpg" }})'>
+	<div class="hero-body">
+		<div class="container has-text-centered">
+			<h1 class="title has-text-light">A Weekend Full of Hacking</h1>
+			<h2 class="subtitle has-text-light">Come and make cool stuff</h2>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns is-centered content">
+			<div class="column is-5 has-text-centered">
+				<h2 class="subtitle">BoilerMake gives you the platform and tools to unleash your creativity.</h2>
+				<div class="youtube-container">
+					<iframe class="box is-paddingless" src="https://youtube.com/embed/Wgs1nLJKqNY" frameborder="0" allowfullscreen></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns content">
+			<div class="column is-1"></div>
+			<div class="column is-6">
+				<h2 class="subtitle">Create amazing things.</h2>
+				<p>Here at BoilerMake, we provide you with the resources (and snacks) to build that dream project you’ve been dying to create. You can share your work with hundreds of other hackers and corporate sponsors, while potentially getting a share of our $10,000 prize pool at the end of a wild 36 hours. Give yourself a chance to add to the legacy of great projects made at BoilerMake, including VR DDR, Skittles Launcher, and more.</p>
+				<a href="https://boilermake-vi.devpost.com"><button class="button is-info">Past Hacks</button></a>
+			</div>
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_build.jpg" }}' alt="build">
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns content">
+			<div class="column is-1"></div>
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_friends.jpg" }}' alt="friends">
+			</div>
+			<div class="column is-6">
+				<h2 class="subtitle">Meet new friends.</h2>
+				<p>BoilerMake is a great place to meet a group of people with a diverse set of skills and backgrounds. Every year, over 500 hackers from schools across the nation come together to hack and have fun. Don’t have a team? No worries, BoilerMake’s team building activities will help you come together to form the perfect group of people to build that dank idea.</p>
+			</div>
+		</div>
+	</div>
+</section>
+</div>
+
+<section class="section">
+	<div class="container">
+	<div class="columns content">
+		<div class="column is-1"></div>
+		<div class="column is-6">
+			<h2 class="subtitle">Connect with sponsors.</h2>
+			<p>Come talk to the people who inspire us to hack harder. Come talk to the people who make it all possible. BoilerMake may be the place where you find your dream company. Sponsor booths are a great place to learn about new technologies and real-world applications of your skills. Some sponsors may even provide fun activities or free swag!</p>
+		</div>
+		<div class="column is-3">
+			<img src='{{ static_path "hackers_connecting.jpg" }}' alt="connecting">
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<div class="container">
+		<div class="columns content">
+			<div class="column is-1"></div>
+			<div class="column is-3">
+				<img src='{{ static_path "hackers_activities.jpg" }}' alt="activities">
+			</div>
+			<div class="column is-6">
+				<h2 class="subtitle">Participate in activities.</h2>
+				<p>Need a break from hacking? We’ve got that covered. At several points throughout the day, we will have activities open to any hacker. These include tech talks, workshops, yoga, MLH cup stacking, and more!</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ template "footer" . }}
+{{ end }}

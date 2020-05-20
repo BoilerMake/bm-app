@@ -5,24 +5,18 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/BoilerMake/new-backend/internal/models"
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
+		session := h.getSession(r)
 
 		id, ok := session.Values["ID"].(int)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
 
@@ -33,14 +27,28 @@ func (h *Handler) getApply() http.HandlerFunc {
 			if err == sql.ErrNoRows {
 				app = &models.Application{}
 			} else {
-				h.Error(w, r, err)
+				h.Error(w, r, err, "")
 				return
 			}
+		} else {
+			if app.Decision == 0 {
+				// Show flash that app has been saved
+				session.AddFlash(flash.Flash{
+					Type:    flash.Success,
+					Message: "Your application has already been submitted! Feel free to update it here until applications close.",
+				})
+			} else {
+				session.AddFlash(flash.Flash{
+					Type:    flash.Success,
+					Message: "Your application has already been submitted!",
+				})
+			}
+			session.Save(r, w)
 		}
 
-		p, ok := NewPage(w, r, "BoilerMake - Apply", status, session)
+		p, ok := h.NewPage(w, r, "BoilerMake - Apply")
 		if !ok {
-			h.Error(w, r, errors.New("creating page failed"))
+			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
@@ -53,34 +61,50 @@ func (h *Handler) getApply() http.HandlerFunc {
 
 // postApply tries to create an application from a post request.
 func (h *Handler) postApply() http.HandlerFunc {
-	sessionCookieName := mustGetEnv("SESSION_COOKIE_NAME")
-	status := mustGetEnv("APP_STATUS")
-	err := onSeasonOnly(status)
-	if err != nil {
-		return h.get404()
-	}
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ok bool
 		var a models.Application
 
-		err := a.FromFormData(r)
-		if err != nil {
-			h.Error(w, r, err)
-			return
-		}
+		session := h.getSession(r)
 
-		session, _ := h.SessionStore.Get(r, sessionCookieName)
-
-		a.UserID, ok = session.Values["ID"].(int)
+		id, ok := session.Values["ID"].(int)
 		if !ok {
-			h.Error(w, r, errors.New("invalid session value"))
+			h.Error(w, r, errors.New("invalid session value"), "")
 			return
 		}
+
+		app, err := h.ApplicationService.GetByUserID(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				app = &models.Application{}
+			} else {
+				h.Error(w, r, err, "")
+				return
+			}
+		}
+
+		// Don't let users update app after decision has been made
+		if app.Decision != 0 {
+			session.AddFlash(flash.Flash{
+				Type:    flash.Error,
+				Message: "You can no longer update your application.",
+			})
+			session.Save(r, w)
+
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+			return
+		}
+
+		err = a.FromFormData(r)
+		if err != nil {
+			h.Error(w, r, err, "")
+			return
+		}
+
+		a.UserID = id
 
 		err = h.ApplicationService.CreateOrUpdate(&a)
 		if err != nil {
-			h.Error(w, r, err)
+			h.Error(w, r, err, "")
 			return
 		}
 
@@ -89,13 +113,17 @@ func (h *Handler) postApply() http.HandlerFunc {
 		if a.ResumeFile != "" {
 			err = h.S3.UploadResume(a.UserID, a.Resume)
 			if err != nil {
-				h.Error(w, r, err)
+				h.Error(w, r, err, "")
 				return
 			}
 		}
 
-		// Redirect back to application page if successful
-		// TODO once session tokens are updated this should show success and give a date for when apps are locked
-		http.Redirect(w, r, "/apply", http.StatusSeeOther)
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Your application has been submitted! Check here later to see your decision.",
+		})
+		session.Save(r, w)
+
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
