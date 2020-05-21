@@ -165,7 +165,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Delete("/announcement", h.deleteAnnouncement())
 	})
 
-	// On sesaon only routes
+	// On season only routes
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.OnSeasonOnly)
 
