@@ -93,6 +93,32 @@
 
 					<h3>Personal</h3>
 					<div class="field is-horizontal">
+                        <div class="field-label is-normal">
+                            <label for="first-name" class="label">First Name</label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="tel" name="first-name" class="input" maxlength="128" value="{{ .FormRefill.FirstName }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field is-horizontal">
+						<div class="field-label is-normal">
+							<label for="last-name" class="label">Last Name</label>
+						</div>
+						<div class="field-body">
+							<div class="field">
+								<div class="control">
+									<input type="tel" name="last-name" class="input" maxlength="128" value="{{ .FormRefill.LastName }}" required>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="field is-horizontal">
 						<div class="field-label is-normal">
 							<label for="school" class="label">Resume</label>
 						</div>

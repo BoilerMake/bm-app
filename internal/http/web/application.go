@@ -94,7 +94,7 @@ func (h *Handler) postApply() http.HandlerFunc {
 			return
 		}
 
-		err = a.FromFormData(r)
+		err = a.FromFormData(r) // builds the application struct
 		if err != nil {
 			h.Error(w, r, err, "")
 			return
