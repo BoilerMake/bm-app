@@ -58,8 +58,6 @@ type User struct {
 	PasswordConfirm string `json:"passwordConfirm"`
 	PasswordHash    string `json:"-"` // NOT NULL
 
-	FirstName string `json:"firstName"` // NOT NULL
-	LastName  string `json:"lastName"`  // NOT NULL
 
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
@@ -91,9 +89,6 @@ func (u *User) FromFormData(r *http.Request) {
 
 	u.Password = r.FormValue("password")
 	u.PasswordConfirm = r.FormValue("password-confirm")
-
-	u.FirstName = r.FormValue("first-name")
-	u.LastName = r.FormValue("last-name")
 }
 
 // Validate checks if a User has all the necessary fields.
@@ -110,10 +105,6 @@ func (u *User) Validate() error {
 		return ErrPasswordConfirm
 	} else if len(u.Password) < 3 {
 		return ErrPasswordTooShort
-	} else if u.FirstName == "" {
-		return ErrEmptyFirstName
-	} else if u.LastName == "" {
-		return ErrEmptyLastName
 	}
 
 	return nil
