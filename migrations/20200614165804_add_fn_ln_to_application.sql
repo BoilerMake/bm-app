@@ -15,5 +15,5 @@ DROP COLUMN first_name,
 DROP COLUMN last_name;
 
 ALTER TABLE users
-DROP COLUMN first_name,
-DROP COLUMN last_name,
+ADD COLUMN first_name TEXT NOT NULL,
+ADD COLUMN last_name TEXT NOT NULL;
