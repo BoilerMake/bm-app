@@ -58,7 +58,6 @@ type User struct {
 	PasswordConfirm string `json:"passwordConfirm"`
 	PasswordHash    string `json:"-"` // NOT NULL
 
-
 	IsActive         bool   `json:"isActive"`
 	ConfirmationCode string `json:"confirmationCode"`
 }

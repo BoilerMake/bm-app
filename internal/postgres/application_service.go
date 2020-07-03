@@ -25,8 +25,8 @@ type dbApplication struct {
 	School               sql.NullString
 	Major                sql.NullString
 	GraduationYear       sql.NullString
-	FirstName			 sql.NullString
-	LastName			 sql.NullString
+	FirstName            sql.NullString
+	LastName             sql.NullString
 	ResumeFile           sql.NullString
 	Phone                sql.NullString
 	Gender               sql.NullString
@@ -55,8 +55,8 @@ func (a *dbApplication) toModel() *models.Application {
 		School:               a.School.String,
 		Major:                a.Major.String,
 		GraduationYear:       a.GraduationYear.String,
-		FirstName:			  a.FirstName.String,
-		LastName:			  a.LastName.String,
+		FirstName:            a.FirstName.String,
+		LastName:             a.LastName.String,
 		ResumeFile:           a.ResumeFile.String,
 		Phone:                a.Phone.String,
 		Gender:               a.Gender.String,

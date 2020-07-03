@@ -20,8 +20,8 @@ var (
 	ErrMissingReferrer       = &ModelError{"Please enter where you heard about BoilerMake.", flash.Info}
 	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake.", flash.Info}
 	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions.", flash.Info}
-	ErrMissingFirstName		 = &ModelError{"Please enter your first name.", flash.Info}
-	ErrMissingLastName		 = &ModelError{"Please enter your last name.", flash.Info}
+	ErrMissingFirstName      = &ModelError{"Please enter your first name.", flash.Info}
+	ErrMissingLastName       = &ModelError{"Please enter your last name.", flash.Info}
 
 	// Validation errors when form paring
 	ErrMissingResume  = &ModelError{"Please upload a resume.", flash.Info}
@@ -53,8 +53,8 @@ type Application struct {
 	School               string
 	Major                string
 	GraduationYear       string
-	FirstName			 string
-	LastName			 string
+	FirstName            string
+	LastName             string
 	ResumeFile           string
 	Resume               *multipart.FileHeader // Stored in S3, not db
 	Phone                string
@@ -79,9 +79,9 @@ func (a *Application) Validate() error {
 		return ErrMissingMajor
 	} else if a.GraduationYear == "" {
 		return ErrMissingGraduationYear
-	} else if a.FirstName == ""{
+	} else if a.FirstName == "" {
 		return ErrMissingFirstName
-	} else if a.LastName == ""{
+	} else if a.LastName == "" {
 		return ErrMissingLastName
 	} else if a.Gender == "" {
 		return ErrMissingGender
