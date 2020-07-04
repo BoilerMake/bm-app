@@ -38,7 +38,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 	}
 
 	confirmMessage :=
-		`Hey %s,
+		`Hello!
 
 Thanks for creating a BoilerMake.org account! We're excited that you're interested in attending our hackathon.  Click the link below to confirm your email.
 
@@ -65,7 +65,7 @@ Hack Your Own Adventure`
 		subject := "Confirm your email"
 		link := domain + "/activate/" + confirmationCode
 
-		err = h.Mailer.Send(to, subject, fmt.Sprintf(confirmMessage, u.FirstName, link))
+		err = h.Mailer.Send(to, subject, fmt.Sprintf(confirmMessage, link))
 		if err != nil {
 			h.Error(w, r, err, "", to, link)
 			return

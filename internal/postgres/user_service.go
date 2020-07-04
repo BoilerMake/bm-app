@@ -30,8 +30,6 @@ type dbUser struct {
 	Role         sql.NullInt64
 	Email        sql.NullString
 	PasswordHash sql.NullString
-	FirstName    sql.NullString
-	LastName     sql.NullString
 
 	IsActive         sql.NullBool
 	ConfirmationCode sql.NullString
@@ -45,8 +43,6 @@ func (u *dbUser) toModel() *models.User {
 		Role:         int(u.Role.Int64),
 		Email:        u.Email.String,
 		PasswordHash: u.PasswordHash.String,
-		FirstName:    u.FirstName.String,
-		LastName:     u.LastName.String,
 
 		IsActive:         u.IsActive.Bool,
 		ConfirmationCode: u.ConfirmationCode.String,
@@ -79,17 +75,13 @@ func (s *UserService) Signup(u *models.User) (id int, code string, err error) {
 			role,
 			email,
 			password_hash,
-			first_name,
-			last_name,
 			is_active,
 			confirmation_code
-		) VALUES ($1, $2, $3, $4, $5, $6, $7)
+		) VALUES ($1, $2, $3, $4, $5)
 		RETURNING id;`,
 		u.Role,
 		u.Email,
 		u.PasswordHash,
-		u.FirstName,
-		u.LastName,
 		false,
 		code,
 	).Scan(&id)
@@ -163,12 +155,10 @@ func (s *UserService) GetByID(id int) (u *models.User, err error) {
 		role,
 		email,
 		password_hash,
-		first_name,
-		last_name,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE id = $1`, id).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -201,12 +191,10 @@ func (s *UserService) GetByEmail(email string) (u *models.User, err error) {
 		role,
 		email,
 		password_hash,
-		first_name,
-		last_name,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE email = $1`, email).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -238,12 +226,10 @@ func (s *UserService) GetByCode(code string) (u *models.User, err error) {
 		role,
 		email,
 		password_hash,
-		first_name,
-		last_name,
 		is_active,
 		confirmation_code
 	FROM users
-	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.FirstName, &dbu.LastName, &dbu.IsActive, &dbu.ConfirmationCode)
+	WHERE confirmation_code = $1`, code).Scan(&dbu.ID, &dbu.Role, &dbu.Email, &dbu.PasswordHash, &dbu.IsActive, &dbu.ConfirmationCode)
 
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
@@ -277,11 +263,9 @@ func (s *UserService) Update(u *models.User) error {
 		role = $1,
 		email = LOWER($2),
 		password_hash = $3,
-		first_name = $4,
-		last_name = $5,
-		is_active = $6,
-		confirmation_code = $7
-	WHERE id = $8`, u.Role, u.Email, u.PasswordHash, u.FirstName, u.LastName, u.IsActive, u.ConfirmationCode, u.ID)
+		is_active = $4,
+		confirmation_code = $5
+	WHERE id = $6`, u.Role, u.Email, u.PasswordHash, u.IsActive, u.ConfirmationCode, u.ID)
 
 	// Check postgres specific error
 	if pgerr, ok := err.(*pq.Error); ok {
