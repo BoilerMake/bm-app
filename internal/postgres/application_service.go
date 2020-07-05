@@ -94,7 +94,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 			if newApp.ResumeFile == "" {
 				return models.ErrMissingResume
 			}
-			_, err = tx.Exec(`INSERT INTO bm7_applications (
+			_, err = tx.Exec(`INSERT INTO bm_applications (
 			user_id,
 			school,
 			major,
@@ -155,7 +155,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 		}
 
 		if newApp.ResumeFile != "" {
-			_, err = tx.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm_applications
 			SET
 				school = $1,
 				major = $2,
@@ -195,7 +195,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 				newApp.UserID,
 			)
 		} else {
-			_, err = tx.Exec(`UPDATE bm7_applications
+			_, err = tx.Exec(`UPDATE bm_applications
 			SET
 				school = $1,
 				major = $2,
@@ -278,7 +278,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy
-		FROM bm7_applications
+		FROM bm_applications
 		WHERE user_id = $1`, uid).Scan(
 		&dba.ID,
 		&dba.UserID,
@@ -324,7 +324,7 @@ func (s *ApplicationService) GetApplicationCount() int {
 		return -1
 	}
 
-	row := tx.QueryRow("SELECT COUNT(*) FROM bm7_applications")
+	row := tx.QueryRow("SELECT COUNT(*) FROM bm_applications")
 	err = row.Scan(&count)
 
 	if err != nil {
