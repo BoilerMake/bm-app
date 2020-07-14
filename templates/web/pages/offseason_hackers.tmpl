@@ -37,7 +37,7 @@
 				<a href="https://boilermake-vii.devpost.com"><button class="button is-info">Past Hacks</button></a>
 			</div>
 			<div class="column is-3">
-				<img src='{{ static_path "bmvii_winners.png" }}' alt="build">
+				<img class="box is-paddingless" src='{{ static_path "bmvii_winners.png" }}' alt="build">
 			</div>
 		</div>
 	</div>
@@ -48,7 +48,7 @@
 		<div class="columns content">
 			<div class="column is-1"></div>
 			<div class="column is-3">
-				<img src='{{ static_path "friends.png" }}' alt="friends">
+				<img class="box is-paddingless" src='{{ static_path "friends.png" }}' alt="friends">
 			</div>
 			<div class="column is-6">
 				<h2 class="subtitle">Meet new friends.</h2>
@@ -68,7 +68,7 @@
 			<p>Come talk to the people who inspire us to hack harder. Come talk to the people who make it all possible. BoilerMake may be the place where you find your dream company. Sponsor booths are a great place to learn about new technologies and real-world applications of your skills. Some sponsors may even provide fun activities or free swag!</p>
 		</div>
 		<div class="column is-3">
-			<img src='{{ static_path "hackers_connecting.jpg" }}' alt="connecting">
+			<img class="box is-paddingless" src='{{ static_path "hackers_connecting.jpg" }}' alt="connecting">
 		</div>
 	</div>
 </section>
@@ -78,7 +78,7 @@
 		<div class="columns content">
 			<div class="column is-1"></div>
 			<div class="column is-3">
-				<img src='{{ static_path "zoomba.png" }}' alt="activities">
+				<img class="box is-paddingless" src='{{ static_path "zoomba.png" }}' alt="activities">
 			</div>
 			<div class="column is-6">
 				<h2 class="subtitle">Participate in activities.</h2>
@@ -91,57 +91,54 @@
 <section class="section">
 	<div class="container">
 		<div class="columns is-centered content">
-			<div class="column is-5 has-text-centered">
-				<h2 class="subtitle">Testimonials</h2>
+			<div class="column has-text-centered">
+				<h2 class="title is-2">Hacker Testimonials</h2>
 			</div>
 		</div>
 	</div>
 </section>
 
-<section class="section">
-	<div class="container">
-		<div class="columns content">
-			<div class="column is-1"></div>
-			<div class="column is-3">
-				<img src='{{ static_path "kevin.jpg" }}' alt="testimonial from kevin">
-			</div>
-			<div class="column is-6">
-				<p>Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what
-                  the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field.</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div class="columns content">
-			<div class="column is-1"></div>
-			<div class="column is-3">
-				<img src='{{ static_path "lauren.jpg" }}' alt="testimonial from lauren">
-			</div>
-			<div class="column is-6">
-				<p>BoilerMake gave me the resources and support I needed to create a project I was truly proud of.
-        If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="section">
-	<div class="container">
-		<div class="columns content">
-			<div class="column is-1"></div>
-			<div class="column is-3">
-				<img src='{{ static_path "sam.jpg" }}' alt="testimonial from lauren">
-			</div>
-			<div class="column is-6">
-				<p>BoilerMake has been the perfect event to build some exciting projects with some great people.
-                   I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while
-                   creating something new.</p>
-			</div>
-		</div>
-	</div>
+<section class="testimonials--offseason">
+  <div class="columns is-centered has-text-centered">
+    <div class="column is-10 is-flex">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-one-third is-flex">
+          <div class="box is-paddingless">
+            <img src={{ static_path "kevin.jpg" }} class="bmvii-testimonial__image" alt="Kevin Cardona">
+            <div class="bmvii-testimonial__text">
+              <p class="title is-3 has-text-weight-bold">❝</p>
+              <p class="subtitle is-5">Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what 
+              the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field.</p>
+              <p class="subtitle is-5 has-text-weight-bold">Kevin Cardona</p>
+            </div>
+          </div>
+        </div>
+        <div class="column is-one-third is-flex">
+          <div class="box is-paddingless">
+            <img src={{ static_path "lauren.jpg" }} class="bmvii-testimonial__image" alt="Lauren Lum">
+            <div class="bmvii-testimonial__text">
+              <p class="title is-3 has-text-weight-bold">❝</p>
+              <p class="subtitle is-5">BoilerMake gave me the resources and support I needed to create a project I was truly proud of. 
+              If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!</p>
+              <p class="subtitle is-5 has-text-weight-bold">Lauren Lum</p>
+            </div>
+          </div>
+        </div>
+        <div class="column is-one-third is-flex">
+          <div class="box is-paddingless">
+            <img src={{ static_path "sam.jpg" }} class="" alt="Samuel Ingram">
+            <div class="bmvii-testimonial__text">
+              <p class="title is-3 has-text-weight-bold">❝</p>
+              <p class="subtitle is-5">BoilerMake has been the perfect event to build some exciting projects with some great people. 
+              I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while 
+              creating something new.</p>
+              <p class="subtitle is-5 has-text-weight-bold">Sam Ingram</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 {{ template "footer" . }}
