@@ -119,12 +119,13 @@ type Handler struct {
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, ras models.RaffleService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
 		UserService:         us,
 		ApplicationService:  as,
 		RSVPService:         rs,
 		AnnouncementService: anns,
+		RaffleService:       ras,
 		Mailer:              mailer,
 		S3:                  S3,
 	}

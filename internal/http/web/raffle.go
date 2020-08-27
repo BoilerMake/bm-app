@@ -56,17 +56,14 @@ func (h *Handler) createRaffle() http.HandlerFunc {
 		// validate
 		err := ra.FromFormData(r) // maybe change it so the db stores them as strings
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			// w.WriteHeader(http.StatusBadRequest)
 			h.Error(w, r, err, "/exec")
 			return
 		}
-		fmt.Println(&ra) // this prints fine
-		fmt.Printf("%p\n", &ra) // this prints fine as well
 
 		// send to db
-		err = h.RaffleService.Create(&ra) // changing all the fields to strings but dont think won't fix
+		err = h.RaffleService.Create(&ra)
 		if err != nil {
-			fmt.Println(err)
 			h.Error(w, r, err, "/exec")
 		}
 		// flash success messages

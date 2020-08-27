@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/BoilerMake/bm-app/internal/models"
 )
 
@@ -22,13 +21,11 @@ type dbRaffle struct {
 
 // Create creates an announcement and stores it in the DB
 func (s *RaffleService) Create(ra *models.Raffle) error {
-	fmt.Println("MADE IT INTO CREATE")
 	// Get the DB
 	tx, err := s.DB.Begin()
 	if err != nil {
 		return err
 	}
-	fmt.Println("MADE IT PAST DB BEGIN")
 	// Create announcement with given message
 	_, err = tx.Exec(`INSERT INTO raffles (
 		code,
@@ -41,7 +38,6 @@ func (s *RaffleService) Create(ra *models.Raffle) error {
 			ra.EndTime,
 			ra.Points,
 	)
-	fmt.Println("FINISHED INSERTION INTO RAFFLES")
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return rollbackErr
