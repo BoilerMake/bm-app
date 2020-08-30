@@ -96,6 +96,7 @@ body {
 @import "../../../node_modules/bulma/bulma.sass";
 
 .bm-navbar {
+    background-color: #A7C3FF;
 	flex-grow: 0;
 }
 
@@ -103,6 +104,16 @@ body {
 	background-position: center;
 	background-size: auto 100%;
 	background-repeat: no-repeat;
+}
+
+.button.is-dark-blue {
+    background-color: #2068FF;
+    border-radius: 6px;
+}
+
+.button.is-light-blue {
+    background-color: #5C91FF;
+    border-radius: 6px;
 }
 
 .button.is-red {

@@ -3,7 +3,7 @@
 <nav class="navbar container bm-navbar" role="navigation" aria-label="main navigation" style="width: 100%;">
 	<div class="navbar-brand">
 		<a class="navbar-item" href="/">
-			<img src='{{ static_path "bmvii_navbar_logo.png" }}' alt="BoilerMake" width="112" height="28">
+			<img src='{{ static_path "bmviii_navbar_logo.png" }}' alt="BoilerMake" width="50" height="52">
 		</a>
 
 		<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="nav-hamburger-menu">
@@ -30,12 +30,15 @@
 			</a>
 			{{ if .IsAuthenticated }}
 			<div class="navbar-item">
-				<a class="button is-outlined is-red" href="/dashboard">Dashboard</a>
+				<a class="button is-dark-blue" href="/dashboard">Dashboard</a>
 			</div>
-			<a class="navbar-item" href="/logout">Log Out</a>
+			<div class="navbar-item">
+			    <a class="button is-light-blue" href="/logout">Log Out</a>
+			</div>
+
 			{{ else }}
 			<div class="navbar-item">
-				<a class="button is-outlined is-red" href="/login">Log In</a>
+				<a class="button is-light-blue" href="/login">Log In</a>
 			</div>
 			{{ end }}
 		</div>
