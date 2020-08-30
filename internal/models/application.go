@@ -26,6 +26,10 @@ var (
 	// Validation errors when form paring
 	ErrMissingResume  = &ModelError{"Please upload a resume.", flash.Info}
 	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
+
+	// Raffle claim errors
+	ErrRaffleEmpty = &ModelError{"Raffle code is empty.", flash.Error}
+	ErrInvalidRaffle = &ModelError{"Invalid raffle code", flash.Error}
 )
 
 const (

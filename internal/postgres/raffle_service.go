@@ -49,9 +49,37 @@ func (s *RaffleService) Create(ra *models.Raffle) error {
 	return err
 }
 
-// GetByID returns an announcement with the given ID.
-func (s *RaffleService) GetByCode(code string) (a *models.Raffle, err error) {
+// GetByCode returns a raffle with the given code.
+func (s *RaffleService) GetByCode(code string) (ra *models.Raffle, err error) {
 	var dba models.Raffle
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return ra, err
+	}
+
+	err = tx.QueryRow(`SELECT
+		code,
+		start_time,
+		end_time,
+		points
+	FROM raffles
+	WHERE id=$1`, code).Scan(&dba.Code, &dba.StartTime, &dba.EndTime, &dba.Points)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Raffle with this code doesn't exist
+			return nil, models.ErrInvalidRaffle
+		}
+
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
+
+		return nil, err
+	}
+
+	err = tx.Commit()
 	return &dba, nil
 }
 
