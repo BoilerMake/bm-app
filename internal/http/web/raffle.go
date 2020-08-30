@@ -6,19 +6,32 @@ import (
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/BoilerMake/bm-app/pkg/flash"
 	"net/http"
+	"time"
 )
 
 // getRaffle renders the raffle page for hackers.
 func (h *Handler) getRaffle() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		session := h.getSession(r)
+
+		id, ok := session.Values["ID"].(int)
+		if !ok {
+			h.Error(w, r, errors.New("invalid session value"), "")
+			return
+		}
+
 		p, ok := h.NewPage(w, r, "BoilerMake - Raffle")
 		if !ok {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
 
-		ticketsCount := 5 // make a call to db to retrieve points
-
+		ticketsCount, err := h.ApplicationService.GetRafflePoints(id) // make a call to db to retrieve points
+		if err != nil { // fail silently
+			// TODO: log error
+			h.Error(w, r, err, "")
+			return
+		}
 		p.Data = map[string]interface{}{
 			"TicketsCount" : ticketsCount,
 		}
@@ -29,38 +42,61 @@ func (h *Handler) getRaffle() http.HandlerFunc {
 
 }
 
-//// postClaimRaffle tries to claim a raffle for user
-//func (h *Handler) postClaimRaffle() http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		// get code
-//		var code string
-//		code = r.FormValue("raffle")
-//		if code == "" {
-//			h.Error(w,r, models.ErrRaffleEmpty, "") // post call on /raffle url
-//			return
-//		}
-//
-//		// validate with db by getting the raffle. if it doesn't exist see error
-//		ra, err := h.RaffleService.GetByCode(code)
-//		if err != nil {
-//			h.Error(w, r, err,"")
-//			return
-//		}
-//		// if it does exist, check time stamps
-//		start := ra.StartTime
-//		end := ra.EndTime
-//		// get current time and check if it's within timestamp
-//		// try to add to user, check if user checked in then check if already claimed this raffle
-//		// one service call. The service call can make other service calls
-//		// Look at Update/Set/Where command in CreateOrUpdate for application service
-//		// where call may need to check for appreance in hstore first
-//		// pull map from hstore and check. add map back in and update map and points
-//
-//		// flash a success or report an error
-//
-//		// redirect to /raffle -> this should regenerate the tickets count
-//	}
-//}
+// postRaffle tries to claim a raffle for user
+func (h *Handler) postRaffle() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session := h.getSession(r)
+
+		id, ok := session.Values["ID"].(int)
+		if !ok {
+			h.Error(w, r, errors.New("invalid session value"), "")
+			return
+		}
+		// get code
+		var code string
+		code = r.FormValue("raffle")
+		if code == "" {
+			h.Error(w,r, models.ErrRaffleEmpty, "") // post call on /raffle url
+			return
+		}
+
+		// validate with db by getting the raffle. if it doesn't exist see error
+		ra, err := h.RaffleService.GetByCode(code)
+		if err != nil {
+			h.Error(w, r, err,"")
+			return
+		}
+		// if it does exist, check time stamps
+		start := ra.StartTime
+		end := ra.EndTime
+		// get current time and check if it's within timestamp
+		now := time.Now()
+		curr := now.UnixNano() / 1000000
+		if curr < start || curr > end {
+			fmt.Println(start)
+			fmt.Println(end)
+			fmt.Println(curr)
+			h.Error(w, r, models.ErrInvalidTime,"")
+			return
+		}
+
+		// attempt to claim raffle
+		err = h.ApplicationService.ClaimRaffle(id, code, ra.Points)
+		if err != nil {
+			h.Error(w, r, err, "")
+			return
+		}
+
+		// flash success and redirect to raffle
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "Raffle has been claimed!",
+		})
+		session.Save(r, w)
+
+		http.Redirect(w, r, "/raffle", http.StatusSeeOther)
+	}
+}
 
 // createRaffle attempts to create a new raffle
 func (h *Handler) createRaffle() http.HandlerFunc {

@@ -3,6 +3,7 @@ package postgres
 import (
 	"database/sql"
 	"github.com/BoilerMake/bm-app/internal/models"
+	"strings"
 )
 
 // AnnouncementService is a PostgreSQL implementation of models.announcement
@@ -39,6 +40,9 @@ func (s *RaffleService) Create(ra *models.Raffle) error {
 			ra.Points,
 	)
 	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			return models.ErrDuplicateRaffle
+		}
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return rollbackErr
 		}
@@ -64,7 +68,7 @@ func (s *RaffleService) GetByCode(code string) (ra *models.Raffle, err error) {
 		end_time,
 		points
 	FROM raffles
-	WHERE id=$1`, code).Scan(&dba.Code, &dba.StartTime, &dba.EndTime, &dba.Points)
+	WHERE code=$1`, code).Scan(&dba.Code, &dba.StartTime, &dba.EndTime, &dba.Points)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

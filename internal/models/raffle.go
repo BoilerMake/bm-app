@@ -15,6 +15,7 @@ var (
 	// ErrBigEndTime = &ModelError{"End time to large", flash.Error}
 	ErrInvalidPoints = &ModelError{"Invalid Points Format", flash.Error}
 	// ErrPointsToBig = &ModelError{"Points out of bounds(int32)", flash.Error}
+	ErrDuplicateRaffle = &ModelError{"This raffle code already exists", flash.Error}
 )
 
 // A Raffle is an raffle stored in the database.

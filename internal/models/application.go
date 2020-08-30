@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/lib/pq/hstore"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -28,8 +29,11 @@ var (
 	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
 
 	// Raffle claim errors
-	ErrRaffleEmpty = &ModelError{"Raffle code is empty.", flash.Error}
-	ErrInvalidRaffle = &ModelError{"Invalid raffle code", flash.Error}
+	ErrNotApplied           = &ModelError{"Sorry! You have not applied", flash.Error}
+	ErrRaffleEmpty          = &ModelError{"Raffle code is empty.", flash.Error}
+	ErrInvalidRaffle        = &ModelError{"Invalid raffle code", flash.Error}
+	ErrInvalidTime          = &ModelError{"Invalid raffle code. Not within timerange", flash.Error}
+	ErrAlreadyClaimedRaffle = &ModelError{"It looks like you already claimed this raffle!", flash.Error}
 )
 
 const (
@@ -72,6 +76,9 @@ type Application struct {
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
 	MLHContestAndPrivacy bool
+
+	Points         int
+	RafflesClaimed hstore.Hstore
 }
 
 // Validate checks if an Application has all the necessary fields. Validation
@@ -165,4 +172,6 @@ type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
+	ClaimRaffle(uid int, raffle string, points int) error
+	GetRafflePoints(uid int) (int, error)
 }

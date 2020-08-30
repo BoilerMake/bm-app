@@ -5,6 +5,7 @@ import (
 
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/lib/pq"
+	"github.com/lib/pq/hstore"
 )
 
 // UserService is a PostgreSQL implementation of models.UserService
@@ -39,6 +40,8 @@ type dbApplication struct {
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
+	Points               sql.NullInt64
+	RafflesClaimed       hstore.Hstore
 }
 
 // toModel converts a database specific dbApplication to the more generic
@@ -69,6 +72,8 @@ func (a *dbApplication) toModel() *models.Application {
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,
+		//Points:               int(a.Points.Int64),
+		//RafflesClaimed:       a.RafflesClaimed,
 	}
 }
 
@@ -339,4 +344,110 @@ func (s *ApplicationService) GetApplicationCount() int {
 		return -1
 	}
 	return count
+}
+
+// ClaimRaffle tries to claim a raffle for hacker
+func (s *ApplicationService) ClaimRaffle(uid int, raffle string, points int) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	// check if hacker has applied ( TODO: remove once checked in works )
+	_, err = s.GetByUserID(uid)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.ErrNotApplied
+		} else {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return err
+		}
+	}
+	var currRaffles hstore.Hstore
+	// var currPoints int
+	// check if hacker has checked in
+
+	// Pull map from hacker
+	err = tx.QueryRow(`SELECT
+			raffles_claimed
+		FROM bm_applications
+		WHERE user_id = $1`, uid).Scan(
+			&currRaffles,
+	)
+
+	/*
+		It seems if I run
+	err = tx.QueryRow(`SELECT
+				points
+				raffles_claimed
+			FROM bm_applications
+			WHERE user_id = $1`, uid).Scan(
+			&currPoints,
+			&currRaffles,
+		)
+		it will pull empty curr points and empty currRaffles
+	 */
+	// fmt.Println(currPoints)
+
+	if len(currRaffles.Map) == 0 { // check if no raffles are claimed yet
+		currRaffles.Map = make(map[string]sql.NullString)
+	} else { // check if hacker has already claimed raffle
+		if _, contains := currRaffles.Map[raffle]; contains {
+			return models.ErrAlreadyClaimedRaffle
+		}
+	}
+
+	// claim raffle
+	currRaffles.Map[raffle] = StringToNullString("N/A")
+
+	_, err = tx.Exec(`UPDATE bm_applications
+			SET
+				points=$1,
+				raffles_claimed=$2
+			WHERE user_id = $3`,
+		points,
+		currRaffles,
+		uid,
+	)
+
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	return err
+}
+
+// GetRafflePoints retrieves the points from hacker
+func (s *ApplicationService) GetRafflePoints(uid int) (int, error) {
+	tx, err := s.DB.Begin()
+	if err != nil { // on failure show 0 points
+		return 0, err
+	}
+
+	var currPoints int
+
+	err = tx.QueryRow(`SELECT
+			points
+		FROM bm_applications
+		WHERE user_id = $1`, uid).Scan(
+		&currPoints,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return currPoints, nil
+}
+
+// StringToNullString takes in a string and returns a sql null string for HStore
+func StringToNullString(s string) sql.NullString {
+	return sql.NullString{
+		String: s,
+		Valid:  s != "",
+	}
 }

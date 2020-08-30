@@ -208,6 +208,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 			r.Use(middleware.MustBeAuthenticated)
 			r.Get("/dashboard", h.getDashboard())
 			r.Get("/raffle", h.getRaffle())
+			r.Post("/raffle", h.postRaffle())
 
 			r.Group(func(r chi.Router) {
 				r.Use(middleware.AppsOpenOnly)
