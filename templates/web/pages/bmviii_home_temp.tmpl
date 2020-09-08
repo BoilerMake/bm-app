@@ -1,0 +1,103 @@
+{{ define "bmviii home temp" }}
+{{ template "head" . }}
+
+{{ template "bmviii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+{{ template "mlh badge" }}
+
+<section class="section has-background-image" style='background-image: url({{ static_path "bmviii_home_small.svg" }})'>
+	<div class="container" style="padding-top: 200px">
+        <div class="columns is-centered content has-text-centered">
+            <div class="column is-5">
+                <h2 class="title">
+                    <img alt="Boilermake" src={{ static_path "bmviii_boilermake_logo.svg" }}>
+                </h2>
+                <h3 class="subtitle">
+                    <img alt="Lay back and hack" src={{ static_path "bmviii_lay_back_and_hack.svg" }} width="350">
+                </h3>
+            </div>
+        </div>
+		<div class="columns is-centered content has-text-centered">
+			<div class="column is-5">
+				<a class="title is-3 button is-red" href="https://forms.gle/ugmBaA4bHvm6rwjF7">Apply Now!</a>
+			</div>
+		</div>
+		<div class="columns is-centered content has-text-centered">
+            <div class="column is-5">
+                <h2 class="title">
+                    <img alt="January 22-24, 2021" src={{ static_path "bmviii_date.svg" }} width="300" height="150">
+                </h2>
+                <h3 class="subtitle">
+                    <img alt="Purdue University" src={{ static_path "bmviii_purdue_text.svg" }} width="200" height="150">
+                </h3>
+            </div>
+        </div>
+	</div>
+</section>
+
+<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "bmviii_why_bm_background.svg" }}); padding-bottom: 500px; padding-left: 0; padding-right:0;'>
+	<div class="container" style="padding: 0 1.5rem;">
+		<div class="columns is-centered content">
+			<div class="column is-2 bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
+				<img alt="Why BoilerMake?" src={{ static_path "bmviii_why_bm_text.svg" }}>
+			</div>
+		</div>
+	</div>
+	<div class="container" style="display: flex; justify-content: flex-end; padding-top: 48px; margin-right: 0px;">
+	    <div class="column is-full">
+            <div class="box content" style="height: 180px">
+                <article>
+                    <div class="media-content">
+                        <div class="content">
+                            <p style="font-family: Cabin; family-style: normal; font-weight: 600; font-size: 20px">
+                                In response to the COVID-19 pandemic, and in accordance with university and local guidelines, BoilerMake VIII will be fully virtual.
+                                While the online format will be a new experience for BoilerMake, our dedication to creating an empowering experience for our hackers to develop their projects remains.
+                                Our team has been hard at work conducting our virtual transition to ensure that both our hackers and sponsors have the necessary platforms and tools to build community and undergo an unforgettable and meaningful experience.
+
+                                If you have any questions, refer to our FAQ or email us at team@boilermake.org for additional information.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+	</div>
+	<div class="container" style="display: flex; justify-content: flex-end; padding-top: 72px;">
+        <div class="column is-half">
+            <p style="font-family: Cabin; family-style: normal; font-size: 28px; color: #000000;">BoilerMake is Purdue University's largest hackathon. Over the past seven years,
+             thousands of students from across the country have come to BoilerMake. This event is for experienced hackers, newbies to technology, and everyone in between.</p>
+        </div>
+    </div>
+    <div class="container" style="display: flex; justify-content: space-between;">
+        <div class="column is-half">
+            <img alt="Blue van" src={{ static_path "bmviii_van.svg" }}>
+        </div>
+        <div class="column is-half"; style="display: flex; justify-content: space-between; padding-top: 120px;">
+            <div class="column is-one-third">
+                <img src={{ static_path "bmvii_why_build.svg" }} class="bmvii-why__img" alt="Gears Turning">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Build Creative Projects</p>
+                <img src={{ static_path "bmvii_why_resume.svg" }} class="bmvii-why__img" alt="Good resume">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Build Creative Projects</p>
+            </div>
+            <div class="column is-one-third">
+                <img src={{ static_path "bmvii_why_companies.svg" }} class="bmvii-why__img" alt="Formal Attire">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Talk to Company Reps</p>
+                <img src={{ static_path "bmvii_why_skills.svg" }} class="bmvii-why__img" alt="Brain">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Learn New Skills</p>
+            </div>
+            <div class="column is-one-third">
+                <img src={{ static_path "bmvii_why_memories.svg" }} class="bmvii-why__img" alt="Floppy Disk">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Make Incredible Memories</p>
+                <img src={{ static_path "bmvii_why_prizes.svg" }} class="bmvii-why__img" alt="Trophy">
+                <p class="subtitle is-5 has-text-white has-text-weight-bold">Win Cool Prizes</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{{ template "bmviii footer" . }}
+{{ end }}

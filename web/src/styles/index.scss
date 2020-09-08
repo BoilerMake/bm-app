@@ -4,6 +4,15 @@ $body-overflow-y: auto;
 // Use dark hammer logo colors instead of Bulma's default
 $dark: #231F20;
 
+// Use new background color for navbar for bmviii
+$navbar-background-color: #A7C3FF;
+
+// change background color for box for bmviii covid-19 info
+$box-background-color: #5C91FF;
+
+// change box radius for bmviii covid-19 info
+$box-radius: 20px;
+
 html {
 	scroll-behavior: smooth;
 }
@@ -59,8 +68,9 @@ body {
 // Make sure background image fills width and stays centered
 .has-background-image {
 	background-position: center;
-	background-size: cover;
+    background-size: cover;
 	background-repeat: no-repeat;
+
 }
 
 
@@ -96,7 +106,6 @@ body {
 @import "../../../node_modules/bulma/bulma.sass";
 
 .bm-navbar {
-    background-color: #A7C3FF;
 	flex-grow: 0;
 }
 
@@ -117,7 +126,8 @@ body {
 }
 
 .button.is-red {
-	background-color: #AC333B;
+	background-color: #FF0043;
+    border-radius: 20px; // needed for rounded corners but doesn't work for some reason
 	border-color: transparent;
 	color: $white;
 }
@@ -131,6 +141,11 @@ body {
 		background-color: #AC333B;
 		color: $white;
 	}
+}
+
+.bmviii-covid-info {
+    width: 886px;
+    height: 127px;
 }
 
 .bmvii-why__img {
@@ -231,6 +246,10 @@ body {
 
 .bmvii-section-header {
 	padding-top: 2rem;
+}
+
+.bmvii-section-header {
+    padding-top: 107.83px;
 }
 
 .animate-spin {

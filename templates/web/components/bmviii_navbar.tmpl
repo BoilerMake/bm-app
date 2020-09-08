@@ -1,0 +1,51 @@
+{{ define "bmviii navbar" }}
+
+<nav class="navbar bm-navbar bmvii_hero" role="navigation" aria-label="main navigation" style="width: 100%;">
+	<div class="navbar-brand">
+		<a class="navbar-item" href="/">
+			<img src='{{ static_path "bmviii_navbar_logo.svg" }}' alt="BoilerMake" width="40" height="52">
+		</a>
+
+		<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="nav-hamburger-menu">
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+			<span aria-hidden="true"></span>
+		</a>
+	</div>
+
+	<div id="nav-hamburger-menu" class="navbar-menu">
+		<div class="navbar-start">
+			<a class="navbar-item" href="/faq" style="color:black; font-family:Cabin; font-weight:600; font-size:18px; padding-left:5px; padding-right:5px">FAQ</a>
+			<a class="navbar-item" href="/hackers" style="color:black; font-family:Cabin; font-weight:600; font-size:18px; padding-left:5px; padding-right:5px">Hackers</a>
+			<a class="navbar-item" href="/sponsors" style="color:black; font-family:Cabin; font-weight:600; font-size:18px; padding-left:5px; padding-right:5px">Sponsors</a>
+			<a class="navbar-item" href="/about" style="color:black; font-family:Cabin; font-weight:600; font-size:18px; padding-left:5px; padding-right:5px">About</a>
+		</div>
+
+		<div class="navbar-end">
+		    <a class="navbar-item" href="https://www.facebook.com/BoilerMake/" style="padding-left: 5px; padding-right: 5px">
+        				<img src={{ static_path "bmviii_facebook_logo.svg" }} alt="Instagram logo" width="25" height="25">
+        	</a>
+			<a class="navbar-item" href="https://www.instagram.com/boilermake/" style="padding-left: 5px; padding-right: 5px">
+				<img src={{ static_path "bmviii_instagram_logo.svg" }} alt="Instagram logo" width="25" height="25">
+			</a>
+			<a class="navbar-item" href="https://twitter.com/BoilerMake1/" style="padding-left: 5px; padding-right: 5px">
+				<img src={{ static_path "bmviii_twitter_logo.svg" }} alt="Twitter logo" width="33" height="25">
+			</a>
+			{{ if .IsAuthenticated }}
+			<div class="navbar-item">
+				<a class="button is-dark-blue" href="/dashboard" style="color:black; font-family:Cabin; font-weight:600; font-size:17px; padding-left:5px; padding-right:5px">Dashboard</a>
+			</div>
+			<div class="navbar-item">
+			    <a class="button is-light-blue" href="/logout" style="color:black; font-family:Cabin; font-weight:600; font-size:17px; padding-left:5px; padding-right:5px">Log Out</a>
+			</div>
+
+			{{ else }}
+			<div class="navbar-item">
+				<a class="button is-light-blue" href="/login" style="color:black; font-family:Cabin; font-weight:600; font-size:17px; padding-left:5px; padding-right:5px">Login</a>
+			</div>
+			{{ end }}
+		</div>
+	</div>
+</nav>
+
+{{ end }}

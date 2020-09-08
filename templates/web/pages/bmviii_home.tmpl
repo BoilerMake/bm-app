@@ -1,0 +1,41 @@
+{{ define "bmviii home" }}
+{{ template "head" . }}
+
+{{ template "bmviii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+{{ template "mlh badge" }}
+
+<section class="section has-background-image" style='background-image: url({{ static_path "bmviii_home_background.svg" }})'>
+	<div class="container" style="padding-top: 245px; padding-right: 25px">
+        <div class="columns is-centered content has-text-centered">
+            <div class="column is-5">
+                <h2 class="title">
+                    <img alt="Boilermake" src={{ static_path "bmviii_boilermake_logo.svg" }}>
+                </h2>
+                <h3 class="subtitle">
+                    <img alt="Lay back and hack" src={{ static_path "bmviii_lay_back_and_hack.svg" }} width="350">
+                </h3>
+            </div>
+        </div>
+		<div class="columns is-centered content has-text-centered">
+			<div class="column is-5">
+				<a class="title is-3 button is-red" href="https://forms.gle/ugmBaA4bHvm6rwjF7">Apply Now!</a>
+			</div>
+		</div>
+		<div class="columns is-centered content has-text-centered">
+            <div class="column is-5">
+                <h2 class="title">
+                    <img alt="January 22-24, 2021" src={{ static_path "bmviii_date.svg" }} width="300" height="150">
+                </h2>
+                <h3 class="subtitle">
+                    <img alt="Purdue University" src={{ static_path "bmviii_purdue_text.svg" }} width="200" height="150">
+                </h3>
+            </div>
+        </div>
+	</div>
+</section>
+
+
+{{ template "bmviii footer" . }}
+{{ end }}
