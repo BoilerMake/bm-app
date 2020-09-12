@@ -104,6 +104,7 @@ body {
 
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
+@import "../../../node_modules/bulma-extensions/src/sass/index.sass";
 
 .bm-navbar {
 	flex-grow: 0;
@@ -146,6 +147,25 @@ body {
 .bmviii-covid-info {
     width: 886px;
     height: 127px;
+}
+
+.bmviii-faq-text {
+    font-family: Cabin, serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.bmviii-faq-accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
 }
 
 .bmvii-why__img {
