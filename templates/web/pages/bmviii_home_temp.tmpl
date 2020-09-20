@@ -46,15 +46,14 @@
 	</div>
 	<div class="container" style="display: flex; justify-content: flex-end; padding-top: 48px; margin-right: 0px;">
 	    <div class="column is-full">
-            <div class="box content" style="height: 180px">
+            <div class="box content" style="width:1218px;">
                 <article>
                     <div class="media-content">
                         <div class="content">
-                            <p style="font-family: Cabin; family-style: normal; font-weight: 600; font-size: 20px">
+                            <p style="font-family: Cabin; family-style: normal; font-weight: 600; font-size: 18px">
                                 In response to the COVID-19 pandemic, and in accordance with university and local guidelines, BoilerMake VIII will be fully virtual.
                                 While the online format will be a new experience for BoilerMake, our dedication to creating an empowering experience for our hackers to develop their projects remains.
                                 Our team has been hard at work conducting our virtual transition to ensure that both our hackers and sponsors have the necessary platforms and tools to build community and undergo an unforgettable and meaningful experience.
-
                                 If you have any questions, refer to our FAQ or email us at team@boilermake.org for additional information.
                             </p>
                         </div>
@@ -102,76 +101,94 @@
     </div>
 </section>
 
-<section class="section accordions has-background-image" id="faq" style='background-image: url({{ static_path "bmviii_faq.svg" }})'>
+<section class="section has-background-image" id="faq" style='background-image: url({{ static_path "bmviii_faq.svg" }})'>
     <div class="container" style="padding: 0 1.5rem;">
-        <div class="columns is-centered content">
-            <div class="column is-2 bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
-                <img alt="Why BoilerMake?" src={{ static_path "bmviii_faq_text.svg" }}>
+            <div class="columns is-centered content">
+                <div class="column is-2 bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
+                    <img alt="FAQ" src={{ static_path "bmviii_faq_text.svg" }}>
+                </div>
+            </div>
+    </div>
+
+    <div class="container" style="display: flex; justify-content: space-between">
+        <div class="column is-half"; style = "padding-top 120px;">
+            <button class="bmviii-left-accordion">What is a hackathon?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+                    Anyone with or without a technical background can attend to learn, build, and share new things.
+                    Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+                </p>
+            </div>
+            <button class="bmviii-left-accordion">Is it free?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    Yes! BoilerMake is an all-expense paid experience. We provide hackers with the venue, swag, and food throughout the weekend.
+                </p>
+            </div>
+            <button class="bmviii-left-accordion">Will BoilerMake be in person?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    Due to the COVID-19 pandemic, we will be shifting to a completely virtual BoilerMake VIII!
+                </p>
+            </div>
+            <button class="bmviii-left-accordion">Given an online event, will there still be opportunities to form teams and interact with sponsors and other hackers?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    Absolutely!
+                    We would like to recreate the community environment of a hackathon through virtual means, which include hacker and sponsor interactions. When we confirm which platforms we will be using to host our events, we will be able to provide more information on what the event will look like!
+                </p>
+            </div>
+            <button class="bmviii-left-accordion">What if I don't know how to code?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions,
+                    and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance
+                    to learn alongside so many other driven hackers.
+                </p>
+            </div>
+            <button class="bmviii-left-accordion">How large can my team be?</button>
+            <div class="bmviii-left-accordion-content">
+                <p>
+                    You can have a maximum of 4 people on your team.
+                </p>
+            </div>
+        </div>
+        <div class="column is-half"; style = "padding-top 120px;">
+            <button class="bmviii-right-accordion">What are the requirements to attend?</button>
+            <div class="bmviii-right-accordion-content">
+                <p>
+                    BoilerMake is open to all undergraduate college students who are of age 18 or older.
+                </p>
+            </div>
+            <button class="bmviii-right-accordion">My team was accepted and I wasn't - can I attend?</button>
+            <div class="bmviii-right-accordion-content">
+                <p>
+                    Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                </p>
+            </div>
+            <button class="bmviii-right-accordion">Do you allow walk-ins and last minute registration?</button>
+            <div class="bmviii-right-accordion-content">
+                <p>
+                    We accept walk-ins based on availability after hacker check-in.
+                    We will announce more details closer to the event!
+                </p>
+            </div>
+            <button class="bmviii-right-accordion">I missed the deadline to apply - can I attend?</button>
+            <div class="bmviii-right-accordion-content">
+                <p>
+                    We set a deadline to ensure that all applications are given equal consideration to attend BoilerMake.
+                    Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                </p>
+            </div>
+            <button class="bmviii-right-accordion">What if I have any other questions?</button>
+            <div class="bmviii-right-accordion-content">
+                <p>
+                    Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
+                </p>
             </div>
         </div>
     </div>
-    <article class="accordion is-active">
-        <div class="accordion-header toggle">
-            <p style="font-family: Cabin, serif;font-style: normal;font-weight: bold;font-size: 26px;">What is a hackathon?<p>
-        </div>
-        <div class="accordion-body">
-            <div class="accordion-content">
-                A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
-                Anyone with or without a technical background can attend to learn, build, and share new things.
-                Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
-            </div>
-        </div>
-    </article>
-    <article class="accordion">
-        <div class="accordion-header">
-            <p class="bmviii-faq-text">Is it free?<p>
-            <button class="toggle" aria-label="toggle"></button>
-        </div>
-        <div class="accordion-body">
-            Yes! BoilerMake is completely free for all attendees.
-        </div>
-    </article>
-    <article class="accordion">
-        <div class="accordion-header">
-            <p class="bmviii-faq-text">will BoilerMake be in person?<p>
-            <button class="toggle" aria-label="toggle"></button>
-        </div>
-        <div class="accordion-body">
-            Due to the COVID-19 pandemic, we will be shifting to a completely virtual BoilerMake VIII!
-        </div>
-    </article>
-    <article class="accordion">
-        <div class="accordion-header">
-            <p class="bmviii-faq-text">Given an online event, will there still be oppurtunites to form teams and interact with sponsors and other hackers?<p>
-            <button class="toggle" aria-label="toggle"></button>
-        </div>
-        <div class="accordion-body">
-            Absolutely!
-            We would like to recreate the community environment of a hackathon through virtual means, which include hacker and sponsor interactions.
-            When we confirm which platforms we will be using to host our events, we will be able to provide more information on what the event will look like!
-        </div>
-    </article>
-    <article class="accordion">
-        <div class="accordion-header">
-            <p class="bmviii-faq-text">What if I don't know how to code?<p>
-            <button class="toggle" aria-label="toggle"></button>
-        </div>
-        <div class="accordion-body">
-            No problem!
-            Come to BoilerMake to learn a new skill and meet people.
-            We'll have tech talks, a Slack workplace to ask questions, and engineers from sponsoring companies to help you build something you can be proud of.
-            This is your best chance to learn alongside so many other driven hackers.
-        </div>
-    </article>
-    <article class="accordion">
-        <div class="accordion-header">
-            <p class="bmviii-faq-text">How large can my team be?<p>
-            <button class="toggle" aria-label="toggle"></button>
-        </div>
-        <div class="accordion-body">
-            You can have a maximum of 4 people on your team.
-        </div>
-    </article>
 </section>
 
 

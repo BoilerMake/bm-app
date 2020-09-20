@@ -104,7 +104,8 @@ body {
 
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
-@import "../../../node_modules/bulma-extensions/src/sass/index.sass";
+//@import "../../../node_modules/@creativebulma/bulma-collapsible/src/sass/index.sass";
+//@import "../../../node_modules/bulma-extensions/src/sass/index.sass";
 
 .bm-navbar {
 	flex-grow: 0;
@@ -142,6 +143,44 @@ body {
 		background-color: #AC333B;
 		color: $white;
 	}
+}
+
+button.bmviii-left-accordion, button.bmviii-right-accordion { // have separate accordions as we have two columns of accordions
+    width: 100%;
+    background-color: #ffffff;
+    border: none;
+    outline: none;
+    text-align: left;
+    padding: 15px 20px;
+    font-family: Cabin;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s linear;
+    word-wrap: break-word;
+}
+
+button.bmviii-left-accordion::after, button.bmviii-right-accordion::after {
+    content: "+";
+    font-size: 14px;
+    float: right;
+}
+
+button.bmviii-left-accordion.is-active::after, button.bmviii-right-accordion.is-active {
+    content:  "-"; // this should be the minus sign
+}
+
+button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.bmviii-left-accordion.is-active, button.bmviii-right-accordion.is-active {
+    background-color: #ddd;
+}
+
+.bmviii-left-accordion-content, .bmviii-right-accordion-content {
+    padding: 0 20px;
+    border-left: 1px solid whitesmoke; // match with heading
+    border-right: 1px solid whitesmoke;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-in-out;
 }
 
 .bmviii-covid-info {

@@ -1,6 +1,21 @@
 const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
 const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
 
+// Listen for bulma accordion changes
+
+
+// for (var i = 0; i < accordions.length; i++) {
+// 	accordions[i].onclick = function () { // create a click event for each accordion
+// 		var content = this.nextElementSibling; // goes down the DOM one element which is the <div class="accordion-content">
+// 		if(content.styles.maxHeight) { // check current value of max-height. max-height = 0 -> closed else open
+// 			// current accordion is open and we need to close it
+// 			content.style.maxHeight = null; // set to null or 0
+// 		} else {
+// 			// accordion is closed. Need to take max height and turn it to whatever height is necessary
+// 			content.style.maxHeight = content.scrollHeight + "px";
+// 		}
+// 	}
+// }
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -22,6 +37,44 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
+	// Listen for clicks on accordion
+	var leftAccordions = document.getElementsByClassName("bmviii-left-accordion"); // gets array of all accordions
+	for (var i = 0; i < leftAccordions.length; i++) {
+		leftAccordions[i].addEventListener('click', event => {
+			// event.target.classList.toggle('is-active');
+			const accordions = document.querySelectorAll('button.bmviii-left-accordion');
+			accordions.forEach(el => el.classList.remove('is-active')); // remove active icon
+			const content = event.target.nextElementSibling;
+			if(content.style.maxHeight) { // check current value of max-height. max-height = 0 -> closed else open
+				// current accordion is open and we need to close it
+				content.style.maxHeight = null; // set to null or 0
+			} else {
+				// accordion is closed. Need to take max height and turn it to whatever height is necessary
+				const accContent = document.querySelectorAll('div.bmviii-left-accordion-content'); // for resetting the rest of the accordion content
+				accContent.forEach(el => el.style.maxHeight = null);
+				event.target.classList.toggle('is-active');
+				content.style.maxHeight = content.scrollHeight + "px";
+			}
+		})
+	}
+
+	var rightAccordions = document.getElementsByClassName("bmviii-right-accordion"); // add separate event listener for second accordion
+	for (var i = 0; i < rightAccordions.length; i++) {
+		rightAccordions[i].addEventListener('click', event => {
+			// event.target.classList.toggle('is-active');
+			const accordions = document.querySelectorAll('button.bmviii-right-accordion');
+			accordions.forEach(el => el.classList.remove('is-active'));
+			const content = event.target.nextElementSibling;
+			if(content.style.maxHeight) {
+				content.style.maxHeight = null;
+			} else {
+				const accContent = document.querySelectorAll('div.bmviii-right-accordion-content');
+				accContent.forEach(el => el.style.maxHeight = null);
+				event.target.classList.toggle('is-active');
+				content.style.maxHeight = content.scrollHeight + "px";
+			}
+		})
+	}
 
 	// Update file upload labels when file changes
  	const fileUploads = document.querySelectorAll('.file-input');
