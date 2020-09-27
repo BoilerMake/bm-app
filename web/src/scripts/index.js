@@ -1,21 +1,6 @@
 const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
 const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
 
-// Listen for bulma accordion changes
-
-
-// for (var i = 0; i < accordions.length; i++) {
-// 	accordions[i].onclick = function () { // create a click event for each accordion
-// 		var content = this.nextElementSibling; // goes down the DOM one element which is the <div class="accordion-content">
-// 		if(content.styles.maxHeight) { // check current value of max-height. max-height = 0 -> closed else open
-// 			// current accordion is open and we need to close it
-// 			content.style.maxHeight = null; // set to null or 0
-// 		} else {
-// 			// accordion is closed. Need to take max height and turn it to whatever height is necessary
-// 			content.style.maxHeight = content.scrollHeight + "px";
-// 		}
-// 	}
-// }
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -36,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	}
+
+	// set up carousel
+	initCarousel();
 
 	// Listen for clicks on accordion
 	var leftAccordions = document.getElementsByClassName("bmviii-left-accordion"); // gets array of all accordions
@@ -321,6 +309,106 @@ function getNextAnnouncement(id, tries) {
       // Try again if we failed but at the id after
       getPrevAnnouncement(id + 1, tries + 1)
     });
+}
+
+// carousel management
+const itemClassName = 'carousel-entry';
+const items = document.getElementsByClassName(itemClassName);
+const totalItems = 3;
+var slide = 0;
+var moving = true;
+
+function setInitialClassesForCarousel() {
+	items[totalItems-1].classList.add('prev');
+	items[0].classList.add('active');
+	items[1].classList.add('next');
+}
+
+// set event listeners
+function setEventListenersOnNextAndPrev() {
+	const next = document.getElementsByClassName('carousel-button-next')[0];
+	const prev = document.getElementsByClassName('carousel-button-prev')[0];
+	next.addEventListener('click', goNextSlide);
+	prev.addEventListener('click', goPrevSlide);
+}
+
+function disableInteractionOnCarousel() { // prevent users from spamming the next/prev buttons
+	moving = true; // set to true to disable
+
+	setTimeout(function() {
+		moving = false;
+	}, 500); // set timeout to 0.5 seconds
+}
+
+function goNextSlide() {
+	if (!moving) {
+		if (slide === (totalItems -1)) { // overflow wrap around
+			slide = 0;
+		} else { // not last slide so increment
+			slide += 1;
+		}
+	}
+
+	// call helper function to move the current slide to front
+	showSlide(slide);
+}
+
+function goPrevSlide() {
+	if (!moving) {
+		if(slide == 0) { // underflow wrap around
+			slide = totalItems -1;
+		} else {
+			slide -= 1;
+		}
+
+		showSlide(slide);
+	}
+}
+
+function showSlide(slide) {
+	if(!moving) { // do nothing if moving
+		disableInteractionOnCarousel(); // act like a mutex lock of sort
+
+		// set new/old previous slides
+		var newPrev = slide -1;
+		var newNext = slide +1;
+		// oldPrev only matters if we arrive here from a "next"
+		// oldNext only matters if we arrive here from a "prev"
+		var oldPrev = slide -2; // depending on which button triggered show slide, either oldPrev or oldNext would be useless
+		var oldNext = slide +2;
+
+		// if (totalItems -1 > 3) {
+		// wrap oldPrev and oldNext
+		if (oldPrev < 0) {
+			oldPrev = totalItems + oldPrev;
+		}
+		if(oldNext > totalItems -1) {
+			oldNext = oldNext - totalItems;
+		}
+
+		// check curr slide. adjust newPrev/Next if needed
+		if (slide === 0) {
+			newPrev = totalItems -1;
+		} else if(slide === totalItems -1) {
+			newNext = 0;
+		}
+
+		// reset old prev and next
+		items[oldPrev].className = itemClassName;
+		items[oldNext].className = itemClassName;
+
+		// trigger transitions by setting prev, next, and active
+		items[newPrev].className = itemClassName + ' prev';
+		items[newNext].className = itemClassName + ' next';
+		items[slide].className = itemClassName + ' active';
+		// }
+	}
+}
+
+function initCarousel() {
+	setInitialClassesForCarousel();
+	setEventListenersOnNextAndPrev();
+	moving = false;
 }
 
 var currentAnnouncement;
