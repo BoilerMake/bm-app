@@ -190,9 +190,16 @@
         </div>
     </div>
 </section>
-<section>
-    <div class="container" style="margin-top: 250px; margin-bottom: 250px">
-        <div class="carousel-wrapper">
+<section class="section has-background-image" id="testimonials" style='background-image: url({{ static_path "bmviii_testimonial_full_background.svg" }})'>
+    <div class="container">
+        <div class="container" style="padding: 0 1.5rem;">
+                <div class="columns is-centered content">
+                    <div class="column is-2 bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
+                        <img alt="Testimonial" src={{ static_path "bmviii_testimonial_text.svg" }}>
+                    </div>
+                </div>
+        </div>
+        <div class="carousel-wrapper" style="margin-top: 125px; margin-bottom: 250px">
             <div class="carousel">
                 <div class="container carousel-entry has-background-image active" style='display: flex; background-image: url({{ static_path "bmviii_testimonial1_background.svg" }});  justify-content: space-between'>
                     <div class="column is-half">
@@ -208,7 +215,7 @@
                         <p>
                     </div>
                 </div>
-                <div class="container carousel-entry has-background-image" style='display: flex; background-image: url({{ static_path "bmviii_testimonial1_background.svg" }});  justify-content: space-between'>
+                <div class="container carousel-entry has-background-image" style='display: flex; justify-content: space-between; background-image: url({{ static_path "bmviii_testimonial1_background.svg" }})'>
                     <div class="column is-half">
                         <img alt="Samuel Ingram" src={{ static_path "sam.jpg" }}>
                     </div>
@@ -239,6 +246,25 @@
                 <div class="carousel-button-next"></div>
                 <div class="carousel-button-prev"></div>
             </div>
+        </div>
+    </div>
+</section>
+<section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmviii_sponsors_background.svg" }})'>
+    <div class="container">
+        <div class="columns is-centered content">
+            <div class="column is-2 bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
+                <img alt="FAQ" src={{ static_path "bmviii_sponsors_text.svg" }}>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="display: flex; justify-content: space-between; margin-top: 90px">
+        <div class="column is-half">
+            <img alt="Bloomberg" src={{ static_path "sponsors_bloomberg.svg" }}>
+            <img alt="Capital One" src ={{ static_path "sponsors_capital_one.svg" }}>
+        </div>
+        <div class = "column is-half">
+            <img alt="Rockwell Collins" src={{ static_path "sponsors_collins.jpeg" }}>
+            <img alt="Data Mine" src={{ static_path "sponsors_data_mine.png" }}>
         </div>
     </div>
 </section>
