@@ -129,7 +129,7 @@ body {
 
 .button.is-red {
 	background-color: #FF0043;
-    border-radius: 20px; // needed for rounded corners but doesn't work for some reason
+    border-radius: 20px;
 	border-color: transparent;
 	color: $white;
 }
@@ -281,6 +281,16 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     border: none;
     outline: none;
     transition: 0.4s;
+}
+
+.bmviii-front-logo { // create own container for each element on front page
+    position: absolute;
+    width: 25%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    right: 0;
+    height: 25%;
 }
 
 .bmvii-why__img {
@@ -584,6 +594,14 @@ and (max-width: 600px) {
   .live-buttons-horizontal {
     grid-column: 1 / 10;
     grid-row: 5;
+  }
+
+  .logo-div {
+      padding-left: 2%;
+  }
+
+  .logo-img {
+      max-width: 80%;
   }
 }
 

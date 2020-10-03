@@ -6,34 +6,25 @@
 {{ template "flashes" .Flashes }}
 {{ template "mlh badge" }}
 
-<section class="section has-background-image" style='background-image: url({{ static_path "bmviii_landing_page_2.0.svg" }})'>
-	<div class="container" style="padding-top: 200px">
-        <div class="columns is-centered content has-text-centered">
-            <div class="column is-5">
-                <h2 class="title">
-                    <img alt="Boilermake" src={{ static_path "bmviii_boilermake_logo.svg" }}>
-                </h2>
-                <h3 class="subtitle">
-                    <img alt="Lay back and hack" src={{ static_path "bmviii_lay_back_and_hack.svg" }} width="350">
-                </h3>
-            </div>
-        </div>
-		<div class="columns is-centered content has-text-centered">
-			<div class="column is-5">
-				<a class="title is-3 button is-red" href="https://forms.gle/ugmBaA4bHvm6rwjF7">Apply Now!</a>
-			</div>
-		</div>
-		<div class="columns is-centered content has-text-centered">
-            <div class="column is-5">
-                <h2 class="title">
-                    <img alt="January 22-24, 2021" src={{ static_path "bmviii_date.svg" }} width="300" height="150">
-                </h2>
-                <h3 class="subtitle">
-                    <img alt="Purdue University" src={{ static_path "bmviii_purdue_text.svg" }} width="200" height="150">
-                </h3>
-            </div>
-        </div>
-	</div>
+<section class="section has-background-image" style="background-color: #A7C3FF; position: relative; padding-top: 0px; padding-bottom: 0px; padding-left: 0px; padding-right: 0px">
+    <img alt="BM buildings" src={{ static_path "bmviii_lp_buildings.svg" }} style="vertical-align: bottom">
+    <div class="container bmviii-front-logo logo-div" style="top: 7%;">
+        <img class="logo-img" alt="Boilermake" src={{ static_path "bmviii_boilermake_logo.svg" }}>
+    </div>
+    <div class="container bmviii-front-logo" style="top: 23%; padding-left: 2.5%">
+        <img alt="Lay back and hack" src={{ static_path "bmviii_lay_back_and_hack.svg" }} width="80%">
+    </div>
+    <div class="container bmviii-front-logo" style="top: 37%; padding-left: 5%">
+        <a href="https://forms.gle/ugmBaA4bHvm6rwjF7">
+            <img alt="Apply Now!" src={{ static_path "bmviii_apply_now.svg" }} width="65%">
+        </a>
+    </div>
+    <div class="container bmviii-front-logo" style="top: 60%; padding-left: 2.3%">
+        <img alt="January 22-24, 2021" src={{ static_path "bmviii_date.svg" }} width="85%">
+    </div>
+    <div class="container bmviii-front-logo" style="top: 70%; padding-left: 5%">
+        <img alt="Purdue University" src={{ static_path "bmviii_purdue_text.svg" }} width="75%">
+    </div>
 </section>
 
 <section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "bmviii_why_bm_background.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0;'>
