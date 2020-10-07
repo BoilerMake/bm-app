@@ -59,7 +59,7 @@ body {
 // Make sure background image fills width and stays centered
 .has-background-image {
 	background-position: center;
-	background-size: cover;
+	background-size: 100%;
 	background-repeat: no-repeat;
 }
 
@@ -200,7 +200,7 @@ body {
 	display: flex;
 	align-items: center;
 
-	background-color: #6176CF; 
+	background-color: #FFE4C3; 
 	background-size: auto 100%;
 	background-repeat: repeat-y;
 	background-position: center;
