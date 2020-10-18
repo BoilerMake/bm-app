@@ -166,6 +166,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
+	// Look for major selection of "other"
+	var majorSelector = document.getElementById("major");
+	majorSelector.addEventListener('change', event => {
+		var otherMajorSelector = document.getElementById("other-major-input");
+		if (event.target.value === "Other") {
+			otherMajorSelector.classList.remove('is-hidden')
+		} else {
+			otherMajorSelector.classList.add('is-hidden')
+		}
+	});
+
 
 	var rsvpSelector = document.getElementById("will-attend");
   if (rsvpSelector) {
