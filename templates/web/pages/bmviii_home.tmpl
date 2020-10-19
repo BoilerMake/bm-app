@@ -88,13 +88,19 @@
 <section class="section" style='background: url({{ static_path "bmviii_rings.svg" }}) center center no-repeat, linear-gradient(0, #A7C3FF 50%, #FF8E9E 50%); padding: 6rem 1.5rem;'></section>
 
 <!-- TODO add bg image -->
-<section class="section contains-background-image" id="surfboards" style='position: relative; min-height: 1000px'>
-    <div style="position: absolute; bottom:0px; left:0px; right:0px">
-        <img src={{ static_path "bmviii_surfboards.svg" }} class="bmvii-why__quarry" alt="Surfboards" style="max-height: 750px">
+<section class="section" id="surfboards" style='position: relative; background-color: #A7C3FF; padding: 0;'>
+    <div class="columns is-centered" style='margin-bottom: 0;'>
+      <div class="column is-half" style='padding-bottom: 0;'>
+        <img src={{ static_path "bmviii_surfboards.svg" }} alt="Sand">
+      </div>
+    </div>
+
+    <div style='position: absolute; bottom: -5px; left: -2.5%; width: 105%; font-size: 0;'>
+      <img src={{ static_path "bmviii_sand.svg" }} alt="Sand">
     </div>
 </section>
 
-<section class="section contains-background-image" id="faq" style='background-color: #FFE4C3; background-image: url({{ static_path "bmviii_faq.svg" }})'>
+<section class="section contains-background-image" id="faq" style='background-color: #ffdfbe; background-image: url({{ static_path "bmviii_faq.svg" }})'>
     <div class="container" style="padding: 0 1.5rem;">
             <div class="columns is-mobile is-centered content">
                 <div class="column is-2-mobile is-2-tablet is-2-desktop bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
