@@ -168,15 +168,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	// Look for major selection of "other"
 	var majorSelector = document.getElementById("major");
-	majorSelector.addEventListener('change', event => {
-		var otherMajorSelector = document.getElementById("other-major-input");
-		if (event.target.value === "Other") {
-			otherMajorSelector.classList.remove('is-hidden')
-		} else {
-			otherMajorSelector.classList.add('is-hidden')
-		}
-	});
-
+	if(majorSelector) {
+		majorSelector.addEventListener('change', event => {
+			var otherMajorSelector = document.getElementById("other-major-input");
+			var otherMajorText = document.getElementById("other-major");
+			if (event.target.value === "Other") {
+				otherMajorSelector.classList.remove('is-hidden');
+				otherMajorText.required = true;
+			} else {
+				otherMajorSelector.classList.add('is-hidden');
+				otherMajorText.required = false;
+			}
+		});
+	}
 
 	var rsvpSelector = document.getElementById("will-attend");
   if (rsvpSelector) {
