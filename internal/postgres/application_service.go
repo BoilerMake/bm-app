@@ -31,11 +31,11 @@ type dbApplication struct {
 	Phone                sql.NullString
 	Gender               sql.NullString
 	Github               sql.NullString
-	Location			 sql.NullString
-	OtherMajor			 sql.NullString
+	Location             sql.NullString
+	OtherMajor           sql.NullString
 	IsFirstHackathon     sql.NullBool
 	WhyBM                sql.NullString
-	ProjIdea			 sql.NullString
+	ProjIdea             sql.NullString
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
@@ -61,11 +61,11 @@ func (a *dbApplication) toModel() *models.Application {
 		Phone:                a.Phone.String,
 		Gender:               a.Gender.String,
 		Github:               a.Github.String,
-		Location:			  a.Location.String,
-		OtherMajor:			  a.OtherMajor.String,
+		Location:             a.Location.String,
+		OtherMajor:           a.OtherMajor.String,
 		IsFirstHackathon:     a.IsFirstHackathon.Bool,
 		WhyBM:                a.WhyBM.String,
-		ProjIdea:			  a.ProjIdea.String,
+		ProjIdea:             a.ProjIdea.String,
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,

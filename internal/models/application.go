@@ -17,9 +17,9 @@ var (
 	ErrMissingGithub         = &ModelError{"Please enter your GitHub username.", flash.Info}
 	ErrMissingPhone          = &ModelError{"Please enter your phone number.", flash.Info}
 	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake.", flash.Info}
-	ErrMissingLocation		 = &ModelError{"Please enter your Location.", flash.Info}
-	ErrMissingOtherMajor	 = &ModelError{"Please enter your major.", flash.Info}
-	ErrMissingProjIdea		 = &ModelError{"Please indicate whether you have a project idea.", flash.Info}
+	ErrMissingLocation       = &ModelError{"Please enter your Location.", flash.Info}
+	ErrMissingOtherMajor     = &ModelError{"Please enter your major.", flash.Info}
+	ErrMissingProjIdea       = &ModelError{"Please indicate whether you have a project idea.", flash.Info}
 	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions.", flash.Info}
 	ErrMissingFirstName      = &ModelError{"Please enter your first name.", flash.Info}
 	ErrMissingLastName       = &ModelError{"Please enter your last name.", flash.Info}
@@ -53,7 +53,7 @@ type Application struct {
 
 	School               string
 	Major                string
-	OtherMajor			 string
+	OtherMajor           string
 	GraduationYear       string
 	FirstName            string
 	LastName             string
@@ -86,15 +86,15 @@ func (a *Application) Validate() error {
 		return ErrMissingLocation
 	} else if a.School == "" {
 		return ErrMissingSchool
-	}  else if a.Major == "" {
+	} else if a.Major == "" {
 		return ErrMissingMajor
-	} else if a.Major == "Other" && a.OtherMajor == ""{
+	} else if a.Major == "Other" && a.OtherMajor == "" {
 		return ErrMissingOtherMajor
 	} else if a.GraduationYear == "" {
 		return ErrMissingGraduationYear
 	} else if a.Github == "" {
 		return ErrMissingGithub
-	}  else if a.WhyBM == "" {
+	} else if a.WhyBM == "" {
 		return ErrMissingWhyBM
 	} else if a.ProjIdea == "" {
 		return ErrMissingProjIdea
@@ -111,7 +111,7 @@ func (a *Application) FromFormData(r *http.Request) error {
 	a.FirstName = r.FormValue("first-name")
 	a.LastName = r.FormValue("last-name")
 	a.Phone = r.FormValue("phone")
-	a.Location  = r.FormValue("location")
+	a.Location = r.FormValue("location")
 	a.School = r.FormValue("school")
 	a.Major = r.FormValue("major")
 	if a.Major == "Other" { // only set OtherMajor if user selected "Other"
