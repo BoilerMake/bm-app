@@ -96,8 +96,6 @@ func (a *Application) Validate() error {
 		return ErrMissingGithub
 	} else if a.WhyBM == "" {
 		return ErrMissingWhyBM
-	} else if a.ProjIdea == "" {
-		return ErrMissingProjIdea
 	} else if !a.Is18OrOlder || !a.MLHCodeOfConduct || !a.MLHContestAndPrivacy {
 		return ErrMissingTACAgree
 	}
