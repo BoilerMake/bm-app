@@ -182,6 +182,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
+	// Look for school selection of "Other"
+	var schoolSelector = document.getElementById("school");
+	if(schoolSelector) {
+		schoolSelector.addEventListener('change', event => {
+			var otherSchoolSelector = document.getElementById("other-school-input");
+			var otherSchoolText = document.getElementById("other-school");
+			if (event.target.value === "Other") {
+				otherSchoolSelector.classList.remove('is-hidden');
+				otherSchoolText.required = true;
+			} else {
+				otherSchoolSelector.classList.add('is-hidden');
+				otherSchoolText.required = false;
+			}
+		})
+	}
+
 	var rsvpSelector = document.getElementById("will-attend");
   if (rsvpSelector) {
     var rsvpMoreInfo = document.getElementById("rsvp-yes-selected");

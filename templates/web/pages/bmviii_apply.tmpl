@@ -5,7 +5,7 @@
 
 {{ template "flashes" .Flashes }}
 
-<section class="section bmvii-form" style='background-image: url({{ static_path "bmviii_application_background.svg" }}); background-color: #FFE4C3'>
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmviii_app_background.svg" }}); background-color: #FFE4C3'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="box column is-6">
@@ -135,11 +135,49 @@
                         <div class="field-body">
                             <div class="field">
                                 <div class="control">
-                                    <input type="text" name="school" style="background-color: #F0F0F0" class="input" placeholder="Purdue University" minlength="7" maxlength="32" value="{{ .FormRefill.School }}" required>
+                                    <div class="select is-fullwidth">
+                                        <select name="school" id="school" list="bmviii-application__schools" style="background-color: #F0F0F0"required>
+                                        {{ template "bmviii school datalist" .FormRefill.School}}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 					</div>
+
+                    {{ if eq .FormRefill.School "Other" }}
+					<div id="other-school-input" class="field">
+                        <label for="other-school" class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                Other University
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="other-school" name="other-school" list="bmvii-application__schools" style="background-color: #F0F0F0" class="input" placeholder="University not on list" maxlength="512" value="{{ .FormRefill.OtherMajor }}" required>
+                                	{{ template "school datalist" }}
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ else }}
+					<div id="other-school-input" class="field is-hidden">
+                        <label for="other-school"class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                Other University
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="other-school" name="other-school" list="bmvii-application__schools" style="background-color: #F0F0F0" class="input" placeholder="University not on list" maxlength="512" value="{{ .FormRefill.OtherMajor }}">
+                                	{{ template "school datalist" }}
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ end }}
 
 					<div class="field">
                         <label for="major" class="label">
