@@ -18,6 +18,7 @@ var (
 	ErrMissingPhone          = &ModelError{"Please enter your phone number.", flash.Info}
 	ErrMissingWhyBM          = &ModelError{"Please enter why you want to come to BoilerMake.", flash.Info}
 	ErrMissingLocation       = &ModelError{"Please enter your Location.", flash.Info}
+	ErrMissingOtherSchool    = &ModelError{"Please enter your school's name.", flash.Info}
 	ErrMissingOtherMajor     = &ModelError{"Please enter your major.", flash.Info}
 	ErrMissingProjIdea       = &ModelError{"Please indicate whether you have a project idea.", flash.Info}
 	ErrMissingTACAgree       = &ModelError{"Please agree to the terms and conditions.", flash.Info}
@@ -52,6 +53,7 @@ type Application struct {
 	CheckedInAt     time.Time
 
 	School               string
+	OtherSchool          string
 	Major                string
 	OtherMajor           string
 	GraduationYear       string
@@ -86,6 +88,8 @@ func (a *Application) Validate() error {
 		return ErrMissingLocation
 	} else if a.School == "" {
 		return ErrMissingSchool
+	} else if a.School == "Other" && a.OtherSchool == "" {
+		return ErrMissingOtherSchool
 	} else if a.Major == "" {
 		return ErrMissingMajor
 	} else if a.Major == "Other" && a.OtherMajor == "" {
@@ -111,6 +115,9 @@ func (a *Application) FromFormData(r *http.Request) error {
 	a.Phone = r.FormValue("phone")
 	a.Location = r.FormValue("location")
 	a.School = r.FormValue("school")
+	if a.School == "Other" { // only set OtherSchool if user selected "Other"
+		a.OtherSchool = r.FormValue("other-school")
+	}
 	a.Major = r.FormValue("major")
 	if a.Major == "Other" { // only set OtherMajor if user selected "Other"
 		a.OtherMajor = r.FormValue("other-major")
