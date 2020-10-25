@@ -630,6 +630,11 @@ and (max-width: 600px) {
   .logo-img {
       max-width: 80%;
   }
+
+  .carousel-entry {
+      width: 100%;
+      padding: 1rem 2rem;
+  }
 }
 
 .live--announcements__button_enabled {

@@ -87,7 +87,6 @@
 
 <section class="section" style='background: url({{ static_path "bmviii_rings.svg" }}) center center no-repeat, linear-gradient(0, #A7C3FF 50%, #FF8E9E 50%); padding: 6rem 1.5rem;'></section>
 
-<!-- TODO add bg image -->
 <section class="section" id="surfboards" style='position: relative; background-color: #A7C3FF; padding: 0;'>
     <div class="columns is-centered" style='margin-bottom: 0;'>
       <div class="column is-half" style='padding-bottom: 0;'>
@@ -100,119 +99,121 @@
     </div>
 </section>
 
-<section class="section contains-background-image" id="faq" style='background-color: #FFE4C3; background-image: url({{ static_path "bmviii_faq.svg" }})'>
-    <div class="container" style="padding: 0 1.5rem;">
-            <div class="columns is-mobile is-centered content">
-                <div class="column is-2-mobile is-2-tablet is-2-desktop bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
-                    <img alt="FAQ" src={{ static_path "bmviii_faq_text.svg" }}>
-                </div>
-            </div>
-    </div>
-
-    <div class="container" style="display: flex; justify-content: space-between">
-        <div class="column is-half"; style = "padding-top: 108px;">
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-left-accordion">What is a hackathon?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
-                        Anyone with or without a technical background can attend to learn, build, and share new things.
-                        Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-left-accordion">Is it free?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        Yes! BoilerMake is an all-expense paid experience. We provide hackers with the venue, swag, and food throughout the weekend.
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-left-accordion">Will BoilerMake be in person?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        Due to the COVID-19 pandemic, we will be shifting to a completely virtual BoilerMake VIII!
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-left-accordion">Given an online event, will there still be opportunities to form teams and interact with sponsors and other hackers?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        Absolutely!
-                        We would like to recreate the community environment of a hackathon through virtual means, which include hacker and sponsor interactions. When we confirm which platforms we will be using to host our events, we will be able to provide more information on what the event will look like!
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-left-accordion">What if I don't know how to code?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions,
-                        and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance
-                        to learn alongside so many other driven hackers.
-                    </p>
-                </div>
-            </div>
-            <div class="container">
-                <button class="bmviii-left-accordion">How large can my team be?</button>
-                <div class="bmviii-left-accordion-content">
-                    <p>
-                        You can have a maximum of 4 people on your team.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="column is-half"; style = "padding-top: 108px;">
-             <div class="container bmviii-container-accordion">
-                <button class="bmviii-right-accordion">What are the requirements to attend?</button>
-                <div class="bmviii-right-accordion-content">
-                    <p>
-                        BoilerMake is open to all undergraduate college students who are of age 18 or older.
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-right-accordion">My team was accepted and I wasn't - can I attend?</button>
-                <div class="bmviii-right-accordion-content">
-                    <p>
-                        Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-right-accordion">Do you allow walk-ins and last minute registration?</button>
-                <div class="bmviii-right-accordion-content">
-                    <p>
-                        We accept walk-ins based on availability after hacker check-in.
-                        We will announce more details closer to the event!
-                    </p>
-                </div>
-            </div>
-            <div class="container bmviii-container-accordion">
-                <button class="bmviii-right-accordion">I missed the deadline to apply - can I attend?</button>
-                <div class="bmviii-right-accordion-content">
-                    <p>
-                        We set a deadline to ensure that all applications are given equal consideration to attend BoilerMake.
-                        Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
-                    </p>
-                </div>
-            </div>
-            <div class="container">
-                <button class="bmviii-right-accordion">What if I have any other questions?</button>
-                <div class="bmviii-right-accordion-content">
-                    <p>
-                        Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="section contains-background-image" id="testimonials" style='background-color: #FFE4C3; background-image: url({{ static_path "bmviii_testimonial_full_background.svg" }}); min-height: 1024px'>
+<section class="section has-background-image" id="faq-testimonial" style='background-color: #FFE4C3; background-image: url({{ static_path "bmviii_faq_testimonial_background.svg" }}); min-height: 2049px'>
     <div class="container">
+        <div class="container" style="padding: 0 1.5rem;">
+                <div class="columns is-mobile is-centered content">
+                    <div class="column is-2-mobile is-2-tablet is-2-desktop bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
+                        <img alt="FAQ" src={{ static_path "bmviii_faq_text.svg" }}>
+                    </div>
+                </div>
+        </div>
+
+        <div class="container" style="padding-top: 108px;">
+            <div class="columns is-mobile">
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What is a hackathon?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+                                Anyone with or without a technical background can attend to learn, build, and share new things.
+                                Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Is it free?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Yes! BoilerMake is an all-expense paid experience. We provide hackers with the venue, swag, and food throughout the weekend.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Will BoilerMake be in person?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Due to the COVID-19 pandemic, we will be shifting to a completely virtual BoilerMake VIII!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Given an online event, will there still be opportunities to form teams and interact with sponsors and other hackers?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Absolutely!
+                                We would like to recreate the community environment of a hackathon through virtual means, which include hacker and sponsor interactions. When we confirm which platforms we will be using to host our events, we will be able to provide more information on what the event will look like!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What if I don't know how to code?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions,
+                                and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance
+                                to learn alongside so many other driven hackers.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-left-accordion">How large can my team be?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                You can have a maximum of 4 people on your team.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-half">
+                     <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">What are the requirements to attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                BoilerMake is open to all undergraduate college students who are of age 18 or older.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">My team was accepted and I wasn't - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">Do you allow walk-ins and last minute registration?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We accept walk-ins based on availability after hacker check-in.
+                                We will announce more details closer to the event!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">I missed the deadline to apply - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We set a deadline to ensure that all applications are given equal consideration to attend BoilerMake.
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-right-accordion">What if I have any other questions?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="padding: 3rem 1.5rem;" >
         <div class="container" style="padding: 1rem 1.5rem;">
                 <div class="columns is-mobile is-centered content">
                     <div class="column is-6-mobile is-4-tablet is-4-desktop bmviii-section-header" style="margin-left: 48px; margin-right: 12px; margin-top:72px">
@@ -220,14 +221,14 @@
                     </div>
                 </div>
         </div>
-        <div class="carousel-wrapper" style="margin-top: 125px; margin-left: 64px">
+        <div class="carousel-wrapper" style="margin-top: 125px; margin-left: 2rem">
             <div class="carousel">
-                <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: cover; background-image: url({{ static_path "bmviii_testimonial_01.svg" }});'>
-                    <div class="columns">
-                        <div class="column is-half">
+                <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%; background-image: url({{ static_path "bmviii_testimonial_01.svg" }});'>
+                    <div class="columns" style="padding-top: 4rem">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile">
                             <img alt="Lauren Lum" src={{ static_path "lauren.jpg" }}>
                         </div>
-                        <div class="column is-half" style="background-color: white; word-wrap: break-word">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile" style="background-color: white; word-wrap: break-word">
                             <p>
                                 BoilerMake gave me the resources and support I needed to create a project I was truly proud of.
                                 If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!
@@ -238,15 +239,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="container carousel-entry" style='background-repeat: no-repeat; background-size: cover; background-image: url({{ static_path "bmviii_testimonial_02.svg" }})'>
-                    <div class="columns">
-                        <div class="column is-half">
+                <div class="container carousel-entry" style='background-repeat: no-repeat; background-size: 100% 100%; background-image: url({{ static_path "bmviii_testimonial_02.svg" }})'>
+                    <div class="columns" style="padding-top: 4rem">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile">
                             <img alt="Samuel Ingram" src={{ static_path "sam.jpg" }}>
                         </div>
-                        <div class="column is-half" style="background-color: white; word-wrap: break-word">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile" style="background-color: white; word-wrap: break-word">
                             <p>
-                                BoilerMake gave me the resources and support I needed to create a project I was truly proud of.
-                                If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!
+                                BoilerMake has been the perfect event to build some exciting projects with some great people.
+                                I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while
+                                creating something new.
                             </p>
                             <p style="font-family: Cabin; family-style: normal; font-weight: 600; font-size: 20px" >
                                 Samuel Ingram
@@ -254,15 +256,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="container carousel-entry" style='background-repeat: no-repeat; background-size: cover; background-image: url({{ static_path "bmviii_testimonial_03.svg" }});'>
-                    <div class="columns">
-                        <div class="column is-half">
+                <div class="container carousel-entry" style='background-repeat: no-repeat; background-size: 100% 100%; background-image: url({{ static_path "bmviii_testimonial_03.svg" }});'>
+                    <div class="columns" style="padding-top: 4rem">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile">
                             <img alt="Kevin Cardona" src={{ static_path "kevin.jpg" }}>
                         </div>
-                        <div class="column is-half" style="background-color: white; word-wrap: break-word">
+                        <div class="column is-half-tablet is-half-desktop is-full-mobile" style="background-color: white; word-wrap: break-word">
                             <p>
-                                BoilerMake gave me the resources and support I needed to create a project I was truly proud of.
-                                If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!
+                                Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what
+                                the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field.
                             </p>
                             <p style="font-family: Cabin; family-style: normal; font-weight: 600; font-size: 20px" >
                                 Kevin Cardona
@@ -276,6 +278,7 @@
         </div>
     </div>
 </section>
+
 <section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmviii_sponsors_background.svg" }})'>
     <div class="container">
         <div class="columns is-centered content">
