@@ -320,6 +320,14 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     height: 25%;
 }
 
+.bmviii-waves {
+    position: absolute;
+    bottom: -5px;
+    left: -2.5%;
+    width: 105%;
+    font-size: 0;
+}
+
 .bmvii-why__img {
 	max-width: 96px;
 	border-radius: 50%;
@@ -584,6 +592,13 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 .live-buttons-horizontal {
   grid-column: 2 / 7;
   grid-row: 5;
+}
+
+@media only screen
+and (min-width: 1342px) {
+  .bmviii-waves {
+      bottom: auto;
+  }
 }
 
 @media only screen
