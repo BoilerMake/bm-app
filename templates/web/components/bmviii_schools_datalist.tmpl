@@ -1,0 +1,105 @@
+{{ define "bmviii school datalist" }}
+<datalist id="bmviii-application__schools">
+    {{ if not . }}
+    <option disabled selected="true">Select an option</option>
+    {{ else }}
+    <option disabled> Select an option</option>
+    {{ end }}
+    {{ if eq . "Purdue University" }}
+	<option value="Purdue University" selected>Purdue University</option>
+	{{ else }}
+	<option value="Purdue University">Purdue University</option>
+	{{ end }}
+	{{ if eq . "Purdue University-Calumet" }}
+	<option value="Purdue University-Calumet" selected>Purdue University-Calumet</option>
+	{{ else }}
+	<option value="Purdue University-Calumet">Purdue University-Calumet</option>
+	{{ end }}
+	{{ if eq . "University of Illinois-Urbana-Champaign" }}
+	<option value="University of Illinois-Urbana-Champaign" selected>University of Illinois-Urbana-Champaign</option>
+	{{ else }}
+	<option value="University of Illinois-Urbana-Champaign">University of Illinois-Urbana-Champaign</option>
+	{{ end }}
+	{{ if eq . "University of Michigan" }}
+	<option value="University of Michigan" selected>University of Michigan</option>
+	{{ else }}
+	<option value="University of Michigan">University of Michigan</option>
+	{{ end }}
+    {{ if eq . "University of Wisconsin-Madison" }}
+	<option value="University of Wisconsin-Madison" selected>University of Wisconsin-Madison</option>
+	{{ else }}
+	<option value="University of Wisconsin-Madison">University of Wisconsin-Madison</option>
+	{{ end }}
+	{{ if eq . "Ohio State University" }}
+	<option value="Ohio State University" selected>Ohio State University</option>
+	{{ else }}
+	<option value="Ohio State University">Ohio State University</option>
+	{{ end }}
+	{{ if eq . "Georgia Institute of Technology" }}
+	<option value="Georgia Institute of Technology" selected>Georgia Institute of Technology</option>
+	{{ else }}
+	<option value="Georgia Institute of Technology">Georgia Institute of Technology</option>
+	{{ end }}
+	{{ if eq . "University of Notre Dame" }}
+	<option value="University of Notre Dame" selected>University of Notre Dame</option>
+	{{ else }}
+	<option value="University of Notre Dame">University of Notre Dame</option>
+	{{ end }}
+	{{ if eq . "Rose-Hulman Institute of Technology" }}
+	<option value="Rose-Hulman Institute of Technology" selected>Rose-Hulman Institute of Technology</option>
+	{{ else }}
+	<option value="Rose-Hulman Institute of Technology">Rose-Hulman Institute of Technology</option>
+	{{ end }}
+	{{ if eq . "Carnegie Mellon University" }}
+	<option value="Carnegie Mellon University" selected>Carnegie Mellon University</option>
+	{{ else }}
+	<option value="Carnegie Mellon University">Carnegie Mellon University</option>
+	{{ end }}
+	{{ if eq . "University of Texas-Austin" }}
+	<option value="University of Texas-Austin" selected>University of Texas-Austin</option>
+	{{ else }}
+	<option value="University of Texas-Austin">University of Texas-Austin</option>
+	{{ end }}
+	{{ if eq . "Indiana University-Bloomington" }}
+	<option value="Indiana University-Bloomington" selected>Indiana University-Bloomington</option>
+	{{ else }}
+	<option value="Indiana University-Bloomington">Indiana University-Bloomington</option>
+	{{ end }}
+	{{ if eq . "Northwestern University" }}
+	<option value="Northwestern University" selected>Northwestern University</option>
+	{{ else }}
+	<option value="Northwestern University">Northwestern University</option>
+	{{ end }}
+	{{ if eq . "Cornell University" }}
+	<option value="Cornell University" selected>Cornell University</option>
+	{{ else }}
+	<option value="Cornell University">Cornell University</option>
+	{{ end }}
+	{{ if eq . "Illinois Institute of Technology" }}
+	<option value="Illinois Institute of Technology" selected>Illinois Institute of Technology</option>
+	{{ else }}
+	<option value="Illinois Institute of Technology">Illinois Institute of Technology</option>
+	{{ end }}
+	{{ if eq . "University of Maryland - College Park" }}
+	<option value="University of Maryland - College Park" selected>University of Maryland - College Park</option>
+	{{ else }}
+	<option value="University of Maryland - College Park">University of Maryland - College Park</option>
+	{{ end }}
+	{{ if eq . "Indiana University/Purdue University at Indianapolis" }}
+	<option value="Indiana University/Purdue University at Indianapolis" selected>Indiana University/Purdue University at Indianapolis</option>
+	{{ else }}
+	<option value="Indiana University/Purdue University at Indianapolis">Indiana University/Purdue University at Indianapolis</option>
+	{{ end }}
+	{{ if eq . "United States Naval Academy" }}
+	<option value="United States Naval Academy" selected>United States Naval Academy</option>
+	{{ else }}
+	<option value="United States Naval Academy">United States Naval Academy</option>
+	{{ end }}
+	{{ if eq . "Other" }}
+	<option value="Other" selected>Other</option>
+	{{ else }}
+	<option value="Other">Other</option>
+	{{ end }}
+
+	</datalist>
+{{ end }}
