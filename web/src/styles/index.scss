@@ -7,8 +7,9 @@ $dark: #231F20;
 // Use new background color for navbar for bmviii
 $navbar-background-color: #A7C3FF;
 
-// change background color for box for bmviii covid-19 info
-// $box-background-color: #5C91FF;
+// change navbar hover color. change text to make it readable as well
+$navbar-item-hover-background-color: #4B75F7;
+$navbar-item-hover-color: #FFFFFF;
 
 // change box radius for bmviii covid-19 info
 $box-radius: 20px;
@@ -110,6 +111,10 @@ body {
 
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
+
+.navbar-menu { // remove box shadow of navbar menu on mobile screens
+    box-shadow: none;
+}
 
 .bm-navbar {
 	flex-grow: 0;
