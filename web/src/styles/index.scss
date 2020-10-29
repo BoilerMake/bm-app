@@ -217,10 +217,10 @@ body {
     height: 3rem;
     //background-color: #F5F5F5; // customize the buttons
     transform: translateY(-50%);
-    //border-radius: 50%;
+    border-radius: 50%;
     cursor: pointer;
     z-index: 1001; /* Sit on top of everything */
-    //border: 1px solid black;
+    border: 1px solid black;
 }
 
 .carousel-button-prev {
@@ -331,6 +331,10 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     left: -2.5%;
     width: 105%;
     font-size: 0;
+}
+
+.bmviii-box-pos {
+    height: 75%;
 }
 
 .bmvii-why__img {
@@ -655,7 +659,17 @@ and (max-width: 600px) {
       width: 100%;
       padding: 1rem 2rem;
   }
+
+  .carousel-button-next {
+      right: -5px;
+  }
+
+  .carousel-button-prev {
+      left: -18px;
+  }
 }
+
+
 
 .live--announcements__button_enabled {
   cursor: pointer;
