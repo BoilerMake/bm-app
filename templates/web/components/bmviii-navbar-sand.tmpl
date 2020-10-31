@@ -1,0 +1,51 @@
+{{ define "bmviii navbar sand" }}
+
+<nav class="navbar bm-navbar bmvii_hero" role="navigation" aria-label="main navigation" style="width: 100%; background-color: #FFE4C3;">
+	<div class="navbar-brand">
+		<a href="/">
+			<img src='{{ static_path "bmviii_navbar_logo.svg" }}' alt="BoilerMake" width="40" style="padding-top: 10px">
+		</a>
+
+		<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="nav-hamburger-menu">
+			<span style="height: 3px" aria-hidden="true"></span>
+			<span style="height: 3px" aria-hidden="true"></span>
+			<span style="height: 3px" aria-hidden="true"></span>
+		</a>
+	</div>
+
+	<div id="nav-hamburger-menu" class="navbar-menu">
+		<div class="navbar-start">
+			<a class="navbar-item bmviii-text-style" href="/faq">FAQ</a>
+			<a class="navbar-item bmviii-text-style" href="/hackers">Hackers</a>
+			<a class="navbar-item bmviii-text-style" href="/sponsors">Sponsors</a>
+			<a class="navbar-item bmviii-text-style" href="/about">About</a>
+		</div>
+
+		<div class="navbar-end">
+		    <a href="https://www.facebook.com/BoilerMake/" style="padding-right: 5px; padding-top: 5px">
+        		<img src={{ static_path "bmviii_facebook.svg" }} width="43" alt="Instagram logo" >
+        	</a>
+			<a href="https://www.instagram.com/boilermake/" style="padding-right: 5px; padding-top: 5px">
+				<img src={{ static_path "bmviii_instagram.svg" }} width="43" alt="Instagram logo" >
+			</a>
+			<a href="https://twitter.com/BoilerMake1/" style="padding-top: 5px">
+				<img src={{ static_path "bmviii_twitter.svg" }} width="43" alt="Twitter logo">
+			</a>
+			{{ if .IsAuthenticated }}
+			<div class="navbar-item">
+				<a class="button is-light-blue" href="/dashboard" style="color:black; font-family:Cabin; font-weight:600; font-size:17px; padding-left:5px; padding-right:5px">Dashboard</a>
+			</div>
+			<div class="navbar-item">
+			    <a class="button is-light-blue" href="/logout" style="color:black; font-family:Cabin; font-weight:600; font-size:17px; padding-left:5px; padding-right:5px">Log Out</a>
+			</div>
+
+			{{ else }}
+			<div class="navbar-item">
+				<a class="button is-light-blue" href="/login" style="color:black; font-family:Cabin; font-weight:600; font-size:17px">Login</a>
+			</div>
+			{{ end }}
+		</div>
+	</div>
+</nav>
+
+{{ end }}
