@@ -1,0 +1,49 @@
+{{ define "bmviii footer" }}
+
+		<footer class="footer is-fixed-bottom" style='background-color: #54A0EE;'>
+			<div class="container">
+				<div class="columns is-centered is-mobile">
+				    <div class="column is-3">
+                        <img alt="Social" src={{ static_path "bmviii_socials_text.svg" }}>
+                        <div class="columns is-gapless is-mobile" style="padding-top: 10px">
+                            <div class="column is-4-mobile is-3-tablet is-2-desktop">
+                                <p>
+                                    <a href="https://www.facebook.com/BoilerMake/">
+                                        <img alt="Facebook logo" src={{ static_path "bmviii_facebook.svg" }} style="padding-right: 2px">
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="column is-4-mobile is-3-tablet is-2-desktop">
+                                <p>
+                                    <a href="https://www.instagram.com/boilermake/">
+                                        <img alt="Instagram logo" src={{ static_path "bmviii_instagram.svg" }} style="padding-right: 2px">
+                                    </a>
+                                </p>
+                            </div>
+                            <div class="column is-4-mobile is-3-tablet is-2-desktop">
+                                <p>
+                                    <a href="https://twitter.com/BoilerMake1/">
+                                        <img alt="Twitter logo" src={{ static_path "bmviii_twitter.svg" }}>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+					<div class="column is-3 is-offset-1">
+						<img alt="Pages" src={{ static_path "bmviii_pages_text.svg" }}>
+						<div style="padding-left: 10px">
+                            <p><a class="has-text-black bmviii-footer-text" href="/">Home</a></p>
+                            <p><a class="has-text-black bmviii-footer-text" href="/hackers">Hackers</a></p>
+                            <p><a class="has-text-black bmviii-footer-text" href="/sponsors">Sponsors</a></p>
+                            <p><a class="has-text-black bmviii-footer-text" href="/about">About</a></p>
+                            <p><a class="has-text-black bmviii-footer-text" href="/faq">FAQ</a></p>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
+
+{{ end }}
