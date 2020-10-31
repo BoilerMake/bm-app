@@ -22,8 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	// set up carousel
-	initCarousel();
+	// set up carousel (only on home page)
+	var carousel = document.getElementsByClassName('carousel-wrapper');
+	if (carousel.length > 0) {
+		initCarousel();
+	}
 
 	// Listen for clicks on accordion
 	var leftAccordions = document.getElementsByClassName("bmviii-left-accordion"); // gets array of all accordions
@@ -344,7 +347,7 @@ function getNextAnnouncement(id, tries) {
 
 // carousel management
 const itemClassName = 'carousel-entry';
-const items = document.getElementsByClassName(itemClassName);
+const items = document.getElementsByClassName(itemClassName); // returns an empty list if not on home page, which is fine as it's never used
 const totalItems = 3;
 var slide = 0;
 var moving = true;
