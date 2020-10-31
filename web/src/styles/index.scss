@@ -278,7 +278,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .bmviii-left-accordion-content, .bmviii-right-accordion-content {
-    background-color: #ddd;
+    background-color: #fff;
     font-family: Cabin;
     padding: 0 20px;
     font-size: 18px;
@@ -336,8 +336,9 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     font-size: 0;
 }
 
-.bmviii-box-pos {
-    height: 75%;
+.bmviii-footer-text {
+    width: 98px;
+    text-align: center;
 }
 
 .bmvii-why__img {
@@ -619,6 +620,13 @@ and (max-width: 1024px) {
   .grid {
     grid-template-rows: 1fr 1rem min-content 0.5rem min-content 0.5rem min-content;
   }
+}
+
+@media only screen
+and (max-width: 500px) {
+    .bmviii-footer-text {
+        text-align: left;
+    }
 }
 
 @media only screen
