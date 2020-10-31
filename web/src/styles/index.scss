@@ -278,10 +278,13 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .bmviii-left-accordion-content, .bmviii-right-accordion-content {
-    background-color: white;
+    background-color: #ddd;
+    font-family: Cabin;
     padding: 0 20px;
+    font-size: 18px;
     border-left: 1px solid whitesmoke; // match with heading
     border-right: 1px solid whitesmoke;
+    border-radius: 12px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-in-out;
