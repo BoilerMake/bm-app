@@ -90,16 +90,16 @@
         {{ else }}
           {{ if or (eq .Status 2) (eq .Status 4) }}
             {{ if eq .Data.Application.Decision -1 }}
-            <a class="button is-red is-fullwidth is-5 title" href="/apply">Apply Now</a>
+            <a class="button is-blue is-fullwidth is-5 title" href="/apply">Apply Now</a>
             {{ end }}
 
             {{ if eq .Data.Application.Decision 0 }}
-            <a class="button is-red is-outlined is-fullwidth is-5 title" href="/apply">View application</a>
+            <a class="button is-blue is-outlined is-fullwidth is-5 title" href="/apply">View application</a>
             {{ end }}
           {{ end }}
 
           {{ if eq .Data.Application.Decision 3 }}
-          <a class="button is-red is-fullwidth is-5 title" href="/rsvp">RSVP</a>
+          <a class="button is-blue is-fullwidth is-5 title" href="/rsvp">RSVP</a>
           {{ end }}
         {{ end }}
 			</div>

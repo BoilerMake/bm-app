@@ -136,6 +136,24 @@ body {
     border-radius: 6px;
 }
 
+.button.is-blue {
+    background-color: #6699FF;;
+    border-radius: 20px;
+    border-color: transparent;
+    color: $black
+}
+
+.button.is-blue.is-outlined {
+    background-color: transparent;
+    border-color: #0045DB;
+    color: $black;
+
+    &:hover {
+        background-color: #0045DB;
+        color: $white;
+    }
+}
+
 .button.is-red {
 	background-color: #FF0043;
     border-radius: 20px;
