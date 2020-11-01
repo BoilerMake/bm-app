@@ -42,7 +42,7 @@ func (h *Handler) postSignup() http.HandlerFunc {
 
 Thanks for creating a BoilerMake.org account! We're excited that you're interested in attending our hackathon.  Click the link below to confirm your email.
 
-Be sure to check 'My Application' to ensure you've applied to BoilerMake VII.  This email only confirms that you've created a BoilerMake.org account – the application is separate.
+Be sure to check 'My Application' to ensure you've applied to BoilerMake VIII.  This email only confirms that you've created a BoilerMake.org account – the application is separate.
 
 %s
 
