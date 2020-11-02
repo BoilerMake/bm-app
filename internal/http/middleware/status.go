@@ -63,7 +63,7 @@ func LiveOnly(h http.Handler) http.Handler {
 	}
 	st := status.Status(statusInt)
 
-	fn := func(w http.ResponseWriter, r*http.Request) {
+	fn := func(w http.ResponseWriter, r *http.Request) {
 		if st == status.Live {
 			h.ServeHTTP(w, r)
 			return
