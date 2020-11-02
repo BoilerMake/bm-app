@@ -194,6 +194,7 @@ func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err err
 				newApp.OtherMajor,
 				newApp.IsFirstHackathon,
 				newApp.WhyBM,
+				newApp.ProjIdea,
 				newApp.Is18OrOlder,
 				newApp.MLHCodeOfConduct,
 				newApp.MLHContestAndPrivacy,
