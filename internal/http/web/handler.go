@@ -153,7 +153,11 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
 
-	r.Get("/live", h.getLive())
+	// Live routes only
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.LiveOnly)
+		r.Get("/live", h.getLive())
+	})
 
 	// Exec routes
 	r.Group(func(r chi.Router) {
