@@ -1,0 +1,9 @@
+{{ define "navbar clear" }}
+
+{{ if or (lt .Status 2) (gt .Status 4) }}
+	{{ template "offseason navbar" . }}
+{{ else }}
+	{{ template "bmviii navbar clear" . }}
+{{ end }}
+
+{{ end }}

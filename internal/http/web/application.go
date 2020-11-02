@@ -55,7 +55,7 @@ func (h *Handler) getApply() http.HandlerFunc {
 		p.FormRefill = app
 
 		// Otherwise we can show the apply form with the data already filled in
-		h.Templates.RenderTemplate(w, "apply", p)
+		h.Templates.RenderTemplate(w, "bmviii-apply", p)
 	}
 }
 

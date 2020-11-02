@@ -22,6 +22,50 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
+	// set up carousel (only on home page)
+	var carousel = document.getElementsByClassName('carousel-wrapper');
+	if (carousel.length > 0) {
+		initCarousel();
+	}
+
+	// Listen for clicks on accordion
+	var leftAccordions = document.getElementsByClassName("bmviii-left-accordion"); // gets array of all accordions
+	for (var i = 0; i < leftAccordions.length; i++) {
+		leftAccordions[i].addEventListener('click', event => {
+			// event.target.classList.toggle('is-active');
+			const accordions = document.querySelectorAll('button.bmviii-left-accordion');
+			accordions.forEach(el => el.classList.remove('is-active')); // remove active icon
+			const content = event.target.nextElementSibling;
+			if(content.style.maxHeight) { // check current value of max-height. max-height = 0 -> closed else open
+				// current accordion is open and we need to close it
+				content.style.maxHeight = null; // set to null or 0
+			} else {
+				// accordion is closed. Need to take max height and turn it to whatever height is necessary
+				const accContent = document.querySelectorAll('div.bmviii-left-accordion-content'); // for resetting the rest of the accordion content
+				accContent.forEach(el => el.style.maxHeight = null);
+				event.target.classList.toggle('is-active');
+				content.style.maxHeight = content.scrollHeight + "px";
+			}
+		})
+	}
+
+	var rightAccordions = document.getElementsByClassName("bmviii-right-accordion"); // add separate event listener for second accordion
+	for (var i = 0; i < rightAccordions.length; i++) {
+		rightAccordions[i].addEventListener('click', event => {
+			// event.target.classList.toggle('is-active');
+			const accordions = document.querySelectorAll('button.bmviii-right-accordion');
+			accordions.forEach(el => el.classList.remove('is-active'));
+			const content = event.target.nextElementSibling;
+			if(content.style.maxHeight) {
+				content.style.maxHeight = null;
+			} else {
+				const accContent = document.querySelectorAll('div.bmviii-right-accordion-content');
+				accContent.forEach(el => el.style.maxHeight = null);
+				event.target.classList.toggle('is-active');
+				content.style.maxHeight = content.scrollHeight + "px";
+			}
+		})
+	}
 
 	// Update file upload labels when file changes
  	const fileUploads = document.querySelectorAll('.file-input');
@@ -166,6 +210,37 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
+	// Look for major selection of "other"
+	var majorSelector = document.getElementById("major");
+	if(majorSelector) {
+		majorSelector.addEventListener('change', event => {
+			var otherMajorSelector = document.getElementById("other-major-input");
+			var otherMajorText = document.getElementById("other-major");
+			if (event.target.value === "Other") {
+				otherMajorSelector.classList.remove('is-hidden');
+				otherMajorText.required = true;
+			} else {
+				otherMajorSelector.classList.add('is-hidden');
+				otherMajorText.required = false;
+			}
+		});
+	}
+
+	// Look for school selection of "Other"
+	var schoolSelector = document.getElementById("school");
+	if(schoolSelector) {
+		schoolSelector.addEventListener('change', event => {
+			var otherSchoolSelector = document.getElementById("other-school-input");
+			var otherSchoolText = document.getElementById("other-school");
+			if (event.target.value === "Other") {
+				otherSchoolSelector.classList.remove('is-hidden');
+				otherSchoolText.required = true;
+			} else {
+				otherSchoolSelector.classList.add('is-hidden');
+				otherSchoolText.required = false;
+			}
+		})
+	}
 
 	var rsvpSelector = document.getElementById("will-attend");
   if (rsvpSelector) {
@@ -268,6 +343,106 @@ function getNextAnnouncement(id, tries) {
       // Try again if we failed but at the id after
       getPrevAnnouncement(id + 1, tries + 1)
     });
+}
+
+// carousel management
+const itemClassName = 'carousel-entry';
+const items = document.getElementsByClassName(itemClassName); // returns an empty list if not on home page, which is fine as it's never used
+const totalItems = 3;
+var slide = 0;
+var moving = true;
+
+function setInitialClassesForCarousel() {
+	items[totalItems-1].classList.add('prev');
+	items[0].classList.add('active');
+	items[1].classList.add('next');
+}
+
+// set event listeners
+function setEventListenersOnNextAndPrev() {
+	const next = document.getElementsByClassName('carousel-button-next')[0];
+	const prev = document.getElementsByClassName('carousel-button-prev')[0];
+	next.addEventListener('click', goNextSlide);
+	prev.addEventListener('click', goPrevSlide);
+}
+
+function disableInteractionOnCarousel() { // prevent users from spamming the next/prev buttons
+	moving = true; // set to true to disable
+
+	setTimeout(function() {
+		moving = false;
+	}, 500); // set timeout to 0.5 seconds
+}
+
+function goNextSlide() {
+	if (!moving) {
+		if (slide === (totalItems -1)) { // overflow wrap around
+			slide = 0;
+		} else { // not last slide so increment
+			slide += 1;
+		}
+	}
+
+	// call helper function to move the current slide to front
+	showSlide(slide);
+}
+
+function goPrevSlide() {
+	if (!moving) {
+		if(slide == 0) { // underflow wrap around
+			slide = totalItems -1;
+		} else {
+			slide -= 1;
+		}
+
+		showSlide(slide);
+	}
+}
+
+function showSlide(slide) {
+	if(!moving) { // do nothing if moving
+		disableInteractionOnCarousel(); // act like a mutex lock of sort
+
+		// set new/old previous slides
+		var newPrev = slide -1;
+		var newNext = slide +1;
+		// oldPrev only matters if we arrive here from a "next"
+		// oldNext only matters if we arrive here from a "prev"
+		var oldPrev = slide -2; // depending on which button triggered show slide, either oldPrev or oldNext would be useless
+		var oldNext = slide +2;
+
+		// if (totalItems -1 > 3) {
+		// wrap oldPrev and oldNext
+		if (oldPrev < 0) {
+			oldPrev = totalItems + oldPrev;
+		}
+		if(oldNext > totalItems -1) {
+			oldNext = oldNext - totalItems;
+		}
+
+		// check curr slide. adjust newPrev/Next if needed
+		if (slide === 0) {
+			newPrev = totalItems -1;
+		} else if(slide === totalItems -1) {
+			newNext = 0;
+		}
+
+		// reset old prev and next
+		items[oldPrev].className = itemClassName;
+		items[oldNext].className = itemClassName;
+
+		// trigger transitions by setting prev, next, and active
+		items[newPrev].className = itemClassName + ' prev';
+		items[newNext].className = itemClassName + ' next';
+		items[slide].className = itemClassName + ' active';
+		// }
+	}
+}
+
+function initCarousel() {
+	setInitialClassesForCarousel();
+	setEventListenersOnNextAndPrev();
+	moving = false;
 }
 
 var currentAnnouncement;

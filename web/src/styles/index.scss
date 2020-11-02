@@ -4,6 +4,16 @@ $body-overflow-y: auto;
 // Use dark hammer logo colors instead of Bulma's default
 $dark: #231F20;
 
+// Use new background color for navbar for bmviii
+$navbar-background-color: #A7C3FF;
+
+// change navbar hover color. change text to make it readable as well
+$navbar-item-hover-background-color: #4B75F7;
+$navbar-item-hover-color: #FFFFFF;
+
+// change box radius for bmviii covid-19 info
+$box-radius: 20px;
+
 html {
 	scroll-behavior: smooth;
 }
@@ -59,10 +69,17 @@ body {
 // Make sure background image fills width and stays centered
 .has-background-image {
 	background-position: center;
-	background-size: cover;
+    background-size: cover;
 	background-repeat: no-repeat;
+
 }
 
+// Make sure full background image is shown. Need to fill with the background color
+.contains-background-image {
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
 
 // Titles in hero elemnts should be B I G
 .hero {
@@ -95,6 +112,10 @@ body {
 // Anything that effects bulma styling needs to come before bulma is imported
 @import "../../../node_modules/bulma/bulma.sass";
 
+.navbar-menu { // remove box shadow of navbar menu on mobile screens
+    box-shadow: none;
+}
+
 .bm-navbar {
 	flex-grow: 0;
 }
@@ -105,21 +126,219 @@ body {
 	background-repeat: no-repeat;
 }
 
+.button.is-dark-blue {
+    background-color: #2068FF;
+    border-radius: 6px;
+}
+
+.button.is-light-blue {
+    background-color: #6699FF;
+    border-radius: 6px;
+}
+
 .button.is-red {
-	background-color: #AC333B;
+	background-color: #FF0043;
+    border-radius: 20px;
 	border-color: transparent;
 	color: $white;
 }
 
 .button.is-red.is-outlined {
 	background-color: transparent;
-	border-color: #AC333B;
+	border-color: #FF0043;
 	color: $black;
 
 	&:hover {
-		background-color: #AC333B;
+		background-color: #FF0043;
 		color: $white;
 	}
+}
+
+.bmviii-text-style {
+    color: black;
+    font-family: Cabin, serif;
+    font-weight: 600;
+    font-size: 18px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.bmviii-footer-text {
+  font-family: Cabin, serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 24.3px;
+}
+
+.carousel-wrapper {
+    overflow: hidden;
+    width: 90%
+}
+.carousel-wrapper * {
+    box-sizing: border-box; // include adding and border to elements' total width and height
+}
+
+.carousel {
+    transform-style: preserve-3d;
+}
+.carousel-entry {
+    opacity: 0;
+    position: absolute;
+    top:0;
+    width: 75%;
+    margin: auto;
+    padding: 3rem 4rem;
+    z-index: 100;
+    transition: transform .5s, opacity .5s, z-index .5s;
+    min-height: 518px
+}
+
+.active { // show element
+    opacity: 1;
+    position: relative;
+    z-index: 900;
+}
+
+.carousel-entry.prev { // move prev item to the left
+    z-index: 800;
+    transform: translateX(-100%);
+}
+
+.carousel-entry.next { // move next item to the right
+    z-index: 800;
+    transform: translateX(100%);
+}
+
+// modify navigation button
+.carousel-button-prev, .carousel-button-next {
+    position: absolute;
+    top: 50%;
+    width: 3rem;
+    height: 3rem;
+    //background-color: #F5F5F5; // customize the buttons
+    transform: translateY(-50%);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001; /* Sit on top of everything */
+    border: 1px solid black;
+}
+
+.carousel-button-prev {
+    left: 0; // most left
+}
+.carousel-button-next {
+    right:0; // most right
+}
+
+.carousel-button-prev::after, .carousel-button-next::after {
+    content: " ";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 50%;
+    left: 54%;
+    border-right: 2px solid black; // customize the buttons
+    border-bottom: 2px solid black;
+    transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.carousel-button-next::after {
+    left: 47%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+button.bmviii-left-accordion, button.bmviii-right-accordion { // have separate accordions as we have two columns of accordions
+    width: 100%;
+    background-color: #ffffff;
+    border: none;
+    outline: none;
+    text-align: left;
+    padding: 15px 20px;
+    font-family: Cabin;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.2s linear;
+    word-wrap: break-word;
+    border-radius: 12px;
+}
+
+button.bmviii-left-accordion::after, button.bmviii-right-accordion::after {
+    content: "+";
+    font-size: 14px;
+    float: right;
+}
+
+button.bmviii-left-accordion.is-active::after, button.bmviii-right-accordion.is-active {
+    content:  "-"; // this should be the minus sign
+}
+
+button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.bmviii-left-accordion.is-active, button.bmviii-right-accordion.is-active {
+    background-color: #ddd;
+}
+
+.bmviii-left-accordion-content, .bmviii-right-accordion-content {
+    background-color: #fff;
+    font-family: Cabin;
+    padding: 0 20px;
+    font-size: 18px;
+    border-left: 1px solid whitesmoke; // match with heading
+    border-right: 1px solid whitesmoke;
+    border-radius: 12px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-in-out;
+}
+
+.bmviii-container-accordion {
+    padding-bottom: 36px;
+}
+
+.bmviii-covid-info {
+    width: 886px;
+    height: 127px;
+}
+
+.bmviii-faq-text {
+    font-family: Cabin, serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 26px;
+}
+
+.bmviii-faq-accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.bmviii-front-logo { // create own container for each element on front page
+    position: absolute;
+    width: 25%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    right: 0;
+    height: 25%;
+}
+
+.bmviii-waves {
+    position: absolute;
+    bottom: -5px;
+    width: 100%;
+    left: 0;
+    font-size: 0;
+}
+
+.bmviii-footer-text {
+    width: 98px;
+    text-align: center;
 }
 
 .bmvii-why__img {
@@ -221,6 +440,10 @@ body {
 .bmvii-section-header {
 	padding-top: 2rem;
 }
+
+//.bmvii-section-header {
+//    padding-top: 107.83px;
+//}
 
 .animate-spin {
 	animation-name: spin-y;
@@ -385,11 +608,25 @@ body {
 }
 
 @media only screen
+and (min-width: 1342px) {
+  .bmviii-waves {
+      bottom: auto;
+  }
+}
+
+@media only screen
 and (min-width: 601px)
 and (max-width: 1024px) {
   .grid {
     grid-template-rows: 1fr 1rem min-content 0.5rem min-content 0.5rem min-content;
   }
+}
+
+@media only screen
+and (max-width: 500px) {
+    .bmviii-footer-text {
+        text-align: left;
+    }
 }
 
 @media only screen
@@ -420,7 +657,30 @@ and (max-width: 600px) {
     grid-column: 1 / 10;
     grid-row: 5;
   }
+
+  .logo-div {
+      padding-left: 2%;
+  }
+
+  .logo-img {
+      max-width: 80%;
+  }
+
+  .carousel-entry {
+      width: 100%;
+      padding: 1rem 2rem;
+  }
+
+  .carousel-button-next {
+      right: -5px;
+  }
+
+  .carousel-button-prev {
+      left: -18px;
+  }
 }
+
+
 
 .live--announcements__button_enabled {
   cursor: pointer;
@@ -435,4 +695,11 @@ and (max-width: 600px) {
 
 .testimonials--offseason {
 	padding: 0 1.5rem 1.5rem;
+}
+
+.bmviii-app-font {
+    font-family: Cabin, serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: black;
 }
