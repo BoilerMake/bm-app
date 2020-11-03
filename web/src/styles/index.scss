@@ -16,6 +16,8 @@ $box-radius: 20px;
 
 html {
 	scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 // Keeps footer at bottom even on pages with less than a full page of content
@@ -23,6 +25,8 @@ body {
 	display: flex;
 	min-height: 100vh;
 	flex-direction: column;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .is-hidden {
