@@ -46,7 +46,7 @@
               <div class="field-body">
                 <div class="field">
                   <div class="control">
-                    <input type="text" name="shipping-address" class="input" maxlength="1024" value="{{ .FormRefill.Accommodations}}">
+                    <input type="text" name="shipping-address" class="input" maxlength="1024" value="{{ .FormRefill.ShippingAddr}}">
                   </div>
                 </div>
               </div>
@@ -61,7 +61,7 @@
                   <div class="control">
                     <div class="select is-fullwidth">
                         <select name="on-campus" id="on-campus" required>
-                            {{ if not .FormRefill.WillAttend }}
+                            {{ if not .FormRefill.OnCampus }}
                             <option value="on">Yes</option>
                             <option value="off" selected="true">No</option>
                             {{ else }}

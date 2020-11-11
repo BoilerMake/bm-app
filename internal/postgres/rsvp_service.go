@@ -17,10 +17,10 @@ type dbRSVP struct {
 	ID     sql.NullInt64
 	UserID sql.NullInt64
 
-	WillAttend     sql.NullBool
-	Accommodations sql.NullString
-	ShirtSize      sql.NullString
-	Allergies      sql.NullString
+	WillAttend   sql.NullBool
+	OnCampus     sql.NullBool
+	ShirtSize    sql.NullString
+	ShippingAddr sql.NullString
 }
 
 // toModel converts a database specific dbRSVP to the more generic
@@ -30,10 +30,10 @@ func (r *dbRSVP) toModel() *models.RSVP {
 		ID:     int(r.ID.Int64),
 		UserID: int(r.UserID.Int64),
 
-		WillAttend:     r.WillAttend.Bool,
-		Accommodations: r.Accommodations.String,
-		ShirtSize:      r.ShirtSize.String,
-		Allergies:      r.Allergies.String,
+		WillAttend:   r.WillAttend.Bool,
+		OnCampus:     r.OnCampus.Bool,
+		ShirtSize:    r.ShirtSize.String,
+		ShippingAddr: r.ShippingAddr.String,
 	}
 }
 
@@ -59,15 +59,15 @@ func (s *RSVPService) CreateOrUpdate(r *models.RSVP) (err error) {
 			_, err = tx.Exec(`INSERT INTO rsvps (
 			user_id,
 			will_attend,
-			accommodations,
 			shirt_size,
-			allergies
+			oncampus,
+			shipping_addr
 		) VALUES ($1, $2, $3, $4, $5);`,
 				r.UserID,
 				r.WillAttend,
-				r.Accommodations,
 				r.ShirtSize,
-				r.Allergies,
+				r.OnCampus,
+				r.ShippingAddr,
 			)
 
 			if err != nil {
@@ -87,14 +87,14 @@ func (s *RSVPService) CreateOrUpdate(r *models.RSVP) (err error) {
 		_, err = tx.Exec(`UPDATE rsvps
 		SET
 			will_attend = $1,
-			accommodations = $2,
-			shirt_size = $3,
-			allergies = $4
+			shirt_size = $2,
+			oncampus = $3,
+			shipping_addr = $4
 		WHERE user_id = $5`,
 			r.WillAttend,
-			r.Accommodations,
 			r.ShirtSize,
-			r.Allergies,
+			r.OnCampus,
+			r.ShippingAddr,
 			r.UserID,
 		)
 
@@ -123,17 +123,17 @@ func (s *RSVPService) GetByUserID(uid int) (*models.RSVP, error) {
 			id,
 			user_id,
 			will_attend,
-			accommodations,
 			shirt_size,
-			allergies
+			oncampus,
+			shipping_addr
 		FROM rsvps
 		WHERE user_id = $1`, uid).Scan(
 		&dbr.ID,
 		&dbr.UserID,
 		&dbr.WillAttend,
-		&dbr.Accommodations,
 		&dbr.ShirtSize,
-		&dbr.Allergies,
+		&dbr.OnCampus,
+		&dbr.ShippingAddr,
 	)
 
 	if err != nil {

@@ -13,15 +13,17 @@ var (
 )
 
 const RSVPExpiryTime = 3 * 24 * time.Hour
+const RSVPExpiryDate = 1608310799000 // this is milliseconds since epoch for the date 12/18/2020 11:59:59 EST
+// const testRSVPExpiryDate
 
 type RSVP struct {
 	ID     int
 	UserID int
 
-	WillAttend     bool
-	Accommodations string
-	ShirtSize      string
-	Allergies      string
+	WillAttend   bool
+	OnCampus     bool
+	ShirtSize    string
+	ShippingAddr string
 }
 
 // Validate checks if an RSVP has all the necessary fields.
@@ -37,9 +39,9 @@ func (rsvp *RSVP) Validate() error {
 // models.RSVP struct.
 func (rsvp *RSVP) FromFormData(r *http.Request) error {
 	rsvp.WillAttend = r.FormValue("will-attend") == "on"
-	rsvp.Accommodations = r.FormValue("accommodations")
+	rsvp.OnCampus = r.FormValue("on-campus") == "on"
 	rsvp.ShirtSize = r.FormValue("shirt-size")
-	rsvp.Allergies = r.FormValue("allergies")
+	rsvp.ShippingAddr = r.FormValue("shipping-address")
 
 	return nil
 }
