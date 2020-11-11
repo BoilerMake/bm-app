@@ -1,11 +1,11 @@
 {{ define "rsvp" }}
 {{ template "head" . }}
 
-{{ template "bmvii navbar" . }}
+{{ template "bmviii navbar sand" . }}
 
 {{ template "flashes" .Flashes }}
 
-<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmviii-dashboard-background.svg" }}); background-color: #FFE4C3'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="box column is-5">
@@ -36,17 +36,17 @@
 					</div>
 
           <div id="rsvp-yes-selected">
-            <p class=" has-text-centered subtitle">Get ready to hack your own adventure.</p>
+            <p class=" has-text-centered subtitle">Get ready to lay back and hack.</p>
             <p>You'll receive an email with more logistical information in the coming weeks.</p>
 
             <div class="field is-horizontal">
               <div class="field-label is-normal">
-                <label for="accommodations" class="label">Required accommodations</label>
+                <label for="accommodations" class="label">Shipping Address (for swag)</label>
               </div>
               <div class="field-body">
                 <div class="field">
                   <div class="control">
-                    <input type="text" name="accommodations" class="input" maxlength="1024" value="{{ .FormRefill.Accommodations}}">
+                    <input type="text" name="shipping-address" class="input" maxlength="1024" value="{{ .FormRefill.Accommodations}}">
                   </div>
                 </div>
               </div>
@@ -54,12 +54,22 @@
 
             <div class="field is-horizontal">
               <div class="field-label is-normal">
-                <label for="allergies" class="label">Allergies</label>
+                <label for="on-campus" class="label">Will you be on-campus? (West Lafayette, IN)</label>
               </div>
               <div class="field-body">
                 <div class="field">
                   <div class="control">
-                    <input type="text" name="allergies" class="input" maxlength="1024" value="{{ .FormRefill.Allergies}}">
+                    <div class="select is-fullwidth">
+                        <select name="on-campus" id="on-campus" required>
+                            {{ if not .FormRefill.WillAttend }}
+                            <option value="on">Yes</option>
+                            <option value="off" selected="true">No</option>
+                            {{ else }}
+                            <option value="on" selected="true">Yes</option>
+                            <option value="off">No</option>
+                            {{ end }}
+                        </select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -122,8 +132,7 @@
               </div>
             </div>
 
-            <p>Please join our Slack workplace to meet other hackers and hear announcements from the team!
-            At this time, we are not able to provide buses or travel reimbursements. We encourage joining the #carpool channel on Slack to find others from your school.</p>
+            <p>Please join our Slack workplace to meet other hackers and hear announcements from the team!</p>
 
             <div class="field has-text-centered">
               <a class="button is-red is-outlined" href="https://join.slack.com/t/boilermakevii/shared_invite/enQtODg5NjE1NDQ5MTczLWJhZTA3MGRlMWI0ZjVjNjU4YjIyN2Y3NDAxOWIwNTEwMGFmNjJhZTljYTI1MmM2MWNkYmE0ZmJmYTRlMDUyNzk" target="_blank">Join BM VII Slack</a>
@@ -141,5 +150,5 @@
 	</div>
 </section>
 
-{{ template "bmvii footer" . }}
+{{ template "bmviii footer" . }}
 {{ end }}
