@@ -13,8 +13,7 @@ var (
 )
 
 const RSVPExpiryTime = 3 * 24 * time.Hour
-const RSVPExpiryDate = 1608310799000 // this is milliseconds since epoch for the date 12/18/2020 11:59:59 EST
-// const testRSVPExpiryDate
+const RSVPExpiryDate = 1608353999000 // this is milliseconds since epoch for the date 12/18/2020 23:59:59 EST
 
 type RSVP struct {
 	ID     int
