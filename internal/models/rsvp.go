@@ -19,10 +19,14 @@ type RSVP struct {
 	ID     int
 	UserID int
 
-	WillAttend   bool
-	OnCampus     bool
-	ShirtSize    string
-	ShippingAddr string
+	WillAttend bool
+	OnCampus   bool
+	ShirtSize  string
+	StreetAddr string
+	City       string
+	State		string
+	Country    string
+	ZipCode    string
 }
 
 // Validate checks if an RSVP has all the necessary fields.
@@ -40,7 +44,11 @@ func (rsvp *RSVP) FromFormData(r *http.Request) error {
 	rsvp.WillAttend = r.FormValue("will-attend") == "on"
 	rsvp.OnCampus = r.FormValue("on-campus") == "on"
 	rsvp.ShirtSize = r.FormValue("shirt-size")
-	rsvp.ShippingAddr = r.FormValue("shipping-address")
+	rsvp.StreetAddr = r.FormValue("street-address")
+	rsvp.City = r.FormValue("city")
+	rsvp.State = r.FormValue("state")
+	rsvp.Country = r.FormValue("country")
+	rsvp.ZipCode = r.FormValue("zipcode")
 
 	return nil
 }
