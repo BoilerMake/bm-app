@@ -43,7 +43,7 @@ services:
       # Request locations to route to metabase
       # Take anything with the mb. prefix
       - traefik.frontend.rule=HostRegexp:mb.{catchall:.*}
-      # bm-app has a priority of 1, so this takes precedences (at least on
+      # bm-app has a priority of 1, so this takes precedence (at least on
       # requests that match the frontend rule above).
       - traefik.frontend.priority=2
       # Name of backend to handle requests from above
