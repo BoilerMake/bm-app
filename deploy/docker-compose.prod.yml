@@ -16,9 +16,36 @@ services:
     # variable expansion in its .toml files.
     command:
       - --acme.email=${TRAEFIK_EMAIL}
-      - --acme.domains=${DOMAIN},www.${DOMAIN}
+      - --acme.domains=${DOMAIN},www.${DOMAIN},mb.${DOMAIN}
     volumes:
       # So traefik can pay attention to docker activities
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.prod.toml:/etc/traefik/traefik.toml
       - /opt/traefik/acme.json:/acme.json
+
+  metabase:
+    image: metabase/metabase
+    restart: always
+    environment:
+      MB_DB_TYPE: 'postgres'
+      MB_DB_DBNAME: '${DB_NAME}'
+      MB_DB_HOST: 'database'
+      MB_DB_PORT: '5432'
+      MB_DB_USER: '${DB_USER}'
+      MB_DB_PASS: '${DB_PASSWORD}'
+    volumes:
+      # where Metabase data will be persisted
+      - '../working/metabase-data:/metabase-data'
+    depends_on:
+      - 'database'
+    labels:
+      - traefik.enable=true
+      # Request locations to route to metabase
+      # Take anything with the mb. prefix
+      - traefik.frontend.rule=HostRegexp:mb.{catchall:.*}
+      # bm-app has a priority of 1, so this takes precedence (at least on
+      # requests that match the frontend rule above).
+      - traefik.frontend.priority=2
+      # Name of backend to handle requests from above
+      - traefik.backend=metabase
+      - traefik.port=3000
