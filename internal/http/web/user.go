@@ -327,7 +327,7 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 
 		// Only show to accepted users
 		if a.Decision == models.DecisionAccepted {
-			if (time.Now().UnixNano()/1000000) > models.RSVPExpiryDate {
+			if time.Now().After(models.RSVPExpiryDate) {
 				a.Decision = -2
 			}
 		}
