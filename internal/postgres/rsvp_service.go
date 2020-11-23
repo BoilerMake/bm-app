@@ -17,10 +17,14 @@ type dbRSVP struct {
 	ID     sql.NullInt64
 	UserID sql.NullInt64
 
-	WillAttend     sql.NullBool
-	Accommodations sql.NullString
-	ShirtSize      sql.NullString
-	Allergies      sql.NullString
+	WillAttend sql.NullBool
+	OnCampus   sql.NullBool
+	ShirtSize  sql.NullString
+	StreetAddr sql.NullString
+	City       sql.NullString
+	State		sql.NullString
+	Country    sql.NullString
+	ZipCode    sql.NullString
 }
 
 // toModel converts a database specific dbRSVP to the more generic
@@ -30,10 +34,14 @@ func (r *dbRSVP) toModel() *models.RSVP {
 		ID:     int(r.ID.Int64),
 		UserID: int(r.UserID.Int64),
 
-		WillAttend:     r.WillAttend.Bool,
-		Accommodations: r.Accommodations.String,
-		ShirtSize:      r.ShirtSize.String,
-		Allergies:      r.Allergies.String,
+		WillAttend: r.WillAttend.Bool,
+		OnCampus:   r.OnCampus.Bool,
+		ShirtSize:  r.ShirtSize.String,
+		StreetAddr: r.StreetAddr.String,
+		City:       r.City.String,
+		State:		r.State.String,
+		Country:    r.Country.String,
+		ZipCode:    r.ZipCode.String,
 	}
 }
 
@@ -59,15 +67,23 @@ func (s *RSVPService) CreateOrUpdate(r *models.RSVP) (err error) {
 			_, err = tx.Exec(`INSERT INTO rsvps (
 			user_id,
 			will_attend,
-			accommodations,
 			shirt_size,
-			allergies
-		) VALUES ($1, $2, $3, $4, $5);`,
+			oncampus,
+			street_address,
+			city,
+			state,
+			country,
+			zip_code
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`,
 				r.UserID,
 				r.WillAttend,
-				r.Accommodations,
 				r.ShirtSize,
-				r.Allergies,
+				r.OnCampus,
+				r.StreetAddr,
+				r.City,
+				r.State,
+				r.Country,
+				r.ZipCode,
 			)
 
 			if err != nil {
@@ -87,14 +103,22 @@ func (s *RSVPService) CreateOrUpdate(r *models.RSVP) (err error) {
 		_, err = tx.Exec(`UPDATE rsvps
 		SET
 			will_attend = $1,
-			accommodations = $2,
-			shirt_size = $3,
-			allergies = $4
-		WHERE user_id = $5`,
+			shirt_size = $2,
+			oncampus = $3,
+			street_address = $4,
+			city = $5,
+			state = $6,
+			country = $7,
+			zip_code = $8
+		WHERE user_id = $9`,
 			r.WillAttend,
-			r.Accommodations,
 			r.ShirtSize,
-			r.Allergies,
+			r.OnCampus,
+			r.StreetAddr,
+			r.City,
+			r.State,
+			r.Country,
+			r.ZipCode,
 			r.UserID,
 		)
 
@@ -123,17 +147,25 @@ func (s *RSVPService) GetByUserID(uid int) (*models.RSVP, error) {
 			id,
 			user_id,
 			will_attend,
-			accommodations,
 			shirt_size,
-			allergies
+			oncampus,
+			street_address,
+			city,
+			state,
+			country,
+			zip_code
 		FROM rsvps
 		WHERE user_id = $1`, uid).Scan(
 		&dbr.ID,
 		&dbr.UserID,
 		&dbr.WillAttend,
-		&dbr.Accommodations,
 		&dbr.ShirtSize,
-		&dbr.Allergies,
+		&dbr.OnCampus,
+		&dbr.StreetAddr,
+		&dbr.City,
+		&dbr.State,
+		&dbr.Country,
+		&dbr.ZipCode,
 	)
 
 	if err != nil {

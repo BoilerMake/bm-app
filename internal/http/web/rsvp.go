@@ -41,7 +41,7 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 
 		// Now make sure RSVP has not expired
 		if app.Decision == models.DecisionAccepted {
-			if !app.AcceptedAt.IsZero() && time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
+			if time.Now().After(models.RSVPExpiryDate) { // check if current epoch in milliseconds is greater than expiry date
 				session.AddFlash(flash.Flash{
 					Type:    flash.Error,
 					Message: "Your RSVP has expired.",
@@ -62,6 +62,7 @@ func (h *Handler) getRSVP() http.HandlerFunc {
 			if err == sql.ErrNoRows {
 				rsvp = &models.RSVP{}
 				rsvp.WillAttend = true
+				rsvp.OnCampus = true
 			} else {
 				h.Error(w, r, err, "")
 				return
@@ -120,7 +121,7 @@ func (h *Handler) postRSVP() http.HandlerFunc {
 
 		// Now make sure RSVP has not expired
 		if app.Decision == models.DecisionAccepted {
-			if !app.AcceptedAt.IsZero() && time.Now().Sub(app.AcceptedAt) > models.RSVPExpiryTime {
+			if time.Now().After(models.RSVPExpiryDate) {
 				session.AddFlash(flash.Flash{
 					Type:    flash.Error,
 					Message: "Your RSVP has expired.",
