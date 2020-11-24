@@ -93,6 +93,9 @@ type Handler struct {
 	// An AnnouncementService is the interface with the database for announcements
 	AnnouncementService models.AnnouncementService
 
+	// A RaffleService is the interface with the databse for raffles
+	RaffleService models.RaffleService
+
 	// A Mailer is used to send emails
 	Mailer mail.Mailer
 
@@ -116,11 +119,12 @@ type Handler struct {
 }
 
 // NewHandler creates a handler for web requests.
-func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, ras models.RaffleService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
 		UserService:         us,
 		ApplicationService:  as,
 		RSVPService:         rs,
+		RaffleService:       ras,
 		AnnouncementService: anns,
 		Mailer:              mailer,
 		S3:                  S3,
@@ -167,6 +171,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 		r.Post("/announcement", h.postAnnouncement())
 		r.Delete("/announcement", h.deleteAnnouncement())
+
+		r.Post("/createraffle", h.createRaffle())
 	})
 
 	// On season only routes

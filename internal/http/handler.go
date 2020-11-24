@@ -21,9 +21,9 @@ type Handler struct {
 }
 
 // NewHandler creates a handler that wraps the subhandlers for the entire app.
-func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, mailer mail.Mailer, S3 s3.S3) *Handler {
+func NewHandler(us models.UserService, as models.ApplicationService, rs models.RSVPService, anns models.AnnouncementService, ras models.RaffleService, mailer mail.Mailer, S3 s3.S3) *Handler {
 	h := Handler{
-		WebHandler: web.NewHandler(us, as, rs, anns, mailer, S3),
+		WebHandler: web.NewHandler(us, as, rs, anns, ras, mailer, S3),
 	}
 	r := chi.NewRouter()
 
