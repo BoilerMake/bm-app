@@ -1,7 +1,7 @@
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
 ALTER TABLE bm_applications
-ADD COLUMN points INTEGER;
+ADD COLUMN points INTEGER DEFAULT 0;
 
 CREATE TABLE raffles (
     raffle_id TEXT PRIMARY KEY,

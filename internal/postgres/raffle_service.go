@@ -3,8 +3,8 @@ package postgres
 import (
 	"database/sql"
 	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/lib/pq"
 	"strconv"
-	"strings"
 )
 
 // RaffleService is a PostgreSQL implementation of models.raffle
@@ -20,6 +20,17 @@ type dbRaffle struct {
 	Start  sql.NullInt64
 	End    sql.NullInt64
 	Points sql.NullInt64
+}
+
+// toModel converts a database specific dbRaffle to the more generic
+// Raffle struct
+func (s *dbRaffle) toModel() *models.Raffle {
+	return &models.Raffle{
+		Code:      s.Code.String,
+		StartTime: strconv.FormatInt(s.Start.Int64, 10),
+		EndTime:   strconv.FormatInt(s.End.Int64, 10),
+		Points:    strconv.FormatInt(s.Points.Int64, 10),
+	}
 }
 
 // Create creates a raffle and stores it in the DB
@@ -57,11 +68,94 @@ func (s *RaffleService) Create(ra *models.Raffle) error {
 		pointsInt,
 	)
 
-	// Check for duplicate
-	if err != nil {
-		if strings.Contains(err.Error(), "duplicate key") {
+	// Check for duplicate. Do this through checking postgres specific error // TODO: CHECK FOR EXEC CREATING RAFFLES
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "unique_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
 			return models.ErrDuplicateRaffle
+		default:
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return pgerr
 		}
+	}
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	return err
+}
+
+// Get raffle by id
+func (s *RaffleService) GetById(id string) (*models.Raffle, error) {
+	var dbr dbRaffle
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+
+	err = tx.QueryRow(`SELECT 
+					raffle_id,
+					start_time,
+					end_time,
+					points
+				FROM raffles
+				WHERE raffle_id = $1`, id).Scan(
+		&dbr.Code,
+		&dbr.Start,
+		&dbr.End,
+		&dbr.Points,
+	)
+
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
+		return nil, err
+	}
+
+	err = tx.Commit()
+	return dbr.toModel(), err
+}
+
+// claim a raffle by inserting to raffle_hacker relation
+func (s *RaffleService) ClaimRaffle(userId int, raffleId string) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`INSERT INTO raffle_hacker (user_id, raffle_id) VALUES ($1, $2);`,
+		userId,
+		raffleId,
+	)
+
+	// Check if user already claimed raffle. Do this through checking postgres specific error
+	if pgerr, ok := err.(*pq.Error); ok {
+		switch pgerr.Code.Name() {
+		case "unique_violation":
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return models.ErrRaffleClaimed
+		default:
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return rollbackErr
+			}
+			return pgerr
+		}
+	}
+
+	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return rollbackErr
 		}

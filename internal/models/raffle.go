@@ -56,4 +56,6 @@ func (ra *Raffle) FromFormData(r *http.Request) error {
 // rsvp model and database representation of the raffles table
 type RaffleService interface {
 	Create(ra *Raffle) error
+	GetById(id string) (*Raffle, error)
+	ClaimRaffle(userId int, raffleId string) error
 }
