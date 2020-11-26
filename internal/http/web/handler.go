@@ -175,6 +175,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Delete("/announcement", h.deleteAnnouncement())
 
 		r.Post("/createraffle", h.createRaffle())
+		r.Post("/addtickets", h.addTickets())
 	})
 
 	// On season only routes

@@ -373,3 +373,24 @@ func (s *ApplicationService) AddPointsToUser(uid int, points int) error {
 	err = tx.Commit()
 	return err
 }
+
+//// add points to user with specific email
+//// create a new function for this so we can use join instead of two separate queries
+//func (s *ApplicationService) AddPointsToEmail(email string, points int) error {
+//	tx, err := s.DB.Begin()
+//	if err != nil {
+//		return err
+//	}
+//
+//	_, err = tx.Exec(`UPDATE bm_applications AS b SET points = points + $1 FROM users AS u WHERE u.id = b.user_id AND u.email = $2`, points, email)
+//
+//	if err != nil {
+//		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+//			return rollbackErr
+//		}
+//		return err
+//	}
+//
+//	err = tx.Commit()
+//	return err
+//}

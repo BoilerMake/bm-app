@@ -15,6 +15,8 @@ var (
 	ErrPointsEmpty      = &ModelError{"Points is missing", flash.Error}
 	ErrInvalidPoints    = &ModelError{"Incorrect format for points", flash.Error}
 	ErrDuplicateRaffle  = &ModelError{"This raffle code already exists", flash.Error}
+
+	ErrInvalidPointsToAdd = &ModelError{"Incorrect format for points to add", flash.Error}
 )
 
 // A Raffle is a raffle stored in the raffles table

@@ -156,3 +156,48 @@ func (h *Handler) createRaffle() http.HandlerFunc {
 		http.Redirect(w, r, "/exec", http.StatusSeeOther)
 	}
 }
+
+// addTickets is endpoint for exec adding points to a specific hacker
+func (h *Handler) addTickets() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session := h.getSession(r)
+		// get email address and points to add
+		email := r.FormValue("email")
+		points := r.FormValue("points")
+		pointsInt, err := strconv.Atoi(points)
+		if err != nil {
+			h.Error(w, r, models.ErrInvalidPointsToAdd, "/exec")
+			return
+		}
+		//err = h.ApplicationService.AddPointsToEmail(email, pointsInt)
+		//if err != nil {
+		//	h.Error(w, r, err, "/exec")
+		//	return
+		//}
+
+		// get user by email
+		user, err := h.UserService.GetByEmail(email)
+		if err != nil {
+			h.Error(w, r, err, "/exec")
+			return
+		}
+
+		id := user.ID
+		err = h.ApplicationService.AddPointsToUser(id, pointsInt)
+		if err != nil {
+			h.Error(w, r, err, "/exec")
+			return
+		}
+
+		// flash success message
+		successMessage := fmt.Sprintf("%d points have been successfully added to %s", pointsInt, email)
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: successMessage,
+		})
+		session.Save(r, w)
+
+		// redirect back to exec page
+		http.Redirect(w, r, "/exec", http.StatusSeeOther)
+	}
+}

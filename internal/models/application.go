@@ -178,4 +178,5 @@ type ApplicationService interface {
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
 	AddPointsToUser(uid int, points int) error
+	// AddPointsToEmail(email string, points int) error
 }
