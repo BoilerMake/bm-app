@@ -1,5 +1,6 @@
-const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
-const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
+const end = new Date('Jan 24, 2021 09:30:00 EST').getTime();
+//const start = new Date('Jan 22, 2021 22:00:00 EST').getTime();
+const start = new Date('Dec 10, 2020 17:17:00 EST').getTime();
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -451,11 +452,17 @@ var mostRecentAnnouncement;
 function updateAnnouncements() {
     fetch('/announcement')
       .then((res) => {
-        return res.json();
-      })
+        return res.text();
+      }).then((text) =>{
+      	if (text.length) {
+      		return JSON.parse(text);
+		} else {
+      		return null
+		}
+	  })
       .then((ann) => {
         // Only update if there was an announcement we didn't have before
-        if (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id) {
+        if (ann != null && (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id)) {
           mostRecentAnnouncement = ann
           // Always force update people so they don't get behind
           currentAnnouncement = mostRecentAnnouncement;
@@ -509,26 +516,35 @@ function repaintAnnouncements() {
 }
 
 function updateCountdown() {
-  const now = new Date().getTime()
-  var distance;
+	const now = new Date().getTime();
+	var distance;
 
-  if (start > now || now > end) {
-    // Hide timer
-    document.querySelector('.live-countdown').classList.add('is-hidden');
-    return
-  } else {
-    // Make sure timer is showing
-    document.querySelector('.live-countdown').classList.remove('is-hidden');
-    distance = end - now
-  }
+	if (start > now || now > end) {
+		// Hide timer
+		document.querySelector('.live-countdown').classList.add('is-hidden');
+		if(start > now) { // event hasn't started yet ( we can do a countdown to event here )
+			document.querySelector('.pre-live').classList.remove('is-hidden');
+		} else { // event has ended
+			document.querySelector('.event-finished').innerHTML = "Hacking has finished";
+		}
 
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+		return
+	} else {
+		// Make sure timer is showing
+		document.querySelector('.live-countdown').classList.remove('is-hidden');
+		document.querySelector('.pre-live').classList.add('is-hidden');
+		distance = end - now
+	}
+	distance = end - now;
+	var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
+	var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+	var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
-	document.querySelector('.hours-left').innerHTML = hours;
-	document.querySelector('.minutes-left').innerHTML = minutes;
-	document.querySelector('.seconds-left').innerHTML = seconds;
+	document.querySelector('.days-left').innerHTML = days + " Days";
+	document.querySelector('.hours-left').innerHTML = hours + " Hours";
+	document.querySelector('.minutes-left').innerHTML = minutes + " Minutes";
+	document.querySelector('.seconds-left').innerHTML = seconds + " Seconds";
 }
 
 var hammers = 

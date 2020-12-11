@@ -2,8 +2,10 @@
 
 {{ if or (lt .Status 2) (gt .Status 4) }}
 	{{ template "offseason home" . }}
+{{ else if eq .Status 4 }}
+	{{ template "bmviii live home" . }}
 {{ else }}
-	{{ template "bmviii home" . }}
+    {{ template "bmviii home" . }}
 {{ end }}
 
 {{ end }}

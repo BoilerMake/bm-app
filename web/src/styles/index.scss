@@ -526,39 +526,39 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   align-self: end;
 }
 
-.live-countdown {
-  grid-column: 6;
-  grid-row: 1;
-
-  justify-self: right;
-  align-self: end;
-
-  display: flex;
-
-  color: white;
-
-  .live-hours,
-  .live-minutes,
-  .live-seconds {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .live--countdown__colon {
-    padding: 0 5px;
-  }
-
-  .live--countdown__time {
-    line-height: 1;
-    font-size: 3rem;
-    margin-bottom: 0px !important;
-  }
-
-  .live--countdown__unit {
-    font-size: 10px;
-  }
-}
+//.live-countdown { // TODO: UNCOMMENT LATER WHEN DEALING WITH THE NEW STYLING
+//  grid-column: 6;
+//  grid-row: 1;
+//
+//  justify-self: right;
+//  align-self: end;
+//
+//  display: flex;
+//
+//  color: white;
+//
+//  .live-hours,
+//  .live-minutes,
+//  .live-seconds {
+//    display: flex;
+//    flex-direction: column;
+//    align-items: center;
+//  }
+//
+//  .live--countdown__colon {
+//    padding: 0 5px;
+//  }
+//
+//  .live--countdown__time {
+//    line-height: 1;
+//    font-size: 3rem;
+//    margin-bottom: 0px !important;
+//  }
+//
+//  .live--countdown__unit {
+//    font-size: 10px;
+//  }
+//}
 
 .live--announcements__padding {
   grid-column: 2 / 4;
