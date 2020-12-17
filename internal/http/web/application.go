@@ -9,6 +9,25 @@ import (
 	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
+func (h *Handler) postCheckIn() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session := h.getSession(r)
+		id, ok := session.Values["ID"].(int)
+		if !ok {
+			h.Error(w, r, errors.New("invalid session value"), "")
+			return
+		}
+		app, err := h.ApplicationService.GetByUserID(id)
+		if err != nil {
+			h.Error(w, r, err, "")
+			return
+		}
+		if app.Decision == models.DecisionAccepted {
+			err = h.ApplicationService.CheckIn(app)
+		}
+	}
+}
+
 // getApply renders the apply template.
 func (h *Handler) getApply() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

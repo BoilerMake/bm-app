@@ -74,6 +74,25 @@ func (a *dbApplication) toModel() *models.Application {
 	}
 }
 
+// CheckIn attempts to check-in a user by switching boolean value of check-in from
+// false to true.
+func (s *ApplicationService) CheckIn(app *models.Application) (err error) {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(`UPDATE bm_applications SET check_in = TRUE	
+						WHERE user_id=$1`, app.UserID)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+	err = tx.Commit()
+	return err
+}
+
 // CreateOrUpdate tries to make a new Application, if one already exists then
 // it updates the existing one.
 func (s *ApplicationService) CreateOrUpdate(newApp *models.Application) (err error) {
