@@ -70,6 +70,7 @@ type Application struct {
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
 	MLHContestAndPrivacy bool
+	CheckedInStatus      bool
 }
 
 // Validate checks if an Application has all the necessary fields. Validation

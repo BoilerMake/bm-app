@@ -40,6 +40,7 @@ type dbApplication struct {
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
+	CheckedInStatus      sql.NullBool
 }
 
 // toModel converts a database specific dbApplication to the more generic
@@ -71,6 +72,7 @@ func (a *dbApplication) toModel() *models.Application {
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,
+		CheckedInStatus:      a.CheckedInStatus.Bool,
 	}
 }
 
@@ -305,7 +307,8 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			proj_idea,
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
-			tac_mlh_contest_and_privacy
+			tac_mlh_contest_and_privacy,
+			check_in_status
 		FROM bm_applications
 		WHERE user_id = $1`, uid).Scan(
 		&dba.ID,
@@ -331,6 +334,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.Is18OrOlder,
 		&dba.MLHCodeOfConduct,
 		&dba.MLHContestAndPrivacy,
+		&dba.CheckedInStatus,
 	)
 
 	if err != nil {

@@ -22,7 +22,7 @@ type dbRSVP struct {
 	ShirtSize  sql.NullString
 	StreetAddr sql.NullString
 	City       sql.NullString
-	State		sql.NullString
+	State      sql.NullString
 	Country    sql.NullString
 	ZipCode    sql.NullString
 }
@@ -39,7 +39,7 @@ func (r *dbRSVP) toModel() *models.RSVP {
 		ShirtSize:  r.ShirtSize.String,
 		StreetAddr: r.StreetAddr.String,
 		City:       r.City.String,
-		State:		r.State.String,
+		State:      r.State.String,
 		Country:    r.Country.String,
 		ZipCode:    r.ZipCode.String,
 	}
