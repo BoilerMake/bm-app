@@ -3,7 +3,6 @@ package web
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -25,7 +24,19 @@ func (h *Handler) postCheckIn() http.HandlerFunc {
 		}
 		if app.Decision == models.DecisionAccepted {
 			err = h.ApplicationService.CheckIn(app)
+			if err != nil {
+				h.Error(w, r, err, "")
+				return
+			}
 		}
+		session.AddFlash(flash.Flash{
+			Type:    flash.Success,
+			Message: "You have successfully checked in! Welcome to BM VIII!",
+		})
+
+		session.Save(r, w)
+
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 	}
 }
 
@@ -145,9 +156,5 @@ func (h *Handler) postApply() http.HandlerFunc {
 		session.Save(r, w)
 
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
-		fmt.Println("-------------------------------------------------------------------------------------")
-		fmt.Println("applied")
-		fmt.Println("-------------------------------------------------------------------------------------")
-
 	}
 }
