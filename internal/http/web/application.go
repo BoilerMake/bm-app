@@ -3,6 +3,7 @@ package web
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -144,5 +145,9 @@ func (h *Handler) postApply() http.HandlerFunc {
 		session.Save(r, w)
 
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		fmt.Println("-------------------------------------------------------------------------------------")
+		fmt.Println("applied")
+		fmt.Println("-------------------------------------------------------------------------------------")
+
 	}
 }

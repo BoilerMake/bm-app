@@ -81,7 +81,7 @@ func (s *ApplicationService) CheckIn(app *models.Application) (err error) {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec(`UPDATE bm_applications SET check_in = TRUE	
+	_, err = tx.Exec(`UPDATE bm_applications SET check_in_status = TRUE	
 						WHERE user_id=$1`, app.UserID)
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
