@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/BoilerMake/bm-app/internal/status"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/BoilerMake/bm-app/internal/models"
@@ -325,9 +328,14 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 			}
 		}
 
-		// Only show to accepted users
+		// Only show to accepted users (unless in app status live where everyone accepted can checkin regardless of rsvp)
 		if a.Decision == models.DecisionAccepted {
-			if time.Now().After(models.RSVPExpiryDate) {
+			statusString := mustGetEnv("APP_STATUS")
+			statusInt, err := strconv.Atoi(statusString)
+			if err != nil {
+				log.Fatalf("Failed to convert status to int: %v", err)
+			}
+			if statusInt != status.Live && time.Now().After(models.RSVPExpiryDate) {
 				a.Decision = -2
 			}
 		}
