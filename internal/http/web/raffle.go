@@ -29,7 +29,11 @@ func (h *Handler) getRaffle() http.HandlerFunc {
 		}
 
 		user, err := h.ApplicationService.GetByUserID(id)
-		if err != nil { // TODO: Make check that user is checked-in here
+		if err != nil {
+			if err == sql.ErrNoRows { // user has not submitted an application
+				h.Error(w, r, models.ErrAppNotFound, "/dashboard")
+				return
+			}
 			h.Error(w, r, err, "")
 			return
 		}
@@ -73,7 +77,7 @@ func (h *Handler) postRaffle() http.HandlerFunc {
 			}
 		}
 
-		// check time stamps0
+		// check time stamps
 		start, err := strconv.ParseInt(raffle.StartTime, 10, 64)
 		if err != nil {
 			h.Error(w, r, err, "") // should never reach here
@@ -87,7 +91,6 @@ func (h *Handler) postRaffle() http.HandlerFunc {
 			h.Error(w, r, models.ErrTime, "/raffle")
 			return
 		}
-		// check if user is checked in // maybe move this check to the get
 
 		// claim raffle
 		err = h.RaffleService.ClaimRaffle(id, code)
@@ -169,15 +172,14 @@ func (h *Handler) addTickets() http.HandlerFunc {
 			h.Error(w, r, models.ErrInvalidPointsToAdd, "/exec")
 			return
 		}
-		//err = h.ApplicationService.AddPointsToEmail(email, pointsInt)
-		//if err != nil {
-		//	h.Error(w, r, err, "/exec")
-		//	return
-		//}
 
 		// get user by email
 		user, err := h.UserService.GetByEmail(email)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				h.Error(w, r, models.ErrEmailNotFound, "/exec")
+				return
+			}
 			h.Error(w, r, err, "/exec")
 			return
 		}

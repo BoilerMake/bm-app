@@ -33,6 +33,9 @@ var (
 	ErrInvalidRaffle = &ModelError{"That raffle code doesn't exist.", flash.Info}
 	ErrTime = &ModelError{"This raffle has expired.", flash.Info}
 	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
+
+	// User not found error
+	ErrAppNotFound = &ModelError{"You have to apply to use this feature.", flash.Info}
 )
 
 const (
@@ -178,5 +181,4 @@ type ApplicationService interface {
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
 	AddPointsToUser(uid int, points int) error
-	// AddPointsToEmail(email string, points int) error
 }

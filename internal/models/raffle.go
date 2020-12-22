@@ -29,7 +29,7 @@ type Raffle struct {
 	Points    string `json:"points"`
 }
 
-// Validate checks if a raffle has all necessary fields (Looks like its primarily used in the service or after fromformdata
+// Validate checks if a raffle has all necessary fields
 func (ra *Raffle) Validate() error {
 	if ra.Code == "" {
 		return ErrRaffleCodeEmpty
