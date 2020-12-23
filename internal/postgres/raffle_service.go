@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"database/sql"
+	"strconv"
+
 	"github.com/BoilerMake/bm-app/internal/models"
 	"github.com/lib/pq"
-	"strconv"
 )
 
 // RaffleService is a PostgreSQL implementation of models.raffle

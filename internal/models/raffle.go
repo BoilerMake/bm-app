@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/BoilerMake/bm-app/pkg/flash"
 	"net/http"
+
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // Raffle errors
@@ -45,13 +46,12 @@ func (ra *Raffle) Validate() error {
 }
 
 // FromFormData builds raffle struct
-func (ra *Raffle) FromFormData(r *http.Request) error {
+func (ra *Raffle) FromFormData(r *http.Request) {
 	ra.Code = r.FormValue("code")
 	ra.StartTime = r.FormValue("starttime")
 	ra.EndTime = r.FormValue("endtime")
 	ra.Points = r.FormValue("points")
 
-	return nil
 }
 
 // A RaffleService defines interface between the

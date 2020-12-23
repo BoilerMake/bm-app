@@ -1,6 +1,7 @@
 -- +goose Up
 -- SQL in this section is executed when the migration is applied.
 ALTER TABLE bm_applications
+ADD COLUMN check_in_status BOOLEAN,
 ADD COLUMN points INTEGER DEFAULT 0;
 
 CREATE TABLE raffles (
@@ -19,6 +20,7 @@ CREATE TABLE raffle_hacker (
 -- +goose Down
 -- SQL in this section is executed when the migration is rolled back.
 ALTER TABLE bm_applications
+DROP COLUMN check_in_status,
 DROP COLUMN points;
 
 DROP TABLE raffles;
