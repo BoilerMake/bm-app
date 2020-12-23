@@ -27,6 +27,15 @@ var (
 	// Validation errors when form paring
 	ErrMissingResume  = &ModelError{"Please upload a resume.", flash.Info}
 	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
+
+	// Raffle errors
+	ErrRaffleEmpty = &ModelError{"Please enter a raffle.", flash.Info}
+	ErrInvalidRaffle = &ModelError{"That raffle code doesn't exist.", flash.Info}
+	ErrTime = &ModelError{"This raffle has expired.", flash.Info}
+	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
+
+	// User not found error
+	ErrAppNotFound = &ModelError{"You have to apply to use this feature.", flash.Info}
 )
 
 const (
@@ -70,6 +79,7 @@ type Application struct {
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
 	MLHContestAndPrivacy bool
+	Points               int
 }
 
 // Validate checks if an Application has all the necessary fields. Validation
@@ -170,4 +180,5 @@ type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
+	AddPointsToUser(uid int, points int) error
 }

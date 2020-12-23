@@ -1,14 +1,14 @@
 {{ define "exec" }}
 {{ template "head" . }}
 
-{{ template "navbar" . }}
+{{ template "bmviii navbar sand" . }}
 
 {{ template "flashes" .Flashes }}
 
-<section class="section bmvii-form" style='background-image: url({{ static_path "bmvii_application_background.svg" }})'>
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmviii-dashboard-background.svg" }}); background-color: #FFE4C3'>
 	<div class="container">
-		<div class="columns is-centered content">
-			<div class="column box is-5-tablet is-4-desktop">
+		<div class="columns is-centered is-multiline content">
+			<div class="column box is-5-tablet is-3-desktop">
 				<h2>Announcements</h2>
 				<form action="/announcement" method="post">
 					<div class="field">
@@ -19,23 +19,81 @@
 					</div>
 
 
-					<div class="field ">
-						<div class="control has-text-centered">
-							<button class="button is-red is-fullwidth" type="submit">Make Announcement</button>
-						</div>
-					</div>
+                    <div class="field ">
+                        <div class="control has-text-centered">
+                            <button class="button is-red is-fullwidth" type="submit">Make Announcement</button>
+                        </div>
+                    </div>
 
-          <hr/>
+                  <hr>
 
-          <div class="column is-7">
-            <h3 class="subtitle">Users: {{.Data.UserCount}}</h3>
-            <h3 class="subtitle">Apps: {{.Data.ApplicationCount}}</h3>
-          </div>
+                  <div class="column is-7">
+                    <h3 class="subtitle">Users: {{.Data.UserCount}}</h3>
+                    <h3 class="subtitle">Apps: {{.Data.ApplicationCount}}</h3>
+                  </div>
 
-				</form>
-      </div>
-		</div>
-	</div>
+                </form>
+            </div>
+            <div class="column box is-5-tablet is-3-desktop is-offset-1">
+                <h2>Create Raffle</h2>
+                <form action="/createraffle" method="post">
+                    <div class="field">
+                        <label for="code" class="label">Raffle Code</label>
+                        <div class="control">
+                            <input class="input" type="text" name="code" placeholder="Raffle Code to Create" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="starttime" class="label">Start Time For Raffle <a href="https://currentmillis.com" target="_blank">(currentmillis.com)</a></label>
+                        <div class="control">
+                            <input class="input" type="text" name="starttime" placeholder="Ex: 16929399600000" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="endtime" class="label">End Time For Raffle <a href="https://currentmillis.com" target="_blank">(currentmillis.com)</a></label>
+                        <div class="control">
+                            <input class="input" type="text" name="endtime" placeholder="Ex: 16929399600000" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="points" class="label">Raffle Points</label>
+                        <div class="control">
+                            <input class="input" type="text" name="points" placeholder="Ex: 30" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control has-text-centered">
+                            <button class="button is-red is-fullwidth" type="submit">Create Raffle</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="column box is-5-tablet is-3-desktop is-offset-1">
+                <h2>Add Tickets</h2>
+                <form action="/addtickets" method="post">
+                    <div class="field">
+                        <label for="email" class="label">User's email</label>
+                        <div class="control">
+                            <input class="input" type="text" name="email" placeholder="hacker@hack.com" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="points" class="label">Points to Add</label>
+                        <div class="control">
+                            <input class="input" type="text" name="points" placeholder="30" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control has-text-centered">
+                            <button class="button is-red is-fullwidth" type="submit">Add Points</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 </section>
 
 {{ template "footer" . }}
