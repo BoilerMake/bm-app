@@ -41,6 +41,7 @@ type dbApplication struct {
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
 	CheckedInStatus      sql.NullBool
+	Points               sql.NullInt64
 }
 
 // toModel converts a database specific dbApplication to the more generic
@@ -73,6 +74,7 @@ func (a *dbApplication) toModel() *models.Application {
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,
 		CheckedInStatus:      a.CheckedInStatus.Bool,
+		Points:               int(a.Points.Int64),
 	}
 }
 
@@ -309,6 +311,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy,
 			check_in_status
+			points
 		FROM bm_applications
 		WHERE user_id = $1`, uid).Scan(
 		&dba.ID,
@@ -335,6 +338,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.MLHCodeOfConduct,
 		&dba.MLHContestAndPrivacy,
 		&dba.CheckedInStatus,
+		&dba.Points,
 	)
 
 	if err != nil {
@@ -372,4 +376,23 @@ func (s *ApplicationService) GetApplicationCount() int {
 		return -1
 	}
 	return count
+}
+
+// add points to user
+func (s *ApplicationService) AddPointsToUser(uid int, points int) error {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`UPDATE bm_applications SET points = points + $1 WHERE user_id = $2`, points, uid)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	return err
 }
