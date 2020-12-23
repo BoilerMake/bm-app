@@ -164,8 +164,6 @@ body {
     font-family: Cabin, serif;
     font-weight: 600;
     font-size: 18px;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .bmviii-footer-text {
@@ -612,11 +610,16 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   grid-row: 5;
 }
 
+.margin-tablet-1 { // add a magrin only on tablets. This is used when columns is disabled but still need the offset
+    margin-left: 0px;
+}
+
 @media only screen
-and (min-width: 1342px) {
-  .bmviii-waves {
-      bottom: auto;
-  }
+and (min-width: 768px)
+and (max-width: 1023px) {
+    .margin-tablet-1 {
+        margin-left: 8.3333333333%; // value taken from bulma is-offset-1
+    }
 }
 
 @media only screen
