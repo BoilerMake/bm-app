@@ -29,9 +29,9 @@ var (
 	ErrResumeTooLarge = &ModelError{"Resume upload is too large.", flash.Info}
 
 	// Raffle errors
-	ErrRaffleEmpty = &ModelError{"Please enter a raffle.", flash.Info}
+	ErrRaffleEmpty   = &ModelError{"Please enter a raffle.", flash.Info}
 	ErrInvalidRaffle = &ModelError{"That raffle code doesn't exist.", flash.Info}
-	ErrTime = &ModelError{"This raffle has expired.", flash.Info}
+	ErrTime          = &ModelError{"This raffle has expired.", flash.Info}
 	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
 
 	// User not found error
@@ -79,6 +79,7 @@ type Application struct {
 	Is18OrOlder          bool
 	MLHCodeOfConduct     bool
 	MLHContestAndPrivacy bool
+	CheckedInStatus      bool
 	Points               int
 }
 
@@ -180,5 +181,6 @@ type ApplicationService interface {
 	CreateOrUpdate(a *Application) error
 	GetByUserID(uid int) (*Application, error)
 	GetApplicationCount() int
+	CheckIn(a *Application) error
 	AddPointsToUser(uid int, points int) error
 }

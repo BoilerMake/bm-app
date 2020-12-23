@@ -11,18 +11,18 @@
   },
   "homepage": "https://github.com/BoilerMake/bm-app#readme",
   "dependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
     "bulma": "^0.7.5",
     "del": "^5.1.0",
     "dotenv": "^8.2.0",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.1.0",
-    "gulp-awspublish": "^4.1.1",
+    "gulp-awspublish": "^4.1.2",
     "gulp-babel": "^8.0.0",
     "gulp-imagemin": "^6.2.0",
     "gulp-rev": "^9.0.0",
-    "gulp-sass": "^4.0.2",
+    "gulp-sass": "^4.1.0",
     "gulp-uglify": "^3.0.2"
   }
 }

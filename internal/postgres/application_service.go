@@ -40,6 +40,7 @@ type dbApplication struct {
 	Is18OrOlder          sql.NullBool
 	MLHCodeOfConduct     sql.NullBool
 	MLHContestAndPrivacy sql.NullBool
+	CheckedInStatus      sql.NullBool
 	Points               sql.NullInt64
 }
 
@@ -72,8 +73,28 @@ func (a *dbApplication) toModel() *models.Application {
 		Is18OrOlder:          a.Is18OrOlder.Bool,
 		MLHCodeOfConduct:     a.MLHCodeOfConduct.Bool,
 		MLHContestAndPrivacy: a.MLHContestAndPrivacy.Bool,
+		CheckedInStatus:      a.CheckedInStatus.Bool,
 		Points:               int(a.Points.Int64),
 	}
+}
+
+// CheckIn attempts to check-in a user by switching boolean value of check-in from
+// false to true.
+func (s *ApplicationService) CheckIn(app *models.Application) (err error) {
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	_, err = tx.Exec(`UPDATE bm_applications SET check_in_status = TRUE	
+						WHERE user_id=$1`, app.UserID)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return rollbackErr
+		}
+		return err
+	}
+	err = tx.Commit()
+	return err
 }
 
 // CreateOrUpdate tries to make a new Application, if one already exists then
@@ -289,6 +310,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy,
+			check_in_status
 			points
 		FROM bm_applications
 		WHERE user_id = $1`, uid).Scan(
@@ -315,6 +337,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 		&dba.Is18OrOlder,
 		&dba.MLHCodeOfConduct,
 		&dba.MLHContestAndPrivacy,
+		&dba.CheckedInStatus,
 		&dba.Points,
 	)
 

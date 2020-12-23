@@ -161,6 +161,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.LiveOnly)
 		r.Get("/live", h.getLive())
+		r.Post("/checkin", h.postCheckIn())
 		r.Get("/raffle", h.getRaffle())
 		r.Post("/raffle", h.postRaffle())
 	})
