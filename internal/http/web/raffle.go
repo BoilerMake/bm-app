@@ -4,11 +4,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/BoilerMake/bm-app/internal/models"
-	"github.com/BoilerMake/bm-app/pkg/flash"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/BoilerMake/bm-app/internal/models"
+	"github.com/BoilerMake/bm-app/pkg/flash"
 )
 
 // getRaffle generates the page for users to enter a raffle
@@ -131,7 +132,7 @@ func (h *Handler) createRaffle() http.HandlerFunc {
 		session := h.getSession(r)
 
 		// Populate raffle
-		_ = ra.FromFormData(r) // err is always nil
+		ra.FromFormData(r) // err is always nil
 
 		// Validate raffle
 		err := ra.Validate()

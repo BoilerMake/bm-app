@@ -310,7 +310,7 @@ func (s *ApplicationService) GetByUserID(uid int) (*models.Application, error) {
 			tac_18_or_older,
 			tac_mlh_code_of_conduct,
 			tac_mlh_contest_and_privacy,
-			check_in_status
+			check_in_status,
 			points
 		FROM bm_applications
 		WHERE user_id = $1`, uid).Scan(
