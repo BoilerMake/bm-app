@@ -29,15 +29,21 @@ func (h *Handler) getRaffle() http.HandlerFunc {
 			return
 		}
 
+		// ensure only participants can reach the /raffle page
 		user, err := h.ApplicationService.GetByUserID(id)
 		if err != nil {
 			if err == sql.ErrNoRows { // user has not submitted an application
-				h.Error(w, r, models.ErrAppNotFound, "/dashboard")
+				h.Error(w, r, models.ErrRaffleAccessDenied, "/dashboard")
 				return
 			}
 			h.Error(w, r, err, "")
 			return
 		}
+		if user.Decision != 3 {
+			h.Error(w, r, models.ErrRaffleAccessDenied, "/dashboard") // user has not been accepted
+			return
+		}
+
 		userPoints := user.Points
 		p.Data = map[string]interface{}{
 			"TicketsCount": userPoints,
@@ -55,6 +61,21 @@ func (h *Handler) postRaffle() http.HandlerFunc {
 		id, ok := session.Values["ID"].(int)
 		if !ok {
 			h.Error(w, r, errors.New("invalid session value"), "")
+			return
+		}
+
+		// ensure only participants can claim a raffle
+		user, err := h.ApplicationService.GetByUserID(id)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				h.Error(w, r, models.ErrRaffleAccessDenied, "/dashboard")
+				return
+			}
+			h.Error(w, r, err, "")
+			return
+		}
+		if user.Decision != 3 {
+			h.Error(w, r, models.ErrRaffleAccessDenied, "/dashboard")
 			return
 		}
 

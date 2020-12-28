@@ -35,7 +35,7 @@ var (
 	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
 
 	// User not found error
-	ErrAppNotFound = &ModelError{"You have to apply to use this feature.", flash.Info}
+	ErrRaffleAccessDenied = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
 )
 
 const (
