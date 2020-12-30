@@ -34,8 +34,9 @@ var (
 	ErrTime          = &ModelError{"This raffle has expired.", flash.Info}
 	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
 
-	// User not found error
-	ErrRaffleAccessDenied = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
+	// Invalid raffle access
+	ErrRaffleAccessDenied    = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
+	ErrNotCheckedInForRaffle = &ModelError{"Please check in before accessing the raffle page", flash.Info}
 )
 
 const (
