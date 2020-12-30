@@ -35,7 +35,7 @@ var (
 	ErrRaffleClaimed = &ModelError{"You have already claimed this raffle.", flash.Info}
 
 	// Invalid raffle access
-	ErrRaffleAccessDenied    = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
+	ErrRaffleAccessDenied = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
 )
 
 const (
