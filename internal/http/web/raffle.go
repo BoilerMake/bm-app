@@ -43,10 +43,6 @@ func (h *Handler) getRaffle() http.HandlerFunc {
 			h.Error(w, r, models.ErrRaffleAccessDenied, "/dashboard") // user has not been accepted
 			return
 		}
-		if !user.CheckedInStatus {
-			h.Error(w, r, models.ErrNotCheckedInForRaffle, "/dashboard") // user has not checked in
-			return
-		}
 
 		userPoints := user.Points
 		p.Data = map[string]interface{}{

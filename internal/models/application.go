@@ -36,7 +36,6 @@ var (
 
 	// Invalid raffle access
 	ErrRaffleAccessDenied    = &ModelError{"Unfortunately, our raffle is for BM VIII participants only. We hope to see you next year!", flash.Info}
-	ErrNotCheckedInForRaffle = &ModelError{"Please check in before accessing the raffle page", flash.Info}
 )
 
 const (
