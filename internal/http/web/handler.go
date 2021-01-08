@@ -348,7 +348,7 @@ func (h *Handler) getLive() http.HandlerFunc {
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "bmvii day of", p)
+		h.Templates.RenderTemplate(w, "bmviii day of", p)
 	}
 }
 

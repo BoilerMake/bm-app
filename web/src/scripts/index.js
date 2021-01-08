@@ -522,29 +522,27 @@ function updateCountdown() {
 	if (start > now || now > end) {
 		// Hide timer
 		document.querySelector('.live-countdown').classList.add('is-hidden');
-		if(start > now) { // event hasn't started yet ( we can do a countdown to event here )
-			document.querySelector('.pre-live').classList.remove('is-hidden');
-		} else { // event has ended
-			document.querySelector('.event-finished').innerHTML = "Hacking has finished";
-		}
-
+		// if(start > now) { // event hasn't started yet ( we can do a countdown to event here )
+		// 	document.querySelector('.pre-live').classList.remove('is-hidden');
+		// } else { // event has ended
+		// 	document.querySelector('.event-finished').innerHTML = "Hacking has finished";
+		// }
 		return
 	} else {
 		// Make sure timer is showing
 		document.querySelector('.live-countdown').classList.remove('is-hidden');
-		document.querySelector('.pre-live').classList.add('is-hidden');
-		distance = end - now
+		// document.querySelector('.pre-live').classList.add('is-hidden');
 	}
 	distance = end - now;
-	var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
+	// var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
 	var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
 	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
 	var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
-	document.querySelector('.days-left').innerHTML = days + " Days";
-	document.querySelector('.hours-left').innerHTML = hours + " Hours";
-	document.querySelector('.minutes-left').innerHTML = minutes + " Minutes";
-	document.querySelector('.seconds-left').innerHTML = seconds + " Seconds";
+	// document.querySelector('.days-left').innerHTML = days + " Days";
+	document.querySelector('.hours-left').innerHTML = hours ;
+	document.querySelector('.minutes-left').innerHTML = minutes;
+	document.querySelector('.seconds-left').innerHTML = seconds;
 }
 
 var hammers = 
