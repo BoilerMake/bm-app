@@ -197,6 +197,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		// Public Annnouncement Route
 		r.Get("/announcement", h.getAnnouncement())
 		r.Get("/announcement/{id}", h.getAnnouncementWithID())
+		r.Get("/allannouncements", h.getAnnouncements())
 
 		r.Get("/logout", h.getLogout())
 

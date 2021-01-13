@@ -283,10 +283,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateCountdown, 1000);
 
 
+	getAllAnnouncements();
+
     // Just gonna piggy back off this, we should only be checking for announcements
     // on the day of page.
     setInterval(updateAnnouncements, 90000);
-    updateAnnouncements();
   }
 
 	var back = document.getElementById("live--announcements__back");
@@ -446,8 +447,42 @@ function initCarousel() {
 	moving = false;
 }
 
-var currentAnnouncement;
+var currentAnnouncement; // since all are shown we can deprecate this variable
 var mostRecentAnnouncement;
+var allAnnouncements = [];
+
+// used once to get all announcements made before user loaded /live page
+function getAllAnnouncements() { // need to set prev and current if needed to maintain semantic for update
+	fetch('/allannouncements')
+		.then((res) => {
+			return res.text();
+		}).then((text) =>{
+			return JSON.parse(text);
+		}).then((allAnn) => {
+			if (allAnn != null) {
+				let count = allAnn.length;
+				if (count > 0) { // curr and prev both exists
+					allAnnouncements = allAnn;
+					mostRecentAnnouncement = allAnn[0];
+					initAnnouncements();
+				}
+			}
+	});
+}
+
+// initally set up the box by looping through allAnnouncements (used once)
+function initAnnouncements() {
+	// now that there is announcements remove loading announcements
+	let annHolder = document.getElementById('announcement-holder');
+	let tempHolder = document.getElementById('announcement-temp');
+	annHolder.removeChild(tempHolder);
+
+	// append old announcements
+	for (let i = allAnnouncements.length - 1; i>=0; i--) { // go in reverse order so most recent shows up first
+		let currAnn = allAnnouncements[i];
+		addAnnouncement(currAnn)
+	}
+}
 
 function updateAnnouncements() {
     fetch('/announcement')
@@ -462,13 +497,109 @@ function updateAnnouncements() {
 	  })
       .then((ann) => {
         // Only update if there was an announcement we didn't have before
-        if (ann != null && (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id)) {
-          mostRecentAnnouncement = ann
+        if (ann != null && (!mostRecentAnnouncement || mostRecentAnnouncement.id !== ann.id)) {
+          	mostRecentAnnouncement = ann;
           // Always force update people so they don't get behind
-          currentAnnouncement = mostRecentAnnouncement;
-          repaintAnnouncements()
+          // currentAnnouncement = mostRecentAnnouncement;
+			addAnnouncement(mostRecentAnnouncement);
+          // repaintAnnouncements()
         }
       });
+}
+
+function addAnnouncement(ann) {
+	let annHolder = document.getElementById('announcement-holder');
+	// let newAnnDiv = document.createElement('div');
+
+	// get time
+	let pField = document.createElement('p');
+	pField.classList.add('bmviii-announcement-style');
+	let rawDate = new Date(ann.createdAt);
+	let hours = rawDate.getHours();
+	let minutes = rawDate.getMinutes();
+	let day = rawDate.getDay();
+
+	// convert day number to letter -> 0-6 = Sunday - Saturday
+	let trueDay;
+	switch(day) {
+		case 0:
+			trueDay = 'Sun';
+			break;
+		case 1:
+			trueDay = 'Mon';
+			break;
+		case 2:
+			trueDay = 'Tues';
+			break;
+		case 3:
+			trueDay = 'Wed';
+			break;
+		case 4:
+			trueDay = 'Thurs';
+			break;
+		case 5:
+			trueDay = 'Fri';
+			break;
+		case 6:
+			trueDay = 'Sat';
+			break;
+		default:
+			trueDay = ''
+	}
+
+	// format time
+	let ampm = hours < 12 ? 'am' : 'pm';
+	hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
+	minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
+	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ' ' + ampm + ' ]';
+	pField.innerHTML = formattedTime + ' ' +  ann.message;
+
+	annHolder.appendChild(pField)
+
+	// // format time
+	// let ampm = hours < 12 ? 'am' : 'pm';
+	// hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
+	// minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
+	// pDate.innerHTML = '[' + hours + ':' + minutes + ampm + ']';
+	// leftItemDiv.appendChild(pDate);
+	// leftDiv.appendChild(leftItemDiv);
+	// newAnnDiv.appendChild(leftDiv);
+	// newAnnDiv.classList.add('level');
+	//
+	// // add the date
+	// let leftDiv = document.createElement('div');
+	// leftDiv.classList.add('level-left');
+	// let leftItemDiv = document.createElement('div');
+	// leftItemDiv.classList.add('level-item');
+	// let pDate = document.createElement('p');
+	// pDate.classList.add('bmviii-announcement-style');
+	// let rawDate = new Date(ann.createdAt);
+	// let hours = rawDate.getHours();
+	// let minutes = rawDate.getMinutes();
+
+	// // format time
+	// let ampm = hours < 12 ? 'am' : 'pm';
+	// hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
+	// minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
+	// pDate.innerHTML = '[' + hours + ':' + minutes + ampm + ']';
+	// leftItemDiv.appendChild(pDate);
+	// leftDiv.appendChild(leftItemDiv);
+	// newAnnDiv.appendChild(leftDiv);
+
+	// // add the announcement
+	// let rightDiv = document.createElement('div');
+	// rightDiv.classList.add('level-right');
+	// let rightItemDiv = document.createElement('div');
+	// rightItemDiv.classList.add('level-item');
+	// let pAnn = document.createElement('p');
+	// pAnn.classList.add('bmviii-announcement-style');
+	// pAnn.innerHTML = ann.message;
+	// rightItemDiv.appendChild(pAnn);
+	// rightDiv.appendChild(rightItemDiv);
+	// newAnnDiv.appendChild(rightDiv);
+
+	// add both
+	// annHolder.append(newAnnDiv);
 }
 
 function repaintAnnouncements() {

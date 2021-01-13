@@ -28,4 +28,5 @@ type AnnouncementService interface {
 	GetByID(id int) (*Announcement, error)
 	GetCurrent() (*Announcement, error)
 	DeleteByID(id int) error
+	GetAllAnnouncements() ([]*Announcement, error)
 }

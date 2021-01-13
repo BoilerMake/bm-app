@@ -133,3 +133,48 @@ func (s *AnnouncementService) DeleteByID(id int) (err error) {
 
 	return err
 }
+
+func (s *AnnouncementService) GetAllAnnouncements() (a []*models.Announcement, err error) {
+	var dbAs []*models.Announcement
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return a, err
+	}
+
+	rows, err := tx.Query(`SELECT id, message, created_at FROM announcements ORDER BY created_at DESC`)
+	if err != nil {
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
+		}
+
+		return nil, err
+	}
+
+	counter := 0 // check if loop is ran
+	defer rows.Close()
+	for rows.Next() {
+		var dbA models.Announcement
+		err = rows.Scan(&dbA.ID, &dbA.Message, &dbA.CreatedAt)
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				return nil, rollbackErr
+			}
+			return nil, err
+		}
+
+		dbAs = append(dbAs, &dbA)
+		counter += 1 // indicate that at least one row was found
+	}
+
+	err = rows.Err() // check if there was an error within loop
+	if err != nil {
+		return nil, err
+	}
+	if counter == 0 { // if the loop was never ran that means there was no rows returned
+		return nil, models.ErrNoAnnouncements
+	}
+
+	err = tx.Commit()
+
+	return dbAs, nil
+}
