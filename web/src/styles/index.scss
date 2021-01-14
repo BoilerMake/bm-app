@@ -614,12 +614,19 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     margin-left: 0px;
 }
 
+.bmviii-sponsors-bottom-row {
+  margin-left: 3rem;
+}
+
 @media only screen
 and (min-width: 768px)
 and (max-width: 1023px) {
     .margin-tablet-1 {
         margin-left: 8.3333333333%; // value taken from bulma is-offset-1
     }
+  .bmviii--sponsors-bottom-row {
+    margin-left: 0;
+  }
 }
 
 @media only screen
@@ -628,12 +635,19 @@ and (max-width: 1024px) {
   .grid {
     grid-template-rows: 1fr 1rem min-content 0.5rem min-content 0.5rem min-content;
   }
+  .bmviii-sponsors-bottom-row {
+    margin-left: 0;
+  }
 }
 
 @media only screen
 and (max-width: 500px) {
     .bmviii-footer-text {
         text-align: left;
+    }
+
+    .bmviii-sponsors-bottom-row {
+      margin-left: 0;
     }
 }
 
@@ -685,6 +699,10 @@ and (max-width: 600px) {
 
   .carousel-button-prev {
       left: -18px;
+  }
+
+  .bmviii-sponsors-bottom-row {
+    margin-left: 0;
   }
 }
 
