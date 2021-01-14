@@ -13,7 +13,8 @@ var (
 )
 
 const RSVPExpiryTime = 3 * 24 * time.Hour
-var RSVPExpiryDate = time.Date(2020, time.December, 18, 23, 59, 59, 0, time.UTC)
+
+var RSVPExpiryDate = time.Date(2021, time.January, 25, 23, 59, 59, 0, time.UTC)
 
 type RSVP struct {
 	ID     int
@@ -24,7 +25,7 @@ type RSVP struct {
 	ShirtSize  string
 	StreetAddr string
 	City       string
-	State		string
+	State      string
 	Country    string
 	ZipCode    string
 }
