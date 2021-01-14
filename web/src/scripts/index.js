@@ -1,7 +1,7 @@
-const end = new Date('Jan 24, 2021 09:30:00 EST').getTime();
-//const start = new Date('Jan 22, 2021 22:00:00 EST').getTime();
-const start = new Date('Dec 10, 2020 17:17:00 EST').getTime();
-
+// const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
+// const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
+const start = new Date('Jan 14, 2021 15:45:00 PST').getTime(); // TODO: JUST USED FOR TESTING TIMER PURPOSES: DELETE BEFORE PUSHING TO PROD
+const end = new Date('Jan 16, 2021 03:45:00 PST').getTime(); // Same here
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -498,19 +498,13 @@ function updateCountdown() {
 	const now = new Date().getTime();
 	var distance;
 
-	if (start > now || now > end) {
-		// Hide timer
-		document.querySelector('.live-countdown').classList.add('is-hidden');
-		// if(start > now) { // event hasn't started yet ( we can do a countdown to event here )
-		// 	document.querySelector('.pre-live').classList.remove('is-hidden');
-		// } else { // event has ended
-		// 	document.querySelector('.event-finished').innerHTML = "Hacking has finished";
-		// }
+	if (start > now || now > end) { // event has either not started or ended
+		if (now > end) { // event has ended set timer to 0's.
+			document.querySelector('.hours-left').innerHTML = '00' ;
+			document.querySelector('.minutes-left').innerHTML = '00';
+			document.querySelector('.seconds-left').innerHTML = '00';
+		} // no need for (start > now) case as it defaults to 36 : 00 : 00
 		return
-	} else {
-		// Make sure timer is showing
-		document.querySelector('.live-countdown').classList.remove('is-hidden');
-		// document.querySelector('.pre-live').classList.add('is-hidden');
 	}
 	distance = end - now;
 	// var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
