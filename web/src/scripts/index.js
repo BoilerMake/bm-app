@@ -275,77 +275,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const now = new Date().getTime()
-
 	const liveCountdown = document.querySelector('.live-countdown');
   if (liveCountdown) {
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-
-	getAllAnnouncements();
-
     // Just gonna piggy back off this, we should only be checking for announcements
     // on the day of page.
+  	getAllAnnouncements();
     setInterval(updateAnnouncements, 90000);
   }
 
-	var back = document.getElementById("live--announcements__back");
-	var forward = document.getElementById("live--announcements__forward");
-  if (back && forward) {
-    back.addEventListener('click', () => {
-      if (currentAnnouncement.id > 1) {
-        getPrevAnnouncement(currentAnnouncement.id - 1, 0)
-      }
-    })
-
-    forward.addEventListener('click', () => {
-      if (currentAnnouncement.id < mostRecentAnnouncement.id) {
-        getNextAnnouncement(currentAnnouncement.id + 1, 0);
-      }
-    })
-  }
-
 });
-
-// These methods are to handle moving past deleted ids
-function getPrevAnnouncement(id, tries) {
-  // Exit out if we've tried too many times
-  if (tries > 5) {
-    return
-  }
-
-  fetch('/announcement/' + id)
-    .then((res) => {
-      return res.json();
-    })
-    .then((ann) => {
-      currentAnnouncement = ann;
-      repaintAnnouncements()
-    }).catch(() => {
-      // Try again if we failed but at the id before
-      getPrevAnnouncement(id - 1, tries + 1)
-    });
-}
-
-function getNextAnnouncement(id, tries) {
-  // Exit out if we've tried too many times
-  if (tries > 5) {
-    return
-  }
-
-  fetch('/announcement/' + id)
-    .then((res) => {
-      return res.json();
-    })
-    .then((ann) => {
-      currentAnnouncement = ann;
-      repaintAnnouncements()
-    }).catch(() => {
-      // Try again if we failed but at the id after
-      getPrevAnnouncement(id + 1, tries + 1)
-    });
-}
 
 // carousel management
 const itemClassName = 'carousel-entry';
@@ -447,7 +388,6 @@ function initCarousel() {
 	moving = false;
 }
 
-var currentAnnouncement; // since all are shown we can deprecate this variable
 var mostRecentAnnouncement;
 var allAnnouncements = [];
 
@@ -499,10 +439,7 @@ function updateAnnouncements() {
         // Only update if there was an announcement we didn't have before
         if (ann != null && (!mostRecentAnnouncement || mostRecentAnnouncement.id !== ann.id)) {
           	mostRecentAnnouncement = ann;
-          // Always force update people so they don't get behind
-          // currentAnnouncement = mostRecentAnnouncement;
 			addAnnouncement(mostRecentAnnouncement);
-          // repaintAnnouncements()
         }
       });
 }
@@ -555,95 +492,6 @@ function addAnnouncement(ann) {
 	pField.innerHTML = formattedTime + ' ' +  ann.message;
 
 	annHolder.appendChild(pField)
-
-	// // format time
-	// let ampm = hours < 12 ? 'am' : 'pm';
-	// hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
-	// minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
-	// pDate.innerHTML = '[' + hours + ':' + minutes + ampm + ']';
-	// leftItemDiv.appendChild(pDate);
-	// leftDiv.appendChild(leftItemDiv);
-	// newAnnDiv.appendChild(leftDiv);
-	// newAnnDiv.classList.add('level');
-	//
-	// // add the date
-	// let leftDiv = document.createElement('div');
-	// leftDiv.classList.add('level-left');
-	// let leftItemDiv = document.createElement('div');
-	// leftItemDiv.classList.add('level-item');
-	// let pDate = document.createElement('p');
-	// pDate.classList.add('bmviii-announcement-style');
-	// let rawDate = new Date(ann.createdAt);
-	// let hours = rawDate.getHours();
-	// let minutes = rawDate.getMinutes();
-
-	// // format time
-	// let ampm = hours < 12 ? 'am' : 'pm';
-	// hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
-	// minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
-	// pDate.innerHTML = '[' + hours + ':' + minutes + ampm + ']';
-	// leftItemDiv.appendChild(pDate);
-	// leftDiv.appendChild(leftItemDiv);
-	// newAnnDiv.appendChild(leftDiv);
-
-	// // add the announcement
-	// let rightDiv = document.createElement('div');
-	// rightDiv.classList.add('level-right');
-	// let rightItemDiv = document.createElement('div');
-	// rightItemDiv.classList.add('level-item');
-	// let pAnn = document.createElement('p');
-	// pAnn.classList.add('bmviii-announcement-style');
-	// pAnn.innerHTML = ann.message;
-	// rightItemDiv.appendChild(pAnn);
-	// rightDiv.appendChild(rightItemDiv);
-	// newAnnDiv.appendChild(rightDiv);
-
-	// add both
-	// annHolder.append(newAnnDiv);
-}
-
-function repaintAnnouncements() {
-  const text = document.getElementById('announcement-text');
-  text.innerHTML = currentAnnouncement.message;
-
-  const date = document.getElementById('announcement-date');
-  const annDate = new Date(currentAnnouncement.createdAt);
-  const annDateDist = (new Date().getTime()) - annDate;
-  var dateStr = "Posted ";
-
-  if (annDateDist < 1000 * 60 * 60) {
-    dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
-  } else if (annDateDist < 1000 * 60 * 60 * 24) {
-    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  } else {
-    dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
-    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  }
-
-  date.innerHTML = dateStr;
-
-	var back = document.getElementById("live--announcements__back");
-	var forward = document.getElementById("live--announcements__forward");
-  if (back && forward) {
-    if (currentAnnouncement.id == mostRecentAnnouncement.id) {
-      // disable forward button
-      forward.classList.add('live--announcements__button_disabled');
-      forward.classList.remove('live--announcements__button_enabled');
-    } else if (currentAnnouncement.id < mostRecentAnnouncement.id) {
-      // enable forward button
-      forward.classList.remove('live--announcements__button_disabled');
-      forward.classList.add('live--announcements__button_enabled');
-    }
-
-    if (currentAnnouncement.id > 1) {
-      // enable backward button
-      back.classList.remove('live--announcements__button_disabled');
-      back.classList.add('live--announcements__button_enabled');
-    } else {
-      back.classList.add('live--announcements__button_disabled');
-      back.classList.remove('live--announcements__button_enabled');
-    }
-  }
 }
 
 function updateCountdown() {
