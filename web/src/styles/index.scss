@@ -614,7 +614,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
     margin-left: 0px;
 }
 
-.bmviii-bottom-row {
+.bmviii-sponsors-bottom-row {
   margin-left: 3rem;
 }
 
@@ -624,7 +624,7 @@ and (max-width: 1023px) {
     .margin-tablet-1 {
         margin-left: 8.3333333333%; // value taken from bulma is-offset-1
     }
-  .bmviii-bottom-row {
+  .bmviii--sponsors-bottom-row {
     margin-left: 0;
   }
 }
@@ -635,7 +635,7 @@ and (max-width: 1024px) {
   .grid {
     grid-template-rows: 1fr 1rem min-content 0.5rem min-content 0.5rem min-content;
   }
-  .bmviii-bottom-row {
+  .bmviii-sponsors-bottom-row {
     margin-left: 0;
   }
 }
@@ -646,7 +646,7 @@ and (max-width: 500px) {
         text-align: left;
     }
 
-    .bmviii-bottom-row {
+    .bmviii-sponsors-bottom-row {
       margin-left: 0;
     }
 }
@@ -701,7 +701,7 @@ and (max-width: 600px) {
       left: -18px;
   }
 
-  .bmviii-bottom-row {
+  .bmviii-sponsors-bottom-row {
     margin-left: 0;
   }
 }
