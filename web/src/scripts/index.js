@@ -2,6 +2,8 @@
 // const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
 const start = new Date('Jan 14, 2021 15:45:00 PST').getTime(); // TODO: JUST USED FOR TESTING TIMER PURPOSES: DELETE BEFORE PUSHING TO PROD
 const end = new Date('Jan 16, 2021 03:45:00 PST').getTime(); // Same here
+const tzoffset = -300 * 60 * 1000; // Timezone offset for EST in milliseconds (this does not hold for Daylight Saving Time, but hopefully we won't have to specify timezone ever again)
+
 document.addEventListener('DOMContentLoaded', () => {
 
 	// Listen for clicks on hamburger button
@@ -452,9 +454,13 @@ function addAnnouncement(ann) {
 	let pField = document.createElement('p');
 	pField.classList.add('bmviii-announcement-style');
 	let rawDate = new Date(ann.createdAt);
-	let hours = rawDate.getHours();
-	let minutes = rawDate.getMinutes();
-	let day = rawDate.getDay();
+	rawDate.setTime(rawDate.getTime() + rawDate.getTimezoneOffset() * 60 * 1000); // convert to UTC
+
+	let estConvertDate = new Date(rawDate.getTime() + tzoffset); // note the locale string representations won't change. Only day/date/hours/minutes/seconds
+
+	let hours = estConvertDate.getHours();
+	let minutes = estConvertDate.getMinutes();
+	let day = estConvertDate.getDay();
 
 	// convert day number to letter -> 0-6 = Sunday - Saturday
 	let trueDay;
@@ -488,7 +494,7 @@ function addAnnouncement(ann) {
 	let ampm = hours < 12 ? 'am' : 'pm';
 	hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
 	minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
-	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ' ' + ampm + ' ]';
+	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ampm + ' EST]';
 	pField.innerHTML = formattedTime + ' ' +  ann.message;
 
 	annHolder.appendChild(pField)
