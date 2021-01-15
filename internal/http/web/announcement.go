@@ -97,12 +97,12 @@ func (h *Handler) getAnnouncement() http.HandlerFunc {
 }
 
 func (h *Handler) getAnnouncements() http.HandlerFunc {
-	return func(w http.ResponseWriter, r*http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		announcements, err := h.AnnouncementService.GetAllAnnouncements() // returns an array of pointers to announcement structs
 		if err != nil {
 			if err == models.ErrNoAnnouncements {
 				w.WriteHeader(http.StatusNoContent)
-				h.Error(w,r,models.ErrNoAnnouncements, "/")
+				h.Error(w, r, models.ErrNoAnnouncements, "/")
 				return
 			}
 
