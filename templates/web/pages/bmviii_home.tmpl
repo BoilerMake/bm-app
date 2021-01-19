@@ -18,6 +18,15 @@
                 <img alt="Lay back and hack" src={{ static_path "bmviii_lay_back_and_hack.svg" }}>
             </div>
         </div>
+        {{ if eq .Status 4 }}
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-3-desktop is-6-tablet is-8-mobile">
+                <a href="/live">
+                    <img alt="Go Live!" src={{ static_path "bmviii_go_live_button.png" }}>
+                </a>
+            </div>
+        </div>
+        {{ else }}
         <div class="columns is-centered is-mobile content">
             <div class="column is-3-desktop is-6-tablet is-8-mobile">
                 {{ if .IsAuthenticated }}
@@ -31,6 +40,7 @@
                 {{ end }}
             </div>
         </div>
+        {{ end }}
         <div class="columns is-centered is-mobile content" style="margin-bottom: 0px">
             <div class="column is-4-desktop is-7-tablet is-10-mobile" style="padding-bottom: 0px;">
                 <img alt="January 22-24, 2021" src={{ static_path "bmviii_date.svg" }}>

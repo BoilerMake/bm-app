@@ -1,7 +1,5 @@
-// const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
-// const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
-const start = new Date('Jan 14, 2021 15:45:00 PST').getTime(); // TODO: JUST USED FOR TESTING TIMER PURPOSES: DELETE BEFORE PUSHING TO PROD
-const end = new Date('Jan 16, 2021 03:45:00 PST').getTime(); // Same here
+const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
+const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
 const tzoffset = -300 * 60 * 1000; // Timezone offset for EST in milliseconds (this does not hold for Daylight Saving Time, but hopefully we won't have to specify timezone ever again)
 
 document.addEventListener('DOMContentLoaded', () => {
