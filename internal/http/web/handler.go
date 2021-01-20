@@ -207,6 +207,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		// Public Annnouncement Route
 		r.Get("/announcement", h.getAnnouncement())
 		r.Get("/announcement/{id}", h.getAnnouncementWithID())
+		r.Get("/allannouncements", h.getAnnouncements())
 
 		r.Get("/logout", h.getLogout())
 
@@ -358,7 +359,7 @@ func (h *Handler) getLive() http.HandlerFunc {
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "bmvii day of", p)
+		h.Templates.RenderTemplate(w, "bmviii day of", p)
 	}
 }
 

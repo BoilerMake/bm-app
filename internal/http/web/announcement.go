@@ -96,6 +96,25 @@ func (h *Handler) getAnnouncement() http.HandlerFunc {
 	}
 }
 
+func (h *Handler) getAnnouncements() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		announcements, err := h.AnnouncementService.GetAllAnnouncements() // returns an array of pointers to announcement structs
+		if err != nil {
+			if err == models.ErrNoAnnouncements {
+				w.WriteHeader(http.StatusNoContent)
+				h.Error(w, r, models.ErrNoAnnouncements, "/")
+				return
+			}
+
+			h.Error(w, r, err, "")
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(announcements)
+	}
+}
+
 func (h *Handler) getAnnouncementWithID() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(chi.URLParam(r, "id"))

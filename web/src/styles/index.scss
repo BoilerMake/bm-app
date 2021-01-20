@@ -385,11 +385,15 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 	padding: 0.5rem 0.75rem;
 }
 
-.bmvii-schedule__item_time {
+.bmviii-schedule__item_time {
+    font-family: Cabin, serif;
+    color: black;
 	white-space: nowrap;
 }
 
-.bmvii-schedule__item_event {
+.bmviii-schedule__item_event {
+    font-family: Cabin, serif;
+    color: black;
 	text-align: right;
 }
 
@@ -502,8 +506,8 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(50px, 0.8fr) minmax(50px, 0.8fr) 10px 4fr minmax(0px, 2fr) 3fr 1rem min-content;
-  grid-template-rows: 0.75fr 1rem min-content 1.5rem min-content;
+  grid-template-columns: minmax(50px, 0.8fr) minmax(50px, 0.8fr) 10px 4fr minmax(0px, 2fr) 3fr 10px minmax(50px, 0.8fr) min-content;
+  grid-template-rows: minmax(300px, 0.75fr) 1rem min-content 1.5rem min-content;
 }
 
 .live-pindrop {
@@ -525,15 +529,15 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .live-countdown {
-  grid-column: 6;
-  grid-row: 1;
-
-  justify-self: right;
-  align-self: end;
+   //grid-column: 5;
+   //grid-row: 1;
+   // width: 95%;
 
   display: flex;
+  flex-direction: row;
+  justify-content: center;
 
-  color: white;
+  color: black;
 
   .live-hours,
   .live-minutes,
@@ -548,13 +552,16 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   }
 
   .live--countdown__time {
+    font-family: Market Deco, serif;
     line-height: 1;
-    font-size: 3rem;
+    font-size: 4rem;
     margin-bottom: 0px !important;
+    font-weight: 600;
   }
 
   .live--countdown__unit {
-    font-size: 10px;
+    font-family: Cabin, serif;
+    font-size: 1.5rem;
   }
 }
 
@@ -568,8 +575,8 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .live--announcements.box {
-  grid-column: 3 / 7;
-  grid-row: 3;
+  grid-column: 1 / 7;
+  grid-row: 1 / 2;
 
   padding: 0.75rem;
   margin-bottom: 0;
@@ -601,13 +608,18 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .live-buttons-vertical {
-  grid-column: 9;
-  grid-row: 7;
+  grid-column: 8;
+  grid-row: 1;
 }
 
 .live-buttons-horizontal {
-  grid-column: 2 / 7;
+  grid-column: 1 / 7;
   grid-row: 5;
+}
+
+.live-logo {
+  grid-column: 2 / 4;
+  grid-row: 1;
 }
 
 .margin-tablet-1 { // add a magrin only on tablets. This is used when columns is disabled but still need the offset
@@ -701,6 +713,10 @@ and (max-width: 600px) {
       left: -18px;
   }
 
+  .bmviii-live-section {
+    background-image: none;
+  }
+
   .bmviii-sponsors-bottom-row {
     margin-left: 0;
   }
@@ -728,4 +744,13 @@ and (max-width: 600px) {
     font-weight: 400;
     font-size: 18px;
     color: black;
+}
+
+.bmviii-announcement-style {
+  font-family: Cabin, serif;
+  font-size: 18px;
+  color: black;
+  &:nth-child(even) {
+    background: #F5F5F5;
+  }
 }

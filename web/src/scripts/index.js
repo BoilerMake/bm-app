@@ -1,5 +1,6 @@
-const end = new Date('Jan 26, 2020 09:30:00 EST').getTime();
-const start = new Date('Jan 24, 2020 22:00:00 EST').getTime();
+const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
+const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
+const tzoffset = -300 * 60 * 1000; // Timezone offset for EST in milliseconds (this does not hold for Daylight Saving Time, but hopefully we won't have to specify timezone ever again)
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -274,76 +275,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  const now = new Date().getTime()
-
 	const liveCountdown = document.querySelector('.live-countdown');
   if (liveCountdown) {
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-
     // Just gonna piggy back off this, we should only be checking for announcements
     // on the day of page.
+  	getAllAnnouncements();
     setInterval(updateAnnouncements, 90000);
-    updateAnnouncements();
-  }
-
-	var back = document.getElementById("live--announcements__back");
-	var forward = document.getElementById("live--announcements__forward");
-  if (back && forward) {
-    back.addEventListener('click', () => {
-      if (currentAnnouncement.id > 1) {
-        getPrevAnnouncement(currentAnnouncement.id - 1, 0)
-      }
-    })
-
-    forward.addEventListener('click', () => {
-      if (currentAnnouncement.id < mostRecentAnnouncement.id) {
-        getNextAnnouncement(currentAnnouncement.id + 1, 0);
-      }
-    })
   }
 
 });
-
-// These methods are to handle moving past deleted ids
-function getPrevAnnouncement(id, tries) {
-  // Exit out if we've tried too many times
-  if (tries > 5) {
-    return
-  }
-
-  fetch('/announcement/' + id)
-    .then((res) => {
-      return res.json();
-    })
-    .then((ann) => {
-      currentAnnouncement = ann;
-      repaintAnnouncements()
-    }).catch(() => {
-      // Try again if we failed but at the id before
-      getPrevAnnouncement(id - 1, tries + 1)
-    });
-}
-
-function getNextAnnouncement(id, tries) {
-  // Exit out if we've tried too many times
-  if (tries > 5) {
-    return
-  }
-
-  fetch('/announcement/' + id)
-    .then((res) => {
-      return res.json();
-    })
-    .then((ann) => {
-      currentAnnouncement = ann;
-      repaintAnnouncements()
-    }).catch(() => {
-      // Try again if we failed but at the id after
-      getPrevAnnouncement(id + 1, tries + 1)
-    });
-}
 
 // carousel management
 const itemClassName = 'carousel-entry';
@@ -445,88 +388,136 @@ function initCarousel() {
 	moving = false;
 }
 
-var currentAnnouncement;
 var mostRecentAnnouncement;
+var allAnnouncements = [];
+
+// used once to get all announcements made before user loaded /live page
+function getAllAnnouncements() { // need to set prev and current if needed to maintain semantic for update
+	fetch('/allannouncements')
+		.then((res) => {
+			return res.text();
+		}).then((text) =>{
+			return JSON.parse(text);
+		}).then((allAnn) => {
+			if (allAnn != null) {
+				let count = allAnn.length;
+				if (count > 0) { // curr and prev both exists
+					allAnnouncements = allAnn;
+					mostRecentAnnouncement = allAnn[0];
+					initAnnouncements();
+				}
+			}
+	});
+}
+
+// initally set up the box by looping through allAnnouncements (used once)
+function initAnnouncements() {
+	// now that there is announcements remove loading announcements
+	let annHolder = document.getElementById('announcement-holder');
+	let tempHolder = document.getElementById('announcement-temp');
+	annHolder.removeChild(tempHolder);
+
+	// append old announcements
+	for (let i = allAnnouncements.length - 1; i>=0; i--) { // go in reverse order so most recent shows up first
+		let currAnn = allAnnouncements[i];
+		addAnnouncement(currAnn)
+	}
+}
 
 function updateAnnouncements() {
     fetch('/announcement')
       .then((res) => {
-        return res.json();
-      })
+        return res.text();
+      }).then((text) =>{
+      	if (text.length) {
+      		return JSON.parse(text);
+		} else {
+      		return null
+		}
+	  })
       .then((ann) => {
         // Only update if there was an announcement we didn't have before
-        if (!mostRecentAnnouncement || mostRecentAnnouncement.id != ann.id) {
-          mostRecentAnnouncement = ann
-          // Always force update people so they don't get behind
-          currentAnnouncement = mostRecentAnnouncement;
-          repaintAnnouncements()
+        if (ann != null && (!mostRecentAnnouncement || mostRecentAnnouncement.id !== ann.id)) {
+          	mostRecentAnnouncement = ann;
+			addAnnouncement(mostRecentAnnouncement);
         }
       });
 }
 
-function repaintAnnouncements() {
-  const text = document.getElementById('announcement-text');
-  text.innerHTML = currentAnnouncement.message;
+function addAnnouncement(ann) {
+	let annHolder = document.getElementById('announcement-holder');
+	// let newAnnDiv = document.createElement('div');
 
-  const date = document.getElementById('announcement-date');
-  const annDate = new Date(currentAnnouncement.createdAt);
-  const annDateDist = (new Date().getTime()) - annDate;
-  var dateStr = "Posted ";
+	// get time
+	let pField = document.createElement('p');
+	pField.classList.add('bmviii-announcement-style');
+	let rawDate = new Date(ann.createdAt);
+	rawDate.setTime(rawDate.getTime() + rawDate.getTimezoneOffset() * 60 * 1000); // convert to UTC
 
-  if (annDateDist < 1000 * 60 * 60) {
-    dateStr += Math.round(annDateDist/1000/60) + " minutes ago"
-  } else if (annDateDist < 1000 * 60 * 60 * 24) {
-    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  } else {
-    dateStr += "on " + (annDate.getMonth()+1) + "/" + annDate.getDate() + "/" + annDate.getFullYear() + " ";
-    dateStr += "at " + annDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-  }
+	let estConvertDate = new Date(rawDate.getTime() + tzoffset); // note the locale string representations won't change. Only day/date/hours/minutes/seconds
 
-  date.innerHTML = dateStr;
+	let hours = estConvertDate.getHours();
+	let minutes = estConvertDate.getMinutes();
+	let day = estConvertDate.getDay();
 
-	var back = document.getElementById("live--announcements__back");
-	var forward = document.getElementById("live--announcements__forward");
-  if (back && forward) {
-    if (currentAnnouncement.id == mostRecentAnnouncement.id) {
-      // disable forward button
-      forward.classList.add('live--announcements__button_disabled');
-      forward.classList.remove('live--announcements__button_enabled');
-    } else if (currentAnnouncement.id < mostRecentAnnouncement.id) {
-      // enable forward button
-      forward.classList.remove('live--announcements__button_disabled');
-      forward.classList.add('live--announcements__button_enabled');
-    }
+	// convert day number to letter -> 0-6 = Sunday - Saturday
+	let trueDay;
+	switch(day) {
+		case 0:
+			trueDay = 'Sun';
+			break;
+		case 1:
+			trueDay = 'Mon';
+			break;
+		case 2:
+			trueDay = 'Tues';
+			break;
+		case 3:
+			trueDay = 'Wed';
+			break;
+		case 4:
+			trueDay = 'Thurs';
+			break;
+		case 5:
+			trueDay = 'Fri';
+			break;
+		case 6:
+			trueDay = 'Sat';
+			break;
+		default:
+			trueDay = ''
+	}
 
-    if (currentAnnouncement.id > 1) {
-      // enable backward button
-      back.classList.remove('live--announcements__button_disabled');
-      back.classList.add('live--announcements__button_enabled');
-    } else {
-      back.classList.add('live--announcements__button_disabled');
-      back.classList.remove('live--announcements__button_enabled');
-    }
-  }
+	// format time
+	let ampm = hours < 12 ? 'am' : 'pm';
+	hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
+	minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
+	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ampm + ' EST]';
+	pField.innerHTML = formattedTime + ' ' +  ann.message;
+
+	annHolder.appendChild(pField)
 }
 
 function updateCountdown() {
-  const now = new Date().getTime()
-  var distance;
+	const now = new Date().getTime();
+	var distance;
 
-  if (start > now || now > end) {
-    // Hide timer
-    document.querySelector('.live-countdown').classList.add('is-hidden');
-    return
-  } else {
-    // Make sure timer is showing
-    document.querySelector('.live-countdown').classList.remove('is-hidden');
-    distance = end - now
-  }
+	if (start > now || now > end) { // event has either not started or ended
+		if (now > end) { // event has ended set timer to 0's.
+			document.querySelector('.hours-left').innerHTML = '00' ;
+			document.querySelector('.minutes-left').innerHTML = '00';
+			document.querySelector('.seconds-left').innerHTML = '00';
+		} // no need for (start > now) case as it defaults to 36 : 00 : 00
+		return
+	}
+	distance = end - now;
+	// var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
+	var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+	var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-
-	document.querySelector('.hours-left').innerHTML = hours;
+	// document.querySelector('.days-left').innerHTML = days + " Days";
+	document.querySelector('.hours-left').innerHTML = hours ;
 	document.querySelector('.minutes-left').innerHTML = minutes;
 	document.querySelector('.seconds-left').innerHTML = seconds;
 }
