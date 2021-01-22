@@ -162,8 +162,8 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		r.Use(middleware.LiveOnly)
 		r.Get("/live", h.getLive())
 		r.Post("/checkin", h.postCheckIn())
-		r.Get("/raffle", h.getRaffle())
-		r.Post("/raffle", h.postRaffle())
+
+		r.Post("/raffle", h.postRaffle()) // only allow claiming a raffle during live event
 	})
 
 	// Exec routes
@@ -194,6 +194,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 			r.Post("/login", h.postLogin())
 
 		})
+
+		// allow user to access raffle page as it is on the navbar
+		r.Get("/raffle", h.getRaffle())
 
 		r.Get("/activate/{code}", h.getActivate())
 
