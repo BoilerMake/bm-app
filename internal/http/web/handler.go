@@ -195,9 +195,6 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 
 		})
 
-		// allow user to access raffle page as it is on the navbar
-		r.Get("/raffle", h.getRaffle())
-
 		r.Get("/activate/{code}", h.getActivate())
 
 		// Password Reset Routes
@@ -217,6 +214,9 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 		// Must have auth
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.MustBeAuthenticated)
+
+			// allow user to access raffle page as it is on the navbar
+			r.Get("/raffle", h.getRaffle())
 
 			r.Get("/dashboard", h.getDashboard())
 
