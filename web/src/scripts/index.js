@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const mlhBadge = document.querySelector(".mlh-badge");
 		// Add a click event on each of them
 		window.onscroll = () => {
-			if (window.pageYOffset > navbarHeight) {
+			if (window.pageYOffset >= 0) {
 				if (flashes) {
 					flashes.classList.add("sticky-flash");
 				}
@@ -559,5 +559,5 @@ var hammers =
                          BoilerMake – Forge the Future
              Notice something weird? Email us at dev@boilermake.org!`
 
-
+console.log("bruh");
 console.log(hammers);

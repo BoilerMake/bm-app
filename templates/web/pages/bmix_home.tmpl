@@ -1,0 +1,369 @@
+{{ define "bmix home" }}
+{{ template "head" . }}
+{{ template "bmix navbar water" . }}
+{{ template "flashes" .Flashes }}
+<!-- Landing Page -->
+<section class="section has-background-image" style='background-color: #D9EAFC; background-image: url({{ static_path "bmix_landing_page_bg.png" }}); min-height:1500px'>
+    <div class="container" style="margin-top: 75px">
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-4-desktop is-7-tablet is-9-mobile" style="padding-top: 20px">
+                <center> <i> <b> <p style="font-family:Raleway; font-weight=500px; color:white; font-size:225%;"> Code on Cloud IX </p> </b> </i> </center>
+            </div>
+        </div>
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 0px">
+                <img style="width:200%" alt="Boilermake" src={{ static_path "bmix_title_long.svg" }}>
+        </div>
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
+                <center> <i> <b> <p style="font-family:Raleway; font-weight=500; color:white; font-size:225%;"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
+        </div>
+        {{ if eq .Status 4 }}
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-3-desktop is-6-tablet is-8-mobile">
+                <a href="/live">
+                    <img alt="Go Live!" src={{ static_path "bmviii_go_live_button.png" }}>
+                </a>
+            </div>
+        </div>
+        {{ else }}
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-3-desktop is-6-tablet is-8-mobile">
+                {{ if .IsAuthenticated }}
+                <a href="/dashboard">
+                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }}>
+                </a>
+                {{ else }}
+                <a href="/signup">
+                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }}>
+                </a>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
+            <center> <a href="#why" style="font-family:Raleway; text-decoration: underline; font-weight=500; color:white; font-size:225%;"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
+        </div>
+    </div>
+</section>
+
+<!-- About BM -->
+<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0; padding-top:10px; min-height:1850px'>
+	<div class="container" style="padding: 0 1.5rem;">
+		<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
+	</div>
+    <div class="container" margin-top: 50px>
+        <img src={{ static_path "bmix_blimp.png" }} alt="blimp">
+    </div>
+</section>
+
+<!-- Event Photos -->
+<section class="section" style='background-color: #FF8E9E; background-image: url({{ static_path "bmix_event_photos_bg.svg" }}); padding-bottom: 125px; padding-left: 5%; padding-right:0; padding-top:10px; min-height:1300px'>
+    <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E; white-space: nowrap;" padding-left: 100px> Event Photos </p>
+    <img style="float:right;" margin-top:-500px width=50% src={{ static_path "bmix_top_plane.png" }} alt="paper plane">
+    <div class="container">
+        <img class="bottom-plane" src={{ static_path "bmix_bottom_plane.png" }} style="object-fit: contain; position: absolute; margin-top:-250px">
+        <div class="event-photos-container">
+            <div class="event-photo">
+                <img src={{ static_path "lauren.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "kevin.jpg" }}>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_testimonials.jpg" }}); background-color: #FFE4C3; position: relative; min-height: 1000px'>
+    <div class="container">
+        <div class="container" style="padding: 0 1.5rem;">
+		    <b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> Testimonials </p> </b> 
+	    </div>
+    </div>
+    <div class="carousel-wrapper" style="margin-top: 5px; margin-left: 1.5rem">
+        <div class="carousel" style="position: relative">
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "lauren.jpg" }} width=40% alt="Lauren">
+                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Lauren Lum </p>
+                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake gave me the resources and support I needed to create a project I was truly proud of. If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!"</p>
+                </center>
+            </div>
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "sam.jpg" }} width=40% alt="Sam">
+                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Sam Ingram </p>
+                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake has been the perfect event to build some exciting projects with some great people. I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while creating something new."</p>
+                </center>
+            </div>
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "kevin.jpg" }} width=40% alt="Kevin">
+                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Kevin Cardona </p>
+                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field."</p>
+                </center>
+            </div>
+            <div class="carousel-button-next"></div>
+            <div class="carousel-button-prev"></div>
+        </div>
+        <img class="testimonial-cloud" src={{ static_path "bmix_testimonial_profile_cloud.svg" }} alt="cloud">
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_faq_bg.svg" }});background-color: #9A8FC5; position: relative; min-height: 1000px'>
+    <div class="container">
+    	<div class="container" style="padding: 0 1.5rem;">
+	    	<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> FAQ </p> </b> 
+	    </div>
+
+        <div class="container" style="padding-top: 75px;">
+            <div class="columns is-mobile">
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What is a hackathon?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+                                Anyone with or without a technical background can attend to learn, build, and share new things.
+                                Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Is it free?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Yes! BoilerMake is an all-expense paid experience. We provide hackers with the venue, swag, and food throughout the weekend.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Will BoilerMake be in person?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Due to the COVID-19 pandemic, we will be shifting to a completely virtual BoilerMake VIII!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Given an online event, will there still be opportunities to form teams and interact with sponsors and other hackers?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Absolutely!
+                                We would like to recreate the community environment of a hackathon through virtual means, which include hacker and sponsor interactions. When we confirm which platforms we will be using to host our events, we will be able to provide more information on what the event will look like!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What if I don't know how to code?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions,
+                                and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance
+                                to learn alongside so many other driven hackers.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-left-accordion">How large can my team be?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                You can have a maximum of 4 people on your team.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-half">
+                     <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">What are the requirements to attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                BoilerMake is open to all undergraduate college students who are of age 18 or older.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">My team was accepted and I wasn't - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">Do you allow walk-ins and last minute registration?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We accept walk-ins based on availability after hacker check-in.
+                                We will announce more details closer to the event!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">I missed the deadline to apply - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We set a deadline to ensure that all applications are given equal consideration to attend BoilerMake.
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-right-accordion">What if I have any other questions?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Meet The Team -->
+<section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:1250px'>
+    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px">
+		<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
+	</div>
+    <div class="team-photos" style="margin-left: 50px;">
+        <div class="balloon-parent">
+            <p> Caroline Chen <br> Director</p>
+            <img src={{ static_path "bmix_director.svg" }} alt="Director" class="balloon">
+            <img src={{ static_path "bmix_director_balloon.png" }} alt="caroline" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Varun Shah <br> Dev Team Lead </p>
+            <img src={{ static_path "bmix_director.svg" }} alt="Director" class="balloon">
+            <img src={{ static_path "bmix_director_balloon.png" }} alt="caroline" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <img src={{ static_path "bmix_director.svg" }} alt="Director" class="balloon">
+            <img src={{ static_path "bmix_director_balloon.png" }} alt="caroline" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <img src={{ static_path "bmix_director.svg" }} alt="Director" class="balloon">
+            <img src={{ static_path "bmix_director_balloon.png" }} alt="caroline" class="team-picture">
+        </div>
+    </div>
+</section>
+
+<!-- Sponsors -->
+<section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmix_sponsorship_bg.svg" }}); min-height: 1999px; background-color: #8BBAEA'>
+    <div class="container">
+        <div class="columns is-mobile is-centered content">
+            <div class="column is-5-mobile is-3-tablet is-2-desktop">
+                <b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E; margin-left:-70px"> Sponsors </p> </b>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-mobile is-centered content" style="margin-top: 10%">
+        <div class="column is-12-mobile is-8-tablet is-8-desktop box" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="column is-3-desktop is-4-tablet is-5-mobile">
+                    <a href="https://www.collinsaerospace.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Collins Aerospace" src={{ static_path "sponsors_collins.jpeg" }}>
+                    </a>
+                </div>
+                <div class="column is-4-desktop is-4-tablet is-5-mobile">
+                    <a href="https://www.qualcomm.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Qualcomm" src={{ static_path "sponsors_qualcomm.jpg" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="column is-3-desktop is-4-tablet is-5-mobile">
+                    <a href="https://www.ecolab.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Ecolab" src={{ static_path "sponsors_ecolab.jpg" }}>
+                    </a>
+                </div>
+                <div class="column is-3-desktop is-4-tablet is-5-mobile is-offset-1-desktop">
+                    <a href="https://www2.deloitte.com/us/en.html" rel="noopener noreferrer" target="_blank">
+                        <img alt="Deloitte" src={{ static_path "sponsors_deloitte.png" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-bottom: 0px">
+                <div class="column is-3-desktop is-4-tablet is-5-mobile">
+                    <a href="https://www.palantir.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Palantir" src={{ static_path "sponsors_palantir.png" }}>
+                    </a>
+                </div>
+                <div class="column is-4-desktop is-4-tablet is-5-mobile is-offset-1-desktop">
+                    <a href="https://www.deere.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="John Deere" src={{ static_path "sponsors_john_deere.png" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="column is-3-desktop is-4-tablet is-4-mobile ">
+                    <a href="https://polytechnic.purdue.edu/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Purdue Polytechnic Institute" src={{ static_path "sponsors_polytech.png" }}>
+                    </a>
+                </div>
+                <div class="column is-3-desktop is-4-tablet is-4-mobile is-offset-1-desktop">
+                    <a href="https://www.capitalone.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Capital One" src={{ static_path "sponsors_capital_one.png" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 5%; margin-bottom: 0px">
+                <div class="column is-3-desktop is-3-tablet is-3-mobile">
+                    <a href="http://hackp.ac/mlh-stickermule-hackathons" rel="noopener noreferrer" target="_blank">
+                      <img alt="Sticker Mule" src={{ static_path "sponsors_stickermule.png" }}>
+                    </a>
+                </div>
+                <div class="column is-2-desktop is-3-tablet is-3-mobile is-offset-1-desktop">
+                    <a href="https://www.echoar.xyz/" rel="noopener noreferrer" target="_blank">
+                      <img alt="Echo AR" src={{ static_path "sponsors_echo_ar.png" }}>
+                    </a>
+                </div>
+                <div class="column is-2-desktop is-offset-1-desktop is-3-tablet is-3-mobile">
+                    <a href="https://www.wolfram.com/language/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Wolfram Language" src={{ static_path "sponsors_wolfram.svg" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="column is-2-desktop is-3-tablet is-3-mobile">
+                    <a href="https://www.digitalocean.com/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Digital Ocean" src={{ static_path "sponsors_digital_ocean.svg" }}>
+                    </a>
+                </div>
+                <div class="column is-4 is-3-tablet is-3-mobile">
+                    <a href="https://pinnacle.us.org/" rel="noopener noreferrer" target="_blank">
+                        <img alt="Pinnacle" src={{ static_path "sponsors_pinnacle.svg" }}>
+                    </a>
+                </div>
+                <div class="column is-2 is-3-tablet is-3-mobile">
+                    <a href="https://thecodex.me/" rel="noopener noreferrer" target="_blank">
+                        <img alt="The Codex" src={{ static_path "sponsors_codex.png" }}>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Automatic Slideshow Script -->
+<script>
+    var slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+    var i;
+    var slides = document.getElementsByClassName("event-photo");
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}    
+    slides[slideIndex-1].style.display = "block";
+    setTimeout(showSlides, 5000); // Change image every 2 seconds
+    }
+</script>
+
+{{ template "bmviii footer" . }}
+{{ end }}

@@ -6,7 +6,7 @@ INFO_STR=[INFO]
 
 dev: dev-frontend
 	@echo $(INFO_STR) starting dev environment...
-	@docker-compose -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up
+	@docker-compose --env-file .env -f deploy/docker-compose.default.yml -f deploy/docker-compose.dev.yml up
 
 dev-force-rebuild: dev-frontend
 	@echo $(INFO_STR) rebuilding dev environment...
