@@ -7,14 +7,14 @@
     <div class="container" style="margin-top: 75px">
         <div class="columns is-centered is-mobile content">
             <div class="column is-4-desktop is-7-tablet is-9-mobile" style="padding-top: 20px">
-                <center> <i> <b> <p style="font-family:Raleway; font-weight=500px; color:white; font-size:225%;"> Code on Cloud IX </p> </b> </i> </center>
+                <center> <i> <b> <p style="font-family:Raleway; font-weight:500px; color:white; font-size:225%;"> Code on Cloud IX </p> </b> </i> </center>
             </div>
         </div>
         <div class="columns is-centered is-mobile content" style="margin-bottom: 0px">
                 <img style="width:200%" alt="Boilermake" src={{ static_path "bmix_title_long.svg" }}>
         </div>
         <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
-                <center> <i> <b> <p style="font-family:Raleway; font-weight=500; color:white; font-size:225%;"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
+                <center> <i> <b> <p style="font-family:Raleway; font-weight:500; color:white; font-size:225%;"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
         </div>
         {{ if eq .Status 4 }}
         <div class="columns is-centered is-mobile content">
@@ -40,7 +40,7 @@
         </div>
         {{ end }}
         <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
-            <center> <a href="#why" style="font-family:Raleway; text-decoration: underline; font-weight=500; color:white; font-size:225%;"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
+            <center> <a href="#why" style="font-family:Raleway; text-decoration: underline; font-weight:500; color:white; font-size:225%;"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
         </div>
     </div>
 </section>
@@ -48,25 +48,38 @@
 <!-- About BM -->
 <section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0; padding-top:10px; min-height:1850px'>
 	<div class="container" style="padding: 0 1.5rem;">
-		<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
+		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
 	</div>
-    <div class="container" margin-top: 50px>
-        <img src={{ static_path "bmix_blimp.png" }} alt="blimp">
+    <div class="container about-parent" margin-top: 50px>
+        <img src={{ static_path "bmix_blimp.png" }} alt="blimp" class="about-blimp">
+        <p class="about-text"> 
+        Since our first event in 2014, BoilerMake’s mission has been to empower hackers to discover, create, innovate, and achieve. We provide tools, resources, tech talks, and networking opportunities for every hacker to learn and grow with the hackathon community. 
+BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd. Over 36 hours, both beginners and experts will collaborate to create both trailblazing projects and unforgettable memories.
+        </p> 
     </div>
 </section>
 
 <!-- Event Photos -->
 <section class="section" style='background-color: #FF8E9E; background-image: url({{ static_path "bmix_event_photos_bg.svg" }}); padding-bottom: 125px; padding-left: 5%; padding-right:0; padding-top:10px; min-height:1300px'>
-    <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E; white-space: nowrap;" padding-left: 100px> Event Photos </p>
+    <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E; white-space: nowrap;" padding-left: 100px> Event Photos </p>
     <img style="float:right;" margin-top:-500px width=50% src={{ static_path "bmix_top_plane.png" }} alt="paper plane">
     <div class="container">
-        <img class="bottom-plane" src={{ static_path "bmix_bottom_plane.png" }} style="object-fit: contain; position: absolute; margin-top:-250px">
+        <img class="bottom-plane" src={{ static_path "bmix_bottom_plane.png" }} style="object-fit: contain; position: absolute; margin-top:0px">
         <div class="event-photos-container">
             <div class="event-photo">
-                <img src={{ static_path "lauren.jpg" }}>
+                <img src={{ static_path "event_photo1.jpg" }}>
             </div>
             <div class="event-photo">
-                <img src={{ static_path "kevin.jpg" }}>
+                <img src={{ static_path "event_photo2.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo3.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo4.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo5.jpg" }}>
             </div>
         </div>
     </div>
@@ -76,7 +89,7 @@
 <section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_testimonials.jpg" }}); background-color: #FFE4C3; position: relative; min-height: 1000px'>
     <div class="container">
         <div class="container" style="padding: 0 1.5rem;">
-		    <b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> Testimonials </p> </b> 
+		    <b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Testimonials </p> </b> 
 	    </div>
     </div>
     <div class="carousel-wrapper" style="margin-top: 5px; margin-left: 1.5rem">
@@ -84,22 +97,22 @@
             <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
                 <center> 
                     <img class="testimonial-profile" src={{ static_path "lauren.jpg" }} width=40% alt="Lauren">
-                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Lauren Lum </p>
-                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake gave me the resources and support I needed to create a project I was truly proud of. If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!"</p>
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Lauren Lum </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake gave me the resources and support I needed to create a project I was truly proud of. If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!"</p>
                 </center>
             </div>
             <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
                 <center> 
                     <img class="testimonial-profile" src={{ static_path "sam.jpg" }} width=40% alt="Sam">
-                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Sam Ingram </p>
-                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake has been the perfect event to build some exciting projects with some great people. I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while creating something new."</p>
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Sam Ingram </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake has been the perfect event to build some exciting projects with some great people. I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while creating something new."</p>
                 </center>
             </div>
             <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
                 <center> 
                     <img class="testimonial-profile" src={{ static_path "kevin.jpg" }} width=40% alt="Kevin">
-                    <p style="font-family:Raleway; font-weight=400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Kevin Cardona </p>
-                    <p style="font-family:Sen; font-weight=400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field."</p>
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Kevin Cardona </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field."</p>
                 </center>
             </div>
             <div class="carousel-button-next"></div>
@@ -113,7 +126,7 @@
 <section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_faq_bg.svg" }});background-color: #9A8FC5; position: relative; min-height: 1000px'>
     <div class="container">
     	<div class="container" style="padding: 0 1.5rem;">
-	    	<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> FAQ </p> </b> 
+	    	<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> FAQ </p> </b> 
 	    </div>
 
         <div class="container" style="padding-top: 75px;">
@@ -225,7 +238,7 @@
 <!-- Meet The Team -->
 <section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:1250px'>
     <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px">
-		<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
+		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
 	</div>
     <div class="team-photos" style="margin-left: 50px;">
         <div class="balloon-parent">
@@ -254,7 +267,7 @@
     <div class="container">
         <div class="columns is-mobile is-centered content">
             <div class="column is-5-mobile is-3-tablet is-2-desktop">
-                <b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E; margin-left:-70px"> Sponsors </p> </b>
+                <b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E; margin-left:-70px"> Sponsors </p> </b>
             </div>
         </div>
     </div>

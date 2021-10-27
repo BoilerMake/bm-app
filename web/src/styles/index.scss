@@ -291,10 +291,10 @@ body {
 .event-photo {
   border-radius: 25px;
   background-color: rgba(255, 255, 255, 0.64);
-  width: 500px;
+  width: auto;
   padding: 50px;
-  margin-top: 150px;
-  margin-left: 250px;
+  margin-top: 200px;
+  margin-left: -100px;
   display: none;
 }
 
@@ -456,6 +456,37 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   width: 50%;
   z-index: 3;
 }
+
+.about-parent {
+  position: relative;
+  display: grid;
+  top: 0;
+  left: 0;
+  margin-bottom: 50px;
+}
+.about-blimp {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 85%;
+}
+.about-text {
+  position: absolute;
+  height: 80%;
+  border-radius: 50%;
+  // left: 10px;
+  display: block;
+  width: 50%;
+  margin-left: 450px;
+  color: white;
+  font-family: Sen;
+  font-weight: 400px;
+  font-size:25px;
+  margin-top: 95px;
+  z-index: 3;
+}
+
 
 .balloon-parent p{
   position: absolute;
