@@ -1,0 +1,85 @@
+{{ define "bmix sponsors" }}
+
+{{ template "head" . }}
+{{ template "bmix navbar water" . }}
+{{ template "flashes" .Flashes }}
+
+<section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmix_sponsorship_bg.svg" }}); min-height: 1999px; background-color: #8BBAEA'>
+    <div class="container">
+        <div class="columns is-mobile is-centered content">
+            <div class="column is-5-mobile is-3-tablet is-2-desktop">
+                <b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E; margin-left:-70px"> Sponsors </p> </b>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-mobile is-centered content">
+        <div class="column is-12-mobile is-8-tablet is-8-desktop" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://boilerlink.purdue.edu/organization/SFAB" rel="noopener noreferrer" target="_blank" style="margin-left: 210px; margin-top: 40px;">
+                        <img alt="Purdue SFAB" src={{ static_path "sponsors_sfab.png" }} style="width:60%">
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.ecolab.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 80px; margin-top: 100px;">
+                        <img alt="Purdue SFAB" src={{ static_path "sponsors_ecolab.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.deere.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 25px; margin-top: 75px; width:75%">
+                        <img alt="John Deere" src={{ static_path "sponsors_john_deere.png" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://digitalocean.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 60px; margin-top: 0px; width: 45%">
+                        <img alt="Digital Ocean" src={{ static_path "sponsors_digital_ocean.svg" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://cloud.google.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: -15px;">
+                        <img alt="Google Cloud" src={{ static_path "sponsors_google_cloud.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://microsoft.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: 60px;">
+                        <img alt="Microsoft" src={{ static_path "sponsors_microsoft.png" }} style="width:150%">
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.wolfram.com/language/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: 50px;">
+                        <img alt="Wolfram" src={{ static_path "sponsors_wolfram.svg" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://robinhood.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 60px; margin-top: 70px; width: 45%">
+                        <img alt="Robinhood" src={{ static_path "bmix_rh_sponsor.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://cloud.google.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: -15px;">
+                        <img alt="Google Cloud" src={{ static_path "sponsors_google_cloud.png" }} style="width:150%">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{ template "bmix footer" . }}
+{{ end }}
