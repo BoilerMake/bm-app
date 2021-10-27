@@ -156,6 +156,7 @@ func NewHandler(us models.UserService, as models.ApplicationService, rs models.R
 	r.Get("/sponsors", h.getSponsors())
 	r.Get("/about", h.getAbout())
 	r.Get("/faq", h.getFaq())
+	r.Get("/meet_team", h.getMeetTeam())
 
 	// Live routes only
 	r.Group(func(r chi.Router) {
@@ -333,8 +334,11 @@ func (h *Handler) getAbout() http.HandlerFunc {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
-
-		h.Templates.RenderTemplate(w, "about", p)
+		if h.Status < 2 || h.Status > 4 {
+			h.Templates.RenderTemplate(w, "about", p)
+		} else {
+			h.Templates.RenderTemplate(w, "bmix_about", p)
+		}
 	}
 }
 
@@ -347,8 +351,24 @@ func (h *Handler) getFaq() http.HandlerFunc {
 			h.Error(w, r, errors.New("creating page failed"), "")
 			return
 		}
+		if h.Status < 2 || h.Status > 4 {
+			h.Templates.RenderTemplate(w, "faq", p)
+		} else {
+			h.Templates.RenderTemplate(w, "bmix_faq", p)
+		}
+	}
+}
 
-		h.Templates.RenderTemplate(w, "faq", p)
+// getMeetTeam renders the meet the team template.
+func (h *Handler) getMeetTeam() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p, ok := h.NewPage(w, r, "BoilerMake - Meet The Team")
+
+		if !ok {
+			h.Error(w, r, errors.New("creating page failed"), "")
+			return
+		}
+		h.Templates.RenderTemplate(w, "bmix_meet_team", p)
 	}
 }
 

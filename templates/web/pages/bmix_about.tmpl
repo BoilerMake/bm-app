@@ -1,0 +1,20 @@
+{{ define "bmix_about" }}
+{{ template "head" . }}
+
+{{ template "bmix navbar water" . }}
+
+{{ template "flashes" .Flashes }}
+
+<!-- About BM -->
+<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0;'>
+	<div class="container" style="padding: 0 1.5rem;">
+		<b> <p style="font-family:Raleway; font-weight=500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
+	</div>
+    <div class="container" margin-top: 50px>
+        <img src={{ static_path "bmix_blimp.png" }} alt="blimp">
+    </div>
+</section>
+
+
+{{ template "footer" . }}
+{{ end }}

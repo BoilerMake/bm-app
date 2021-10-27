@@ -32,3 +32,6 @@ web/static/
 
 # .idea
 .idea/
+
+# Makefile cause of docker
+Makefile
