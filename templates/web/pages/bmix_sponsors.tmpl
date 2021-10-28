@@ -4,6 +4,7 @@
 {{ template "bmix navbar water" . }}
 {{ template "flashes" .Flashes }}
 
+<!-- Sponsors -->
 <section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmix_sponsorship_bg.svg" }}); min-height: 1999px; background-color: #8BBAEA'>
     <div class="container">
         <div class="columns is-mobile is-centered content">
@@ -72,14 +73,15 @@
                 </div>
                 <div class="sponsor-parent">
                     <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="http://cloud.google.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: -15px;">
-                        <img alt="Google Cloud" src={{ static_path "sponsors_google_cloud.png" }} style="width:150%">
+                    <a class="sponsor" href="https://www.sketch.com" rel="noopener noreferrer" target="_blank" style="margin-left: 70px; margin-top: 10px;">
+                        <img alt="Sketch" src={{ static_path "sponsors_sketch.png" }} style="width:75%">
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
 
 {{ template "bmix footer" . }}
 {{ end }}
