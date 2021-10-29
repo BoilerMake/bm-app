@@ -144,6 +144,11 @@ body {
     border-radius: 6px;
 }
 
+.button.is-light-pink {
+  background-color: #E9DAEB;
+  border-radius: 8px;
+}
+
 .button.is-red {
 	background-color: #FF0043;
     border-radius: 20px;
@@ -499,10 +504,8 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   font-size: 12px;
   opacity: 0;
   text-align: center;
-  width: 100px;
-  height: 140px;
+  height: 90%;
   border-radius: 90% / 100%;
-  height: 150px;
   visibility: hidden;
   -webkit-transition: visibility 0s, opacity 0.2s linear; 
   transition: visibility 0s, opacity 0.2s linear;
@@ -519,7 +522,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
  }
  
  .balloon-parent:hover p{
-  width: 150px;
+  width: 113%;
   visibility: visible;
   opacity: 0.9; 
  }

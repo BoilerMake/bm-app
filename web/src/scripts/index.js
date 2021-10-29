@@ -559,5 +559,4 @@ var hammers =
                          BoilerMake – Forge the Future
              Notice something weird? Email us at dev@boilermake.org!`
 
-console.log("bruh");
 console.log(hammers);
