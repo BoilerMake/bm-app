@@ -1,0 +1,390 @@
+{{ define "bmix-apply" }}
+{{ template "head" . }}
+
+{{ template "bmix navbar water" . }}
+
+{{ template "flashes" .Flashes }}
+
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmix_application_bg.svg" }}); background-color: #FFFFFF; background-size: 100%; min-height: 1500px;'>
+	<div class="container" style="margin-top: -600px">
+        <div class="columns is-centered has-text-centered content">
+            <div class="column is-8">
+                <p style="font-family:Raleway; font-weight:400px; font-size:60px; color:#59536F"> BMIX Application </p>
+            </div>
+        </div>
+        <div class="columns is-centered has-text-centered content" style="margin-top:-30px">
+            <div class="column is-8">
+                <p style="font-family:Raleway; font-weight:400px; font-size:17px; color:#59536F"> Want to build and create with other passionate people?  </p>
+            </div>
+        </div>
+        <div class="columns is-centered has-text-centered content">
+            <div class="column is-8">
+                <p style="font-family:Raleway; font-weight:400px; font-size:17px; color:#59536F">         Apply using the form below to spend a weekend learning, coding, and networking with the BoilerMake team!
+                    We will provide the resources, tools, and activities to fuel both your work and break time,  so do not miss 
+                    your chance to participate in Purdue’s largest hackathon!
+                   <b> The deadline for applications is December 10th. </b> If you have any questions, do not hesitate to reach out to us at team@boilermake.org.</p>
+            </div>
+        </div>     
+        <!-- Application Questions -->
+		<div class="columns is-centered content" style="margin-top:50px">
+			<div class="column is-6" style="background-color: transparent;">
+				<form action="" method="post" enctype="multipart/form-data" style="padding: 0 1.5rem;">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">1. Personal Information</button>
+                        <div class="bmviii-left-accordion-content">
+                            <div class="field">
+                                <label for="first-name" class="label">
+                                    <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                        First Name
+                                    </p>
+                                </label>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="text" name="first-name" style="background-color: transparent" class="input" placeholder="John" maxlength="128" value="{{ .FormRefill.FirstName }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="last-name" class="label">
+                                <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                    Last Name
+                                </p>
+                            </label>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="text" name="last-name" style="background-color: transparent" class="input" placeholder="Smith" maxlength="128" value="{{ .FormRefill.LastName }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="gender" class="label">
+                                    <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                        Gender
+                                    </p>
+                                </label>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="gender" style="background-color: transparent" required>
+                                                {{ if not .FormRefill.Gender }}
+                                                <option disabled selected="true">Select an option</option>
+                                                {{ else }}
+                                                <option disabled>Select an option</option>
+                                                {{ end }}
+
+                                                {{ if eq .FormRefill.Gender "Female" }}
+                                                <option value="Female" selected>Female</option>
+                                                {{ else }}
+                                                <option value="Female">Female</option>
+                                                {{ end }}
+
+                                                {{ if eq .FormRefill.Gender "Male" }}
+                                                <option value="Male" selected>Male</option>
+                                                {{ else }}
+                                                <option value="Male">Male</option>
+                                                {{ end }}
+
+                                                {{ if eq .FormRefill.Gender "Other" }}
+                                                <option value="Other" selected>Other</option>
+                                                {{ else }}
+                                                <option value="Other">Other</option>
+                                                {{ end }}
+
+                                                {{ if eq .FormRefill.Gender "Prefer not to say" }}
+                                                <option value="Prefer not to say" selected>Prefer not to say</option>
+                                                {{ else }}
+                                                <option value="Prefer not to say">Prefer not to say</option>
+                                                {{ end }}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                            <label for="phone" class="label">
+                                <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                    Phone
+                                </p>
+                            </label>
+                            <div class="field-body">
+                                <div class="field">
+                                    <div class="control">
+                                        <input type="tel" name="phone" style="background-color: transparent" class="input" placeholder="1234567890" minlength="7" maxlength="32" value="{{ .FormRefill.Phone }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="field">
+                                <label for="location" class="label">
+                                    <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                        Date of Birth
+                                    </p>
+                                </label>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="text" name="location" style="background-color: transparent; margin-bottom: 15px" class="input" placeholder="MM/DD/YYYY" value="{{ .FormRefill.Location }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+					        </div>
+                            </div>
+                            </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">2. Education Info</button>
+                        <div class="bmviii-left-accordion-content">
+                            <div class="field">
+                        {{ if eq .FormRefill.School "Other" }}
+					<div id="school-input" class="field">
+                        <label for="school" class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                College
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="school" name="school" list="bmvii-application__schools" style="background-color: #F0F0F0" class="input" placeholder="Purdue University" maxlength="512" value="{{ .FormRefill.OtherSchool }}" required>
+                                	{{ template "school datalist" }}
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ else }}
+					<div id="school-input" class="field">
+                        <label for="school"class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                College
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="school" name="school" list="bmvii-application__schools" style="background-color: #F0F0F0" class="input" placeholder="Purdue University" maxlength="512" value="{{ .FormRefill.OtherSchool }}">
+                                	{{ template "school datalist" }}
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ end }}
+                    {{ if eq .FormRefill.Major "Other" }}
+					<div id="major-input" class="field">
+                        <label for="major" class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                Major
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="major" name="major" style="background-color: #F0F0F0" class="input" placeholder="Major" maxlength="512" value="{{ .FormRefill.OtherMajor }}" required>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ else }}
+					<div id="major-input" class="field">
+                        <label for="major"class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px">
+                                Major
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control">
+                                    <input type="text" id="major" name="major" style="background-color: #F0F0F0" class="input" placeholder="Major" maxlength="512">
+                                </div>
+                            </div>
+                        </div>
+					</div>
+					{{ end }}
+					<div class="field">
+                        <div class="field-label is-normal">
+                            <label for="graduation-year" class="label">
+                                <p class="bmviii-app-font" style="margin-bottom: 0px; margin-top: 7px">
+                                    Graduation Year
+                                </p>
+                            </label>
+                        </div>
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="control" style="background-color: transparent; margin-bottom: 15px">
+                                    <div class="select is-fullwidth">
+                                        <select name="graduation-year" style="background-color: #F0F0F0" required>
+                                            {{ if not .FormRefill.GraduationYear }}
+                                            <option disabled selected="true">Choose a year</option>
+                                            {{ else }}
+                                            <option disabled>Choose a year</option>
+                                            {{ end }}
+
+                                            {{ if eq .FormRefill.GraduationYear "2021" }}
+                                            <option value="2021" selected>2021</option>
+                                            {{ else }}
+                                            <option value="2021">2021</option>
+                                            {{ end }}
+
+                                            {{ if eq .FormRefill.GraduationYear "2022" }}
+                                            <option value="2022" selected>2022</option>
+                                            {{ else }}
+                                            <option value="2022">2022</option>
+                                            {{ end }}
+
+                                            {{ if eq .FormRefill.GraduationYear "2023" }}
+                                            <option value="2023" selected>2023</option>
+                                            {{ else }}
+                                            <option value="2023">2023</option>
+                                            {{ end }}
+
+                                            {{ if eq .FormRefill.GraduationYear "2024" }}
+                                            <option value="2024" selected>2024</option>
+                                            {{ else }}
+                                            <option value="2024">2024</option>
+                                            {{ end }}
+
+                                             {{ if eq .FormRefill.GraduationYear "2025" }}
+                                            <option value="2025" selected>2025</option>
+                                            {{ else }}
+                                            <option value="2025">2025</option>
+                                            {{ end }}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+
+					</div>
+                        </div>
+                    </div>
+
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">3. Professional Info</button>
+                        <div class="bmviii-left-accordion-content">
+                            <div class="field">
+                                <label for="github-username" class="label">
+                                    <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                        GitHub Username
+                                    </p>
+                                </label>
+                                <div class="field-body">
+                                    <div class="field">
+                                        <div class="control">
+                                            <input type="text" name="github-username" style="background-color: #F0F0F0" class="input" placeholder="smith0987" maxlength="512" value="{{ .FormRefill.Github }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                        <label for="school" class="label">
+                            <p class="bmviii-app-font" style="margin-bottom: 0px;">
+                                Resume
+                            </p>
+                        </label>
+                        <div class="field-body">
+                            <div class="file has-name" style="background-color: transparent; margin-bottom: 15px" class="input">
+                                <label class="file-label">
+                                    {{ if .FormRefill.ResumeFile }}
+                                    <input class="file-input" type="file" accept=".pdf" name="resume">
+                                    {{ else }}
+                                    <input class="file-input" type="file" accept=".pdf" name="resume" required>
+                                    {{ end }}
+                                    <span class="file-cta" style="background-color: #6E9CFF;">
+                                        <span class="file-label" style="font-family: Cabin; font-weight: bold; color: white">
+                                            Upload...
+                                        </span>
+                                    </span>
+                                    {{ if .FormRefill.ResumeFile }}
+                                    <span class="file-name">{{ .FormRefill.ResumeFile }}</span>
+                                    {{ else }}
+                                    <span class="file-name" style="font-family: Cabin; color: #989898; background-color: #F0F0F0">No file selected</span>
+                                    {{ end }}
+                                </label>
+                            </div>
+                        </div>
+					</div>
+                        </div>
+                    </div>
+
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">4. Short Answer Questions</button>
+                        <div class="bmviii-left-accordion-content">
+                            <div class="field">
+						        <label for="why-bm" class="label">
+						        <p class="bmviii-app-font" style="margin-bottom: 0px">
+						            What do you hope to take away from BoilerMake? (e.g. talking to companies, making friends, learning new things, etc). Please keep your answer below 100 words
+                                </p>
+                                </label>
+                                <div class="control" style="background-color: transparent; margin-bottom: 15px;">
+                                    <textarea class="textarea" style="background-color: #F0F0F0; resize: none" name="why-bm" maxlength="300" required >{{ .FormRefill.WhyBM }}</textarea>
+                                </div>
+					        </div>
+                            <div class="field">
+						        <label for="proj-idea" class="label">
+						        <p class="bmviii-app-font" style="margin-bottom: 0px">
+						            Do you already have a project idea? If not, what technologies are you interested in using at BoilerMake? (e.g. web dev, app dev, Raspberry Pi, etc). Please keep your answer below 100 words
+                                </p>
+                                </label>
+                                <div class="control" style="background-color: transparent; margin-bottom: 15px;">
+                                    <textarea class="textarea" style="background-color: #F0F0F0; resize: none" name="proj-idea" maxlength="300" required >{{ .FormRefill.ProjIdea }}</textarea>
+                                </div>
+					        </div>
+                        </div>
+                    </div>
+
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">5. Acknowledgements</button>
+                        <div class="bmviii-left-accordion-content">
+                            <div class="field" style="margin-top: 30px">
+                                <label class="checkbox">
+                                    {{ if .FormRefill.Is18OrOlder }}
+                                    <input type="checkbox" name="is-18-or-older" checked required>
+                                    {{ else }}
+                                    <input type="checkbox" name="is-18-or-older" required>
+                                    {{ end }}
+                                    I have read the <a href="https://protect.purdue.edu/updates/protect-purdue-for-fall-2021/" target="_blank">Protect Purdue Guidelines</a>
+                                </label>
+					        </div>
+
+                            <div class="field">
+                                <label class="checkbox">
+                                    {{ if .FormRefill.MLHCodeOfConduct }}
+                                    <input type="checkbox" name="mlh-code-of-conduct" checked required>
+                                    {{ else }}
+                                    <input type="checkbox" name="mlh-code-of-conduct" required>
+                                    {{ end }}
+                                    I have read and agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>
+                                </label>
+                            </div>
+
+                            <div class="field">
+                                <label class="checkbox">
+                                    {{ if .FormRefill.MLHContestAndPrivacy }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" checked required>
+                                    {{ else }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" required>
+                                    {{ end }}
+                                    Do you acknowledge that if you do not follow these guidelines, you will be asked to leave the event?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+          {{ if eq .FormRefill.Decision 0 }}
+					<div class="field has-text-centered">
+						<button class="button is-white" style="border-radius:10px" id="submit-app" type="submit">Submit Application</button>
+					</div>
+          {{ end }}
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+{{ template "bmix footer" . }}
+{{ end }}

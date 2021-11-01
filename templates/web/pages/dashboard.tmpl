@@ -5,7 +5,7 @@
 
 {{ template "flashes" .Flashes }}
 
-<section class="section bmvii-form" style='background-image: url({{ static_path "bmviii-dashboard-background.svg" }}); background-color: #FFE4C3'>
+<section class="section bmvii-form" style='background-image: url({{ static_path "bmix_landing_page_bg.png" }}); background-color: #FFE4C3; background-size: 100%; min-height: 600px'>
 	<div class="container">
 		<div class="columns is-centered content">
 			<div class="column box is-5-desktop is-7-tablet">
@@ -132,7 +132,7 @@
             {{ end }}
 
             {{ if eq .Data.Application.Decision 0 }}
-            <a class="button is-red is-outlined is-fullwidth is-5 title" href="/apply">View application</a>
+            <a class="button is-light-pink is-outlined is-fullwidth is-5 title" style="color:white" href="/apply">View application</a>
             {{ end }}
           {{ end }}
 
