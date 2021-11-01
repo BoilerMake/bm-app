@@ -19,7 +19,7 @@ type S3 struct {
 func NewS3(resumeBucket string) S3 {
 	// AWS credentials are loaded from env automatically
 	sess, err := session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{Region: aws.String("us-east-1")},
+		Config: aws.Config{Region: aws.String("us-east-2")},
 	})
 	if err != nil {
 		log.Fatal("Failed to set up aws session")
