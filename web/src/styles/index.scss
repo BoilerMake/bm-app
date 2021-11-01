@@ -436,6 +436,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   margin-top: auto;
   margin-bottom: auto;
   z-index: 3;
+  object-fit: cover;
 }
 
 .sponsor-parent {
@@ -444,18 +445,19 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   top: 0;
   left: 0;
   margin-bottom: 50px;
+  justify-content: center;
+  display: flex;
 }
 .big-sponsor-cloud {
   position: relative;
   top: 0;
   left: 0;
   z-index: 1;
-  width: 85%;
+  width: 85%;;
 }
 .sponsor {
   position: absolute;
   height: 80%;
-  border-radius: 50%;
   // left: 10px;
   display: block;
   width: 50%;
