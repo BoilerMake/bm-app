@@ -18,13 +18,13 @@
 		{{ if and (.Status) (or (lt .Status 2) (gt .Status 4)) }}
 		<meta property="og:image" content='{{ static_path `logo_black.png` }}'>
 
-		<link rel="icon" href='{{ static_path "big_bmix_logo.svg" }}'>
+		<link rel="icon" href='{{ static_path "hammer_logo.png" }}'>
 		<link rel="alternate icon" href='{{ static_path "bmix_logo.png" }}'>
 		{{ else }}
 		<meta property="og:image" content='{{ static_path `bmviii_unfurl.jpg` }}'>
 
-		<link rel="icon" type="image/svg+xml" href='{{ static_path "big_bmix_logo.svg" }}'>
-		<link rel="alternate icon" type="image/png" href='{{ static_path "big_bmix_logo.png" }}'>
+		<link rel="icon" type="image/svg+xml" href='{{ static_path "hammer_logo.png" }}'>
+		<link rel="alternate icon" type="image/png" href='{{ static_path "hammer_logo.png" }}'>
 		{{ end }}
 
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Cabin" />
