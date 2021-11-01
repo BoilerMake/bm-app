@@ -5,14 +5,14 @@ $body-overflow-y: auto;
 $dark: #231F20;
 
 // Use new background color for navbar for bmviii
-$navbar-background-color: #A7C3FF;
+$navbar-background-color: rgba(0, 0, 0, 0.15);
 
 // change navbar hover color. change text to make it readable as well
-$navbar-item-hover-background-color: #4B75F7;
+$navbar-item-hover-background-color: rgba(0, 0, 0, 0.25);
 $navbar-item-hover-color: #FFFFFF;
 
 // change box radius for bmviii covid-19 info
-$box-radius: 20px;
+// $box-radius: 20px;
 
 // change tablet screen to include 768px
 $tablet: 768px;
@@ -40,6 +40,7 @@ body {
 }
 
 .mlh-badge {
+  position: fixed;
 	display: block;
 	max-width: 100px;
 	min-width: 60px;
@@ -62,7 +63,7 @@ body {
 }
 
 .sticky-badge {
-	top: 0;
+	top: 500;
 	position: fixed;
 }
 
@@ -123,6 +124,8 @@ body {
 
 .bm-navbar {
 	flex-grow: 0;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .bm-vii-hero {
@@ -139,6 +142,11 @@ body {
 .button.is-light-blue {
     background-color: #6699FF;
     border-radius: 6px;
+}
+
+.button.is-light-pink {
+  background-color: #E9DAEB;
+  border-radius: 8px;
 }
 
 .button.is-red {
@@ -166,8 +174,14 @@ body {
     font-size: 18px;
 }
 
+.bmix-text-style {
+  color: white;
+  font-family: Sen;
+  font-size: 24px;
+}
+
 .bmviii-footer-text {
-  font-family: Cabin, serif;
+    font-family: Raleway;
     font-weight: 600;
     font-size: 20px;
     line-height: 24.3px;
@@ -184,6 +198,29 @@ body {
 .carousel {
     transform-style: preserve-3d;
 }
+
+.bottom-plane {
+  position: absolute;
+  margin-left: -100px;
+  top: 500px;
+  min-width: 110%;
+  z-index: 1;
+}
+
+.back-cloud {
+  margin-top: 1000px;
+}
+
+.testimonial-cloud {
+  position: absolute;
+  margin-left: 300px;
+  margin-right: auto;
+  top: 500px;
+  margin-top: -100px;
+  max-width: 50%;
+  z-index: 2;
+}
+
 .carousel-entry {
     opacity: 0;
     position: absolute;
@@ -193,7 +230,7 @@ body {
     padding: 3rem 4rem;
     z-index: 100;
     transition: transform .5s, opacity .5s, z-index .5s;
-    min-height: 518px
+    min-height: 518px;
 }
 
 .active { // show element
@@ -250,16 +287,37 @@ body {
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+.event-photos-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+.event-photo {
+  border-radius: 25px;
+  background-color: rgba(255, 255, 255, 0.64);
+  width: auto;
+  padding: 50px;
+  margin-top: 200px;
+  margin-left: -100px;
+  display: none;
+}
+
+.testimonial-profile {
+  border-radius: 50%;
+  // margin-top: -100px;
+}
+
 button.bmviii-left-accordion, button.bmviii-right-accordion { // have separate accordions as we have two columns of accordions
     width: 100%;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.60);
     border: none;
     outline: none;
     text-align: left;
     padding: 15px 20px;
-    font-family: Cabin;
-    font-weight: bold;
-    font-size: 18px;
+    font-family: Raleway;
+    font-weight: 400;
+    font-size: 26px;
     cursor: pointer;
     transition: background-color 0.2s linear;
     word-wrap: break-word;
@@ -268,7 +326,7 @@ button.bmviii-left-accordion, button.bmviii-right-accordion { // have separate a
 
 button.bmviii-left-accordion::after, button.bmviii-right-accordion::after {
     content: "+";
-    font-size: 14px;
+    font-size: 30px;
     float: right;
 }
 
@@ -277,20 +335,27 @@ button.bmviii-left-accordion.is-active::after, button.bmviii-right-accordion.is-
 }
 
 button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.bmviii-left-accordion.is-active, button.bmviii-right-accordion.is-active {
-    background-color: #ddd;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 .bmviii-left-accordion-content, .bmviii-right-accordion-content {
-    background-color: #fff;
-    font-family: Cabin;
+    background-color: rgba(255, 255, 255, 0.67);
+    font-family: Raleway;
     padding: 0 20px;
+    margin-top: -20px;
     font-size: 18px;
+    font-weight: 400;
     border-left: 1px solid whitesmoke; // match with heading
     border-right: 1px solid whitesmoke;
     border-radius: 12px;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.2s ease-in-out;
+}
+
+.bmviii-left-accordion-content p, .bmviii-right-accordion-content p {
+  margin-top: 25px;
+  margin-bottom: 10px;
 }
 
 .bmviii-container-accordion {
@@ -342,6 +407,131 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 .bmviii-footer-text {
     width: 98px;
     text-align: center;
+}
+
+.balloon-parent {
+  position: relative;
+  display: grid;
+  top: 0;
+  left: 0;
+  margin-bottom: 50px;
+}
+.balloon {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  min-width: 110%;
+}
+.team-picture {
+  position: absolute;
+  max-width: 100%;
+  height: 80%;
+  border-radius: 50%;
+  top: 10px;
+  left: 10px;
+  display: block;
+  margin-left: -3px;
+  margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  z-index: 3;
+}
+
+.sponsor-parent {
+  position: relative;
+  display: grid;
+  top: 0;
+  left: 0;
+  margin-bottom: 50px;
+}
+.big-sponsor-cloud {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 85%;
+}
+.sponsor {
+  position: absolute;
+  height: 80%;
+  border-radius: 50%;
+  // left: 10px;
+  display: block;
+  width: 50%;
+  z-index: 3;
+}
+
+.about-parent {
+  position: relative;
+  display: grid;
+  top: 0;
+  left: 0;
+  margin-bottom: 50px;
+}
+.about-blimp {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 85%;
+}
+.about-text {
+  position: absolute;
+  height: 80%;
+  border-radius: 50%;
+  // left: 10px;
+  display: block;
+  width: 50%;
+  margin-left: 450px;
+  color: white;
+  font-family: Sen;
+  font-weight: 400px;
+  font-size:25px;
+  margin-top: 95px;
+  z-index: 3;
+}
+
+
+.balloon-parent p{
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(89, 82, 118, 0.8);
+  color: white;
+  font-family: Sen;
+  font-weight: 400;
+  font-size: 12px;
+  opacity: 0;
+  text-align: center;
+  height: 90%;
+  border-radius: 90% / 100%;
+  visibility: hidden;
+  -webkit-transition: visibility 0s, opacity 0.2s linear; 
+  transition: visibility 0s, opacity 0.2s linear;
+  margin-right: -15px;
+  margin-bottom: 17px;
+  padding-top: 50px;
+  word-wrap: break-word;
+  z-index: 10;
+ }
+ 
+ /* Hover on Parent Container */
+ .balloon-parent:hover{
+  cursor: pointer;
+ }
+ 
+ .balloon-parent:hover p{
+  width: 113%;
+  visibility: visible;
+  opacity: 0.9; 
+ }
+
+
+.team-photos {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-gap: 20px;
+  display: grid;
 }
 
 .bmvii-why__img {
@@ -740,7 +930,7 @@ and (max-width: 600px) {
 }
 
 .bmviii-app-font {
-    font-family: Cabin, serif;
+    font-family: Sen;
     font-weight: 400;
     font-size: 18px;
     color: black;

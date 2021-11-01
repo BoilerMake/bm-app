@@ -1,0 +1,490 @@
+{{ define "bmix home" }}
+{{ template "head" . }}
+{{ template "bmix navbar water" . }}
+{{ template "flashes" .Flashes }}
+<!-- Landing Page -->
+<section class="section has-background-image" style='background-color: #D9EAFC; background-image: url({{ static_path "bmix_landing_page_bg.png" }}); min-height:1500px'>
+    <div class="container" style="margin-top: 75px">
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-4-desktop is-7-tablet is-9-mobile" style="padding-top: 20px">
+                <center> <i> <b> <p style="font-family:Raleway; font-weight:500px; color:white; font-size:225%;"> Code on Cloud IX </p> </b> </i> </center>
+            </div>
+        </div>
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 0px">
+                <img style="width:200%" alt="Boilermake" src={{ static_path "bmix_title_long.svg" }}>
+        </div>
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
+                <center> <i> <b> <p style="font-family:Raleway; font-weight:500; color:white; font-size:225%;"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
+        </div>
+        {{ if eq .Status 4 }}
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-3-desktop is-6-tablet is-8-mobile">
+                <a href="/live">
+                    <img alt="Go Live!" src={{ static_path "bmviii_go_live_button.png" }}>
+                </a>
+            </div>
+        </div>
+        {{ else }}
+        <div class="columns is-centered is-mobile content">
+            <div class="column is-3-desktop is-6-tablet is-8-mobile">
+                {{ if .IsAuthenticated }}
+                <a href="/dashboard">
+                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }}>
+                </a>
+                {{ else }}
+                <a href="/signup">
+                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }}>
+                </a>
+                {{ end }}
+            </div>
+        </div>
+        {{ end }}
+        <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
+            <center> <a id="about-click" style="font-family:Raleway; text-decoration: underline; font-weight:500; color:white; font-size:225%;"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
+        </div>
+    </div>
+</section>
+
+<!-- About BM -->
+<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0; padding-top:10px; min-height:1850px'>
+	<div class="container" style="padding: 0 1.5rem;">
+		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
+	</div>
+    <div class="container about-parent" margin-top: 50px>
+        <img src={{ static_path "bmix_blimp.png" }} alt="blimp" class="about-blimp">
+        <p class="about-text"> 
+        Since our first event in 2014, BoilerMake’s mission has been to empower hackers to discover, create, innovate, and achieve. We provide tools, resources, tech talks, and networking opportunities for every hacker to learn and grow with the hackathon community. 
+BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd. Over 36 hours, both beginners and experts will collaborate to create both trailblazing projects and unforgettable memories.
+        </p> 
+    </div>
+</section>
+
+<!-- Event Photos -->
+<section class="section" style='background-color: #FF8E9E; background-image: url({{ static_path "bmix_event_photos_bg.svg" }}); padding-bottom: 125px; padding-left: 5%; padding-right:0; padding-top:10px; min-height:1300px'>
+    <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E; white-space: nowrap;" padding-left: 100px> Event Photos </p>
+    <img style="float:right;" margin-top:-500px width=50% src={{ static_path "bmix_top_plane.png" }} alt="paper plane">
+    <div class="container">
+        <img class="bottom-plane" src={{ static_path "bmix_bottom_plane.png" }} style="object-fit: contain; position: absolute; margin-top:0px">
+        <div class="event-photos-container">
+            <div class="event-photo">
+                <img src={{ static_path "event_photo1.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo2.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo3.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo4.jpg" }}>
+            </div>
+            <div class="event-photo">
+                <img src={{ static_path "event_photo5.jpg" }}>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_testimonials.jpg" }}); background-color: #FFE4C3; position: relative; min-height: 1000px'>
+    <div class="container">
+        <div class="container" style="padding: 0 1.5rem;">
+		    <b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Testimonials </p> </b> 
+	    </div>
+    </div>
+    <div class="carousel-wrapper" style="margin-top: 5px; margin-left: 1.5rem">
+        <div class="carousel" style="position: relative">
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "lauren.jpg" }} width=40% alt="Lauren">
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Lauren Lum </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake gave me the resources and support I needed to create a project I was truly proud of. If you have an idea and a passion for creating something from scratch, don’t let this opportunity pass you up!"</p>
+                </center>
+            </div>
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "sam.jpg" }} width=40% alt="Sam">
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Sam Ingram </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "BoilerMake has been the perfect event to build some exciting projects with some great people. I have always had fun spending the weekend alongside other hackers, and it is a great opportunity to learn more while creating something new."</p>
+                </center>
+            </div>
+            <div class="container carousel-entry active" style='background-repeat: no-repeat; background-size: 100% 100%;'>
+                <center> 
+                    <img class="testimonial-profile" src={{ static_path "kevin.jpg" }} width=40% alt="Kevin">
+                    <p style="font-family:Raleway; font-weight:400px; font-size:35px; color:#3F2C4E; margin-top:75px"> Kevin Cardona </p>
+                    <p style="font-family:Sen; font-weight:400px; font-size:18px; color:#3F2C4E; margin-top:25px; align: center; max-width: 500px;"> "Hacking at BoilerMake made me realize my potential as a creator. Taking advantage of what the weekend had to offer made me lifelong friends and gave me the opportunity to explore what I enjoy most in my field."</p>
+                </center>
+            </div>
+            <div class="carousel-button-next"></div>
+            <div class="carousel-button-prev"></div>
+        </div>
+        <img class="testimonial-cloud" src={{ static_path "bmix_testimonial_profile_cloud.svg" }} alt="cloud">
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_faq_bg.svg" }});background-color: #9A8FC5; position: relative; min-height: 1000px'>
+    <div class="container">
+    	<div class="container" style="padding: 0 1.5rem;">
+	    	<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> FAQ </p> </b> 
+	    </div>
+
+        <div class="container" style="padding-top: 75px;">
+            <div class="columns is-mobile">
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What is a hackathon?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+                                Anyone with or without a technical background can attend to learn, build, and share new things.
+                                Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Will BoilerMake be in person?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                In accordance with university guidelines and with campus safety in mind, BoilerMake IX will be a hybrid event. Purdue students will be able to apply to attend the in-person events. All hackers, regardless of location, will be able to virtually participate in BoilerMake. 
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">Given a hybrid event, will there still be opportunities for virtual participants to form teams and interact with sponsors and other hackers?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Absolutely! We would like to recreate the community environment of a hackathon through both in-person and virtual means. We will be able to provide more specific information on the hybrid format at a later date!</p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What if I don't know how to code?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                No problem! Come to BoilerMake to learn a new skill and meet people. We'll have tech talks, a Slack workplace to ask questions, and engineers from sponsoring companies to help you build something you can be proud of. This is your best chance to learn alongside many other driven hackers!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-left-accordion">How large can my team be?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                You can have a maximum of 4 people on your team.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">Is it free?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Yes! BoilerMake is completely free for all attendees.
+                            </p>
+                        </div>
+                    </div>
+                     <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">What are the requirements to attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                BoilerMake is open to all undergraduate college students who are of age 18 or older.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">My team was accepted and I wasn't - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">I missed the deadline to apply - can I attend?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We set a deadline to ensure that all applications are given equal consideration to attend BoilerMake.
+                                Feel free to email team@boilermake.org for info about our waitlist, and we will do our best to accommodate you as space opens up at our event.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-right-accordion">What if I have any other questions?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Meet The Team -->
+<section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:1250px'>
+    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px">
+		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
+	</div>
+    <div class="team-photos" style="margin-left: 50px;">
+        <div class="balloon-parent">
+            <p> Caroline Chen <br> Director</p>
+            <img src={{ static_path "bmix_director.svg" }} alt="Director" class="balloon">
+            <img src={{ static_path "bmix_director_balloon.png" }} alt="caroline" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Anna Kuruvilla <br> Comm Team Lead </p>
+            <img src={{ static_path "bmix_comm_balloon.png" }} alt="Comm" class="balloon">
+            <img src={{ static_path "Anna Kuruvilla-Comm.jpg" }} alt="anna" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Sahiti Tummala <br> Comm Team Member </p>
+            <img src={{ static_path "bmix_comm_balloon.png" }} alt="Comm" class="balloon">
+            <img src={{ static_path "Sahiti Tummala - Comm.png" }} alt="sahiti" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Rashmi Ananth <br> Comm Team Member </p>
+            <img src={{ static_path "bmix_comm_balloon.png" }} alt="Comm" class="balloon">
+            <img src={{ static_path "Rashmi Ananth - Comm.png" }} alt="rashmi" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Iris Yuan <br> Comm Team Member </p>
+            <img src={{ static_path "bmix_comm_balloon.png" }} alt="Comm" class="balloon">
+            <img src={{ static_path "Iris Yuan - Comm.png" }} alt="iris" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Jisoo Kim <br> Design Team Lead </p>
+            <img src={{ static_path "bmix_design_balloon.png" }} alt="Design" class="balloon">
+            <img src={{ static_path "Jisoo Kim-Design.jpeg" }} alt="jisoo" class="team-picture" style="width: 100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Bengisu Cuneyit <br> Design Team Member </p>
+            <img src={{ static_path "bmix_design_balloon.png" }} alt="Design" class="balloon">
+            <img src={{ static_path "Bengisu Cuneyit - Design.png" }} alt="su" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Gayathri Sriram <br> Design Team Member </p>
+            <img src={{ static_path "bmix_design_balloon.png" }} alt="Design" class="balloon">
+            <img src={{ static_path "Gayathri Sriram - Design.png" }} alt="gayathri" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Max Cherbak <br> Design Team Member </p>
+            <img src={{ static_path "bmix_design_balloon.png" }} alt="Design" class="balloon">
+            <img src={{ static_path "Max Cherbak - Design.png" }} alt="max" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Vicki Liu <br> Design Team Member </p>
+            <img src={{ static_path "bmix_design_balloon.png" }} alt="Design" class="balloon">
+            <img src={{ static_path "Vicki Liu - Design.jpg" }} alt="vicki" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Varun Shah <br> Dev Team Lead </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Varun Shah - dev.png" }} alt="varun" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Pranav Jaikumar <br> Dev Team Member </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Pranav Jaikumar-Dev.jpg" }} alt="pranav" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Gowri Harish <br> Dev Team Member </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Gowri-dev.jpg" }} alt="gowri" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Justin Choi <br> Dev Team Member </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Justin Choi - Dev.png" }} alt="justin" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Savreen Kaur <br> Dev Team Member </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Savreen Kaur - Dev.png" }} alt="savreen" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Isha Prabesh <br> Dev Team Member </p>
+            <img src={{ static_path "bmix_dev_balloon.png" }} alt="Dev" class="balloon">
+            <img src={{ static_path "Isha -Dev.jpg" }} alt="isha" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Nguyen Do <br> Sponsorship Team Lead </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Nguyen Do.png" }} alt="nguyen" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Henry Wellman <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "HenryWellman.jpg" }} alt="henry" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Joey Powers <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Joey Powers-Sponsorship.jpg" }} alt="joey" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Pallav Agarwal <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Pallav Agarwal - Sponsorship.png" }} alt="pallav" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Harshita Janardan <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Harshita Janardan - Sponsorship.png" }} alt="harshita" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Sweta Saravanan  <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Sweta Saravanan - Sponsorship.png" }} alt="sweta" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Daniel Joseph <br> Sponsorship Team Member </p>
+            <img src={{ static_path "bmix_sponsorship_balloon.png" }} alt="Spons" class="balloon">
+            <img src={{ static_path "Daniel Joseph - Sponsorship.png" }} alt="daniel" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Anisha Bhat <br> UX Team Lead </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Anisha Bhat-UX.jpg" }} alt="anisha" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Miranda Chai <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Miranda Chai UX.jpg" }} alt="miranda" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Jacquie Yu <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Jacquie Yu-UX.jpg" }} alt="jacquie" class="team-picture" style="width:100%">
+        </div>
+        <div class="balloon-parent">
+            <p> Ariana Zhu <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Ariana Zhu - UX.png" }} alt="ariana" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Timothy Hein <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Timothy Hein - UX.png" }} alt="timmy" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Andrew Thomae <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Andrew Thomae - UX.png" }} alt="andrew" class="team-picture">
+        </div>
+        <div class="balloon-parent">
+            <p> Enya Song <br> UX Team Member </p>
+            <img src={{ static_path "bmix_ux_balloon.png" }} alt="UX" class="balloon">
+            <img src={{ static_path "Enya Song - UX.png" }} alt="enya" class="team-picture">
+        </div>
+    </div>
+</section>
+
+<!-- Sponsors -->
+<section class="section has-background-image" id="sponsors" style='background-image: url({{ static_path "bmix_sponsorship_bg.svg" }}); min-height: 1999px; background-color: #8BBAEA'>
+    <div class="container">
+        <div class="columns is-mobile is-centered content">
+            <div class="column is-5-mobile is-3-tablet is-2-desktop">
+                <b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E; margin-left:-70px"> Sponsors </p> </b>
+            </div>
+        </div>
+    </div>
+
+    <div class="columns is-mobile is-centered content">
+        <div class="column is-12-mobile is-8-tablet is-8-desktop" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://boilerlink.purdue.edu/organization/SFAB" rel="noopener noreferrer" target="_blank" style="margin-left: 210px; margin-top: 40px;">
+                        <img alt="Purdue SFAB" src={{ static_path "sponsors_sfab.png" }} style="width:60%">
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.ecolab.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 80px; margin-top: 100px;">
+                        <img alt="Purdue SFAB" src={{ static_path "sponsors_ecolab.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.deere.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 25px; margin-top: 75px; width:75%">
+                        <img alt="John Deere" src={{ static_path "sponsors_john_deere.png" }}>
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://digitalocean.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 60px; margin-top: 0px; width: 45%">
+                        <img alt="Digital Ocean" src={{ static_path "sponsors_digital_ocean.svg" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://cloud.google.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: -15px;">
+                        <img alt="Google Cloud" src={{ static_path "sponsors_google_cloud.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://microsoft.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: 60px;">
+                        <img alt="Microsoft" src={{ static_path "sponsors_microsoft.png" }} style="width:150%">
+                    </a>
+                </div>
+            </div>
+            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.wolfram.com/language/" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: 50px;">
+                        <img alt="Wolfram" src={{ static_path "sponsors_wolfram.svg" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="http://robinhood.com/" rel="noopener noreferrer" target="_blank" style="margin-left: 60px; margin-top: 70px; width: 45%">
+                        <img alt="Robinhood" src={{ static_path "bmix_rh_sponsor.png" }} style="width:150%">
+                    </a>
+                </div>
+                <div class="sponsor-parent">
+                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                    <a class="sponsor" href="https://www.sketch.com" rel="noopener noreferrer" target="_blank" style="margin-left: 50px; margin-top: 50px;">
+                        <img alt="Sketch" src={{ static_path "sponsors_sketch_dark.png" }}>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Automatic Slideshow Script -->
+<script>
+    var slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+    var i;
+    var slides = document.getElementsByClassName("event-photo");
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}    
+    slides[slideIndex-1].style.display = "block";
+    setTimeout(showSlides, 5000); // Change image every 2 seconds
+    }
+</script>
+
+<!-- Smooth Scrolling Script -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    $("#about-click").click(function() {
+        $('html,body').animate({
+            scrollTop: $("#why").offset().top - 50},
+            'slow');
+    });
+</script>
+{{ template "bmix footer" . }}
+{{ end }}
