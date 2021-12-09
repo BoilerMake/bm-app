@@ -20,7 +20,7 @@
                           <p class="level-left is-5 title is-marginless">Application Status: Accepted!</p>
                           <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
                         </div>
-                        <p>We are excited to welcome you to BM VIII! We're looking forward to seeing what you create!</p>
+                        <p>We are excited to welcome you to BM IX! We're looking forward to seeing what you create!</p>
                         <p><strong>Please check-in below to let us know that you are here.</strong></p>
                         <button class="button is-red is-outlined is-fullwidth is-5 title" type="submit">Check In</a>
                     </form>
@@ -30,11 +30,11 @@
                   <p class="level-left is-5 title is-marginless">Application Status: Accepted!</p>
                   <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
                 </div>
-                <p>Welcome to BM VIII! You are successfully checked in!</p>
+                <p>Welcome to BM IX! You are successfully checked in!</p>
                 <hr>
 
                 {{ if and (.Data.HasRSVP) (.Data.RSVP.WillAttend) }}
-                <p>We can't wait to see what you make at BoilerMake VIII! Feel free to update your RSVP.</p>
+                <p>We can't wait to see what you make at BoilerMake IX! Feel free to update your RSVP.</p>
                 {{ else }}
                 <p><strong> We noticed you haven't RSVP'd. Please RSVP as soon as possible.</strong></p>
                 {{ end }}
@@ -45,7 +45,7 @@
               <p class="level-left is-5 title is-marginless">Application Status: Rejected</p>
               <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
             </div>
-            <p>Unfortunately, we won't be able to reserve a space for you at BoilerMake VIII. We realize this outcome may be disappointing, but we do our best to accommodate as many people.</p>
+            <p>Unfortunately, we won't be able to reserve a space for you at BoilerMake IX. We realize this outcome may be disappointing, but we do our best to accommodate as many people.</p>
             <p>We hope you apply next year for BoilerMake IX. As always, Hack on.</p>
             {{ end }}
           {{ else }}
@@ -55,13 +55,13 @@
                   <p class="level-left is-5 title is-marginless">You're all set!</p>
                   <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
                 </div>
-                <p>We can't wait to see what you make at BoilerMake VIII. Check back here and your email for more in the coming weeks. In the meantime, feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions.</p>
+                <p>We can't wait to see what you make at BoilerMake IX. Check back here and your email for more in the coming weeks. In the meantime, feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions.</p>
                 {{ else }}
                 <div class="level" style="margin-bottom: 1em;">
                   <p class="level-left is-5 title is-marginless">We wish you could make it!</p>
                   <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
                 </div>
-                <p>We're sad you couldn't make it to BoilerMake VIII, but we hope you'll attend next year. Feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions. Hack on!</p>
+                <p>We're sad you couldn't make it to BoilerMake IX, but we hope you'll attend next year. Feel free to reach out to us at <a href="mailto:team@boilermake.org">team@boilermake.org</a> with any questions. Hack on!</p>
                 {{ end }}
               {{ else }}
                 {{ if eq .Data.Application.Decision -2 }}
@@ -84,7 +84,7 @@
                       <p class="level-left is-5 title is-marginless">Applications are closed</p>
                       <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
                     </div>
-                    <p>Unfortunately, applications for BoilerMake VIII have closed.  We hope to see you at future BoilerMake events!</p>
+                    <p>Unfortunately, applications for BoilerMake IX have closed.  We hope to see you at future BoilerMake events!</p>
                   {{ end }}
 
                 {{ else if eq .Data.Application.Decision 0 }}
@@ -99,7 +99,7 @@
                   <p class="level-left is-5 title is-marginless">Application Status: Rejected</p>
                   <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-rejected"></div>
                 </div>
-                <p>Unfortunately, we won't be able to reserve a space for you at BoilerMake VIII.
+                <p>Unfortunately, we won't be able to reserve a space for you at BoilerMake IX.
                                 We realize this outcome may be disappointing, but we do our best to accomodate as many people as possible at our venue.
                                 We may accept walk-ins on a rolling basis at the event - ask us at check-in or visit your dashboard on January 24th.</p>
                              <p>We hope you apply next year for BoilerMake IX. As always, Hack on.</p>
@@ -116,7 +116,7 @@
                   <p class="level-left is-5 title is-marginless">Application Status: Accepted!</p>
                   <div class="level-right is-5 title bmvii-status-pulse bmvii-status-pulse-accepted"></div>
                 </div>
-                <p>Congratulations! We are honored to invite you to BoilerMake VIII on January 22nd.
+                <p>Congratulations! We are honored to invite you to BoilerMake IX on January 22nd.
                                 Get ready to hack your own adventure and learn new skills while enjoying tech talks, workshops, and online activities on the side.</p>
                             <p><strong>Please RSVP below to let us know if you can make it. Your acceptance will expire on December 18th.</strong></p>
                 {{ end }}
@@ -128,7 +128,7 @@
         {{ else }}
           {{ if or (eq .Status 2) (eq .Status 4) }}
             {{ if eq .Data.Application.Decision -1 }}
-            <a class="button is-red is-fullwidth is-5 title" href="/apply">Apply Now</a>
+            <a class="button is-light-pink is-fullwidth is-5 title" href="/apply" style="color:white; border-radius:20px">Apply Now</a>
             {{ end }}
 
             {{ if eq .Data.Application.Decision 0 }}
