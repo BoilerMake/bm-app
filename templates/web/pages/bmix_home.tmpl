@@ -2,19 +2,20 @@
 {{ template "head" . }}
 {{ template "bmix navbar water" . }}
 {{ template "flashes" .Flashes }}
+
 <!-- Landing Page -->
-<section class="section has-background-image" style='background-color: #D9EAFC; background-image: url({{ static_path "bmix_landing_page_bg.png" }}); min-height:1500px'>
+<section class="section has-background-image" style='background-color: #D9EAFC; background-image: url({{ static_path "bmix_landing_page_bg.svg" }}); min-height:1000px'>
     <div class="container" style="margin-top: 75px">
         <div class="columns is-centered is-mobile content">
             <div class="column is-4-desktop is-7-tablet is-9-mobile" style="padding-top: 20px">
-                <center> <i> <b> <p style="font-family:Raleway; font-weight:500px; color:white; font-size:225%; text-shadow: 2px 1px #000000;"> Code on Cloud IX </p> </b> </i> </center>
+                <center> <b> <i> <p style="font-family:Raleway; font-weight:600px; color:white; font-size:225%; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);"> Code on Cloud IX </p> </i> </b> </center>
             </div>
         </div>
         <div class="columns is-centered is-mobile content" style="margin-bottom: 0px">
                 <img style="width:200%" alt="Boilermake" src={{ static_path "bmix_title_long.svg" }}>
         </div>
         <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
-                <center> <i> <b> <p style="font-family:Raleway; font-weight:500; color:white; font-size:225%;"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
+                <center> <i> <b> <p style="font-family:Raleway; font-weight:500; color:white; font-size:225%; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);"> Purdue University | January 21-23, 2022 </p> </b> </i> </center>
         </div>
         {{ if eq .Status 4 }}
         <div class="columns is-centered is-mobile content">
@@ -40,27 +41,23 @@
         </div>
         {{ end }}
         <div class="columns is-centered is-mobile content" style="margin-bottom: 50px; padding-top:30px">
-            <center> <a id="about-click" style="font-family:Raleway; text-decoration: underline; font-weight:500; color:white; font-size:225%;"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
+            <center> <a id="about-click" style="font-family:Raleway; text-decoration: underline; font-weight:500; color:white; font-size:225%; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);"> Cool but... what <i> is </i>  BoilerMake? </a> </center>
         </div>
     </div>
 </section>
 
 <!-- About BM -->
-<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0; padding-top:10px; min-height:1850px'>
+<section class="section has-background-image" id="why" style='background-color: #FFE9F9; background-image: url({{ static_path "about_bmix.svg" }}); min-height:1000px'>
 	<div class="container" style="padding: 0 1.5rem;">
 		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
 	</div>
     <div class="container about-parent" margin-top: 50px>
-        <img src={{ static_path "bmix_blimp.png" }} alt="blimp" class="about-blimp">
-        <p class="about-text"> 
-        Since our first event in 2014, BoilerMake’s mission has been to empower hackers to discover, create, innovate, and achieve. We provide tools, resources, tech talks, and networking opportunities for every hacker to learn and grow with the hackathon community. 
-BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd. Over 36 hours, both beginners and experts will collaborate to create both trailblazing projects and unforgettable memories.
-        </p> 
+        <img src={{ static_path "bmix_about_bm_blimp.png" }} alt="blimp">
     </div>
 </section>
 
 <!-- Event Photos -->
-<section class="section" style='background-color: #FF8E9E; background-image: url({{ static_path "bmix_event_photos_bg.svg" }}); padding-bottom: 125px; padding-left: 5%; padding-right:0; padding-top:10px; min-height:1300px'>
+<section class="section" style='background-color: #000000; background-image: url({{ static_path "bmix_event_photos_bg.svg" }}); adding-left: 5%; padding-right:0; min-height:1250px'>
     <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E; white-space: nowrap;" padding-left: 100px> <b> Event Photos </b> </p>
     <img style="float:right;" margin-top:-500px width=50% src={{ static_path "bmix_top_plane.png" }} alt="paper plane">
     <div class="container">
@@ -86,9 +83,9 @@ BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd
 </section>
 
 <!-- Testimonials -->
-<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_testimonials.jpg" }}); background-color: #FFE4C3; position: relative; min-height: 1000px'>
+<section class="section has-background-image" id="faq-testimonial" style='background-image: url({{ static_path "bmix_testimonials.svg" }}); background-color: #FFE4C3; position: relative; min-height: 1100px'>
     <div class="container">
-        <div class="container" style="padding: 0 1.5rem;">
+        <div class="container" style="padding: 0 1.5rem; margin-top:100px">
 		    <b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Testimonials </p> </b> 
 	    </div>
     </div>
@@ -118,7 +115,7 @@ BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd
             <div class="carousel-button-next"></div>
             <div class="carousel-button-prev"></div>
         </div>
-        <img class="testimonial-cloud" src={{ static_path "bmix_testimonial_profile_cloud.svg" }} alt="cloud">
+        <img class="testimonial-cloud" src={{ static_path "bmix_testimonial_profile_cloud.svg" }} alt="cloud" style="margin-top:0">
     </div>
 </section>
 
@@ -223,8 +220,8 @@ BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd
 </section>
 
 <!-- Meet The Team -->
-<section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:1250px'>
-    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px">
+<section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:0px'>
+    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px; margin-top:-250px">
 		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
 	</div>
     <div class="team-photos" style="margin-left: 50px;">
@@ -392,61 +389,79 @@ BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd
     </div>
 
     <div class="columns is-mobile is-centered content">
-        <div class="column is-12-mobile is-8-tablet is-8-desktop" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
+        <div class="column is-12" style="padding: 1.5rem 2.5rem; margin: 2.5rem 0;">
             <div class="columns is-mobile is-centered is-vcentered content">
-                <div class="sponsor-parent">
-                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="https://boilerlink.purdue.edu/organization/SFAB" rel="noopener noreferrer" target="_blank" style="margin-left: 75px; margin-top: 40px;">
-                        <img alt="Purdue SFAB" src={{ static_path "sponsors_sfab.png" }} style="width:60%">
-                    </a>
+                <div class="column is-half">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="https://boilerlink.purdue.edu/organization/SFAB" rel="noopener noreferrer" target="_blank" style="margin-left: 75px; margin-top: 40px;">
+                            <img alt="Purdue SFAB" src={{ static_path "sponsors_sfab.png" }} style="width:60%; margin-left:-3.5%">
+                        </a>
+                    </div>
+                </div>
+                <div class="column is-half">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="https://www.deere.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 15%; width:80%;">
+                            <img alt="John Deere" src={{ static_path "sponsors_john_deere.png" }}>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="columns is-mobile is-centered is-vcentered content">
-                <div class="sponsor-parent">
-                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="https://www.ecolab.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 100px;">
-                        <img alt="Purdue SFAB" src={{ static_path "sponsors_ecolab.png" }} style="width:150%">
-                    </a>
+                <div class="column is-5">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="https://www.ecolab.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 100px;">
+                            <img alt="Ecolab" src={{ static_path "sponsors_ecolab.png" }} style="width:150%">
+                        </a>
+                    </div>
                 </div>
-                <div class="sponsor-parent">
-                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="https://www.deere.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 75px; width:75%;">
-                        <img alt="John Deere" src={{ static_path "sponsors_john_deere.png" }}>
-                    </a>
-                </div>
-            </div>
-            <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
-                <div class="sponsor-parent">
-                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="http://digitalocean.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 0px; width: 45%; height: 50%; text-align: center;">
-                        <img alt="Digital Ocean" src={{ static_path "sponsors_digital_ocean.svg" }} style="width:150%">
-                    </a>
-                </div>
-                <div class="sponsor-parent">
-                    <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
-                    <a class="sponsor" href="http://microsoft.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 80px;">
-                        <img alt="Microsoft" src={{ static_path "sponsors_microsoft.png" }} style="width:150%">
-                    </a>
+                <div class="column is-5">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src = {{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="https://www.microsoft.com/" el="noopener noreferrer" target="_blank">
+                            <img alt="Microsoft" src={{ static_path "sponsors_microsoft.png" }} style="width:150%; margin-top: 45%">
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
                 <div class="sponsor-parent">
                     <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
                     <a class="sponsor" href="https://www.wolfram.com/language/" rel="noopener noreferrer" target="_blank" style="margin-top: 50px;">
-                        <img alt="Wolfram" src={{ static_path "sponsors_wolfram.svg" }} style="width:150%">
+                        <img alt="Wolfram" src={{ static_path "sponsors_wolfram.svg" }} style="width:150%; margin-top:15%">
                     </a>
                 </div>
                 <div class="sponsor-parent">
                     <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
                     <a class="sponsor" href="http://robinhood.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 70px; width: 45%">
-                        <img alt="Robinhood" src={{ static_path "bmix_rh_sponsor.png" }} style="width:150%">
+                        <img alt="Robinhood" src={{ static_path "bmix_rh_sponsor.png" }} style="width:150%; margin-top:20%">
                     </a>
                 </div>
                 <div class="sponsor-parent">
                     <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
                     <a class="sponsor" href="https://www.sketch.com" rel="noopener noreferrer" target="_blank" style="margin-top: 50px;">
-                        <img alt="Sketch" src={{ static_path "sponsors_sketch_dark.png" }}>
+                        <img alt="Sketch" src={{ static_path "sponsors_sketch_dark.png" }} style="margin-top:15%">
                     </a>
+                </div>
+            </div>
+           <div class="columns is-mobile is-centered is-vcentered content" style="margin-top: 2%;">
+                <div class="column is-4">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="http://digitalocean.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 0px; width: 45%; height: 50%; text-align: center;">
+                            <img alt="Digital Ocean" src={{ static_path "sponsors_digital_ocean.svg" }} style="width:150%">
+                        </a>
+                    </div>
+                </div>
+                <div class="column is-4">
+                    <div class="sponsor-parent">
+                        <img class="big-sponsor-cloud" alt="Sponsor Cloud" src={{ static_path "bmix_sponsor_cloud.png" }}>
+                        <a class="sponsor" href="http://cloud.google.com/" rel="noopener noreferrer" target="_blank" style="margin-top: 0px; width: 45%; height: 50%; text-align: center;">
+                            <img alt="Google Cloud" src={{ static_path "sponsors_google_cloud.png" }} style="width:150%">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

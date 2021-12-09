@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 4500 4276" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(1,0,0,1,-5433.73,-8551.18)">
-        <g id="Event-photos" serif:id="Event photos" transform="matrix(0.37727,0,0,0.0565017,855.132,8551.18)">
+<svg width="100%" height="100%" viewBox="0 0 4500 3237" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-5433.73,-6472.44)">
+        <g id="Event-photos" serif:id="Event photos" transform="matrix(0.37727,0,0,0.0427665,855.132,6472.44)">
             <rect x="12136.1" y="0" width="11927.8" height="75671.9" style="fill:none;"/>
             <clipPath id="_clip1">
                 <rect x="12136.1" y="0" width="11927.8" height="75671.9"/>
             </clipPath>
             <g clip-path="url(#_clip1)">
-                <g transform="matrix(4.1416,0,0,29.415,12136.1,-148517)">
+                <g transform="matrix(4.1416,0,0,33.967,12136.1,-151344)">
                     <use xlink:href="#_Image2" x="0" y="0" width="2880px" height="17546px"/>
                 </g>
             </g>
