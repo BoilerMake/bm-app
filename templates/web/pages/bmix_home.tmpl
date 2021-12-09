@@ -30,7 +30,7 @@
             <div class="column is-3-desktop is-6-tablet is-8-mobile">
                 {{ if .IsAuthenticated }}
                 <a href="/dashboard">
-                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }}>
+                    <img alt="Apply Now!" src={{ static_path "bmix_apply_button.svg" }} style="">
                 </a>
                 {{ else }}
                 <a href="/signup">
@@ -221,7 +221,7 @@
 
 <!-- Meet The Team -->
 <section class="section has-background-image" id="meet-the-team" style='background-color: #5A4F87BF; background-image: url({{ static_path "bmix_meet_team_bg.svg" }}); min-height:0px'>
-    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px; margin-top:-250px">
+    <div class="container" style="padding: 0 1.5rem; margin-bottom: 50px; margin-top:-200px">
 		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> Meet The Team </p> </b> 
 	</div>
     <div class="team-photos" style="margin-left: 50px;">
