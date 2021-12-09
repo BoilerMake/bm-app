@@ -6,16 +6,12 @@
 {{ template "flashes" .Flashes }}
 
 <!-- About BM -->
-<section class="section has-background-image" id="why" style='background-color: #FF8E9E; background-image: url({{ static_path "about_bmix.svg" }}); padding-bottom: 125px; padding-left: 0; padding-right:0; padding-top:100px; min-height:1000px'>
+<section class="section has-background-image" id="why" style='background-color: #FFE9F9; background-image: url({{ static_path "about_bmix.svg" }}); min-height:1000px'>
 	<div class="container" style="padding: 0 1.5rem;">
 		<b> <p style="font-family:Raleway; font-weight:500px; font-size:60px; color:#3F2C4E"> About BM </p> </b> 
 	</div>
     <div class="container about-parent" margin-top: 50px>
-        <img src={{ static_path "bmix_blimp.png" }} alt="blimp" class="about-blimp">
-        <p class="about-text"> 
-        Since our first event in 2014, BoilerMake’s mission has been to empower hackers to discover, create, innovate, and achieve. We provide tools, resources, tech talks, and networking opportunities for every hacker to learn and grow with the hackathon community. 
-BoilerMake IX will be a hybrid hackathon event taking place on January 21st-23rd. Over 36 hours, both beginners and experts will collaborate to create both trailblazing projects and unforgettable memories.
-        </p> 
+        <img src={{ static_path "bmix_about_bm_blimp.png" }} alt="blimp">
     </div>
 </section>
 {{ template "footer" . }}

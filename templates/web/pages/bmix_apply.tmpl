@@ -350,7 +350,7 @@ Apply using the form below to spend a weekend learning, coding, and networking w
                                     {{ else }}
                                     <input type="checkbox" name="is-18-or-older" required>
                                     {{ end }}
-                                    I have read the <a href="https://protect.purdue.edu/updates/protect-purdue-for-fall-2021/" target="_blank">Protect Purdue Guidelines</a>
+                                    I have read the <a href="https://protect.purdue.edu/updates/" target="_blank">Protect Purdue Guidelines</a>
                                 </label>
 					        </div>
 
@@ -362,6 +362,29 @@ Apply using the form below to spend a weekend learning, coding, and networking w
                                     <input type="checkbox" name="mlh-code-of-conduct" required>
                                     {{ end }}
                                     I have read and agree to the <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf" target="_blank">MLH Code of Conduct</a>
+                                </label>
+                            </div>
+                            
+                            <div class="field">
+                                <label class="checkbox">
+                                    {{ if .FormRefill.MLHContestAndPrivacy }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" checked required>
+                                    {{ else }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" required>
+                                    {{ end }}
+                                    I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>. 
+                                    I further agree to the terms of both the <a href="https://github.com/MLH/mlh-policies/blob/master/prize-terms-and-conditions/contest-terms.md" target="_blank">MLH Contest Terms and Conditions</a> and the <a href="https://mlh.io/privacy" target="_blank">MLH Privacy Policy</a>.
+                                </label>
+                            </div>
+                            
+                            <div class="field">
+                                <label class="checkbox">
+                                    {{ if .FormRefill.MLHContestAndPrivacy }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" checked required>
+                                    {{ else }}
+                                    <input type="checkbox" name="mlh-contest-and-privacy" required>
+                                    {{ end }}
+                                    I authorize MLH to send me pre- and post-event informational emails, which contain free credit and opportunities from their partners.
                                 </label>
                             </div>
 
