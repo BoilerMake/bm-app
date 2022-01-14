@@ -14,7 +14,7 @@ var (
 
 const RSVPExpiryTime = 3 * 24 * time.Hour
 
-var RSVPExpiryDate = time.Date(2022, time.January, 12, 23, 59, 59, 0, time.UTC)
+var RSVPExpiryDate = time.Date(2022, time.January, 20, 23, 59, 59, 0, time.UTC)
 
 type RSVP struct {
 	ID     int
