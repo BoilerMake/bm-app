@@ -1,5 +1,5 @@
-const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
-const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
+const end = new Date('Jan 23, 2022 09:00:00 EST').getTime();
+const start = new Date('Jan 21, 2022 21:00:00 EST').getTime();
 const tzoffset = -300 * 60 * 1000; // Timezone offset for EST in milliseconds (this does not hold for Daylight Saving Time, but hopefully we won't have to specify timezone ever again)
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -501,7 +501,6 @@ function addAnnouncement(ann) {
 function updateCountdown() {
 	const now = new Date().getTime();
 	var distance;
-
 	if (start > now || now > end) { // event has either not started or ended
 		if (now > end) { // event has ended set timer to 0's.
 			document.querySelector('.hours-left').innerHTML = '00' ;
@@ -512,7 +511,7 @@ function updateCountdown() {
 	}
 	distance = end - now;
 	// var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
-	var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+	var hours = Math.floor((distance) / (1000 * 60 * 60)).toString().padStart(2, '0');
 	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
 	var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 

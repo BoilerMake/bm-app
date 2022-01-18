@@ -1,0 +1,131 @@
+{{ define "bmix day of" }}
+{{ template "head" . }}
+
+{{ template "bmviii navbar" . }}
+
+{{ template "flashes" .Flashes }}
+
+
+<section class="section has-background-image" style='background-color: #A7C3FF; background-image: url({{ static_path "bmix_landing_page_bg.svg" }})'>
+    <img alt="BM IX" src={{ static_path "bmix_title_long.svg" }} width="150%" style="display: block; margin-left: auto; margin-right: auto;">
+	<div class="container" style="margin-top: 15px">
+		<div class="columns is-centered content">
+			<div class="column is-12">
+                <div class="columns">
+                    <div class="column is-6">
+                        <div class="box live-countdown">
+                            <div class="live-hours">
+                                <p class="live--countdown__time hours-left">36</p>
+                                <p class="live--countdown__unit">Hours</p>
+                            </div>
+                            <div class="live--countdown__colon">
+                                <p class="live--countdown__time">:</p>
+                            </div>
+
+                            <div class="live-minutes">
+                                <p class="live--countdown__time minutes-left">00</p>
+                                <p class="live--countdown__unit">Minutes</p>
+                            </div>
+
+                            <div class="live--countdown__colon">
+                                <p class="live--countdown__time">:</p>
+                            </div>
+
+                            <div class="live-seconds">
+                                <p class="live--countdown__time seconds-left">00</p>
+                                <p class="live--countdown__unit">Seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column is-12 grid">
+                        <div class="box live--announcements">
+                            <div>
+                                <img alt="Live Announcements" src={{ static_path "bmviii_live_announcements.png" }}>
+                            </div>
+                            <div style="height: 225px; overflow-y: scroll; display: flex; flex-direction:column-reverse">
+                                <div id="announcement-holder">
+                                    <p class="bmviii-announcement-style" id="announcement-temp">Loading Announcements...</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="box live-buttons-vertical is-hidden-touch" style="margin-bottom: 0">
+                          <div class="columns is-mobile is-centered content">
+                            <div class="column is-12 live--icon">
+                              <a target="_blank" rel="noopener noreferrer" href="https://join.slack.com/t/boilermakeviii/shared_invite/zt-kin2ciz7-FDt4KCD9x1Np8jV~5b4SQA">
+                                <div class="has-text-centered">
+                                  <img class="live--icon__image image" alt="Slack" src={{ static_path "bmviii_live_slack_icon.png" }}>
+                                  <b>Slack</b>
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="columns is-mobile is-centered content">
+                            <div class="column is-12 live--icon">
+                              <a target="_blank" rel="noopener noreferrer" href="https://www.twitch.tv/boilermake8">
+                                <div class="has-text-centered">
+                                  <img class="live--icon__image image" alt="Twitch" src={{ static_path "bmviii_live_twitch_icon.png" }}>
+                                  <b>Twitch</b>
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="columns is-mobile is-centered content">
+                            <div class="column is-12 live--icon">
+                              <a target="_blank" rel="noopener noreferrer" href="https://boilermake-viii.devpost.com/">
+                                <div class="has-text-centered">
+                                  <img class="live--icon__image image" alt="Submit" src={{ static_path "bmviii_live_submit_icon.png" }}>
+                                  <b>Submit</b>
+                                </div>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="box live-buttons-horizontal is-hidden-desktop">
+                          <div class="columns is-centered content">
+                            <div class="column is-12">
+                              <div class="columns is-mobile is-centered content">
+                                <div class="column is-4 live--icon">
+                                  <a target="_blank" rel="noopener noreferrer" href="https://join.slack.com/t/boilermakeviii/shared_invite/zt-kin2ciz7-FDt4KCD9x1Np8jV~5b4SQA">
+                                    <div class="has-text-centered">
+                                      <img class="live--icon__image image" alt="Slack" src={{ static_path "bmviii_live_slack_icon.png" }}>
+                                      <b>Slack</b>
+                                    </div>
+                                  </a>
+                                </div>
+                                <div class="column is-4 live--icon">
+                                  <a target="_blank" rel="noopener noreferrer" href="https://www.twitch.tv/boilermake8">
+                                    <div class="has-text-centered">
+                                      <img class="live--icon__image image" alt="Twitch" src={{ static_path "bmviii_live_twitch_icon.png" }}>
+                                      <b>Twitch</b>
+                                    </div>
+                                  </a>
+                                </div>
+                                <div class="column is-4 live--icon">
+                                  <a target="_blank" rel="noopener noreferrer" href="https://boilermake-vii.devpost.com/">
+                                    <div class="has-text-centered">
+                                      <img class="live--icon__image image" alt="Submit" src={{ static_path "bmviii_live_submit_icon.png" }}>
+                                      <b>Submit</b>
+                                    </div>
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{ template "schedule" }}
+
+            </div>
+        </div>
+	</div>
+</section>
+
+{{ template "bmviii footer" . }}
+{{ end }}
