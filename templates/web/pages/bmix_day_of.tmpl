@@ -1,40 +1,40 @@
 {{ define "bmix day of" }}
 {{ template "head" . }}
 
-{{ template "bmviii navbar" . }}
+{{ template "bmix navbar water" . }}
 
 {{ template "flashes" .Flashes }}
 
 
-<section class="section has-background-image" style='background-color: #A7C3FF; background-image: url({{ static_path "bmix_landing_page_bg.svg" }})'>
+<section class="section has-background-image" style='background-color: #A7C3FF; background-image: url({{ static_path "bmix_landing_page_bg.svg" }}); min-height: 1999px'>
     <img alt="BM IX" src={{ static_path "bmix_title_long.svg" }} width="150%" style="display: block; margin-left: auto; margin-right: auto;">
 	<div class="container" style="margin-top: 15px">
 		<div class="columns is-centered content">
 			<div class="column is-12">
                 <div class="columns">
                     <div class="column is-6">
-                        <div class="box live-countdown">
+                        <div class="box live-countdown" style="backgorund-color: transparent">
                             <div class="live-hours">
-                                <p class="live--countdown__time hours-left">36</p>
-                                <p class="live--countdown__unit">Hours</p>
-                            </div>
-                            <div class="live--countdown__colon">
-                                <p class="live--countdown__time">:</p>
-                            </div>
+                                    <p class="live--countdown__time hours-left">36</p>
+                                    <p class="live--countdown__unit">Hours</p>
+                                </div>
+                                <div class="live--countdown__colon">
+                                    <p class="live--countdown__time">:</p>
+                                </div>
 
-                            <div class="live-minutes">
-                                <p class="live--countdown__time minutes-left">00</p>
-                                <p class="live--countdown__unit">Minutes</p>
-                            </div>
+                                <div class="live-minutes">
+                                    <p class="live--countdown__time minutes-left">00</p>
+                                    <p class="live--countdown__unit">Minutes</p>
+                                </div>
 
-                            <div class="live--countdown__colon">
-                                <p class="live--countdown__time">:</p>
-                            </div>
+                                <div class="live--countdown__colon">
+                                    <p class="live--countdown__time">:</p>
+                                </div>
 
-                            <div class="live-seconds">
-                                <p class="live--countdown__time seconds-left">00</p>
-                                <p class="live--countdown__unit">Seconds</p>
-                            </div>
+                                <div class="live-seconds">
+                                    <p class="live--countdown__time seconds-left">00</p>
+                                    <p class="live--countdown__unit">Seconds</p>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -127,5 +127,5 @@
 	</div>
 </section>
 
-{{ template "bmviii footer" . }}
+{{ template "bmix footer" . }}
 {{ end }}

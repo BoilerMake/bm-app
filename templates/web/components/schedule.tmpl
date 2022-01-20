@@ -1,30 +1,43 @@
 {{ define "schedule" }}
 
-<div class="columns is-centered content">
-  <div class="column is-4">
-    <div class="box bmvii-schedule__box">
-      <img alt="Friday, January 22" class="bmvii-schedule__date" src={{ static_path "bmviii_schedule_friday.png" }}>
-
+<div class="columns is-centered content" id="schedule_things">
+  <div class="column">
+    <div style="background: white; border-bottom: 1.5px solid"> <b> <p style="font-family:Raleway; font-weight:600px; color:#3F2C4E; font-size:36px; padding-left: 20px" id="title"> Event Schedule </p> </b> </div>
+    <div class="bmvii-schedule__box" id="friday_schedule" style="display: block">
       <div class="bmvii-schedule__day">
-
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">6:00 pm</span>
-            <span class="bmviii-schedule__item_event">Check-in Begins</span>
+            <span class="bmviii-schedule__item_event">Check-In Begins</span>
+            <div class="bmix_event_link">Dashboard</div>
+            <div class="bmix_event_presenter">BoilerMake!</div>
+          </div>
+        </div>
+
+        <div class="bmvii-schedule__item">
+          <div class="bmvii-schedule__item_info">
+            <span class="bmviii-schedule__item_time">6:30 pm</span>
+            <span class="bmviii-schedule__item_event">Ice Breakers</span>
+            <div class="bmix_event_link">In Person</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">7:30 pm</span>
-            <span class="bmviii-schedule__item_event">Ice Breakers</span>
+            <span class="bmviii-schedule__item_event">Opening Ceremony</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">8:00 pm</span>
-            <span class="bmviii-schedule__item_event">Opening Ceremony</span>
+            <span class="bmviii-schedule__item_time">8:30 pm</span>
+            <span class="bmviii-schedule__item_event">Team-Building Icebreakers</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
@@ -32,223 +45,152 @@
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">9:00 pm</span>
             <span class="bmviii-schedule__item_event">Hacking Begins</span>
+            <div class="bmix_event_link">None</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">9:00 pm</span>
-            <span class="bmviii-schedule__item_event">BM8 Tutorial</span>
+            <span class="bmviii-schedule__item_time">9:00 pm - 11:00 pm</span>
+            <span class="bmviii-schedule__item_event">Dinner (by zone)</span>
+            <div class="bmix_event_link">None</div>
+            <div class="bmix_event_presenter">In Person Hackers</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">9:30 pm</span>
-            <span class="bmviii-schedule__item_event">Hacker Interview</span>
+            <span class="bmviii-schedule__item_time">2:00 am</span>
+            <span class="bmviii-schedule__item_event">Late Night Snack</span>
+            <div class="bmix_event_link">None</div>
+            <div class="bmix_event_presenter">Your Favorite Hackathon</div>
           </div>
         </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">10:00 pm</span>
-            <span class="bmviii-schedule__item_event">Tech Talk: Deloitte</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">11:00 pm</span>
-            <span class="bmviii-schedule__item_event">BM Family Feud</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">12:00 am</span>
-            <span class="bmviii-schedule__item_event">Behind the Scenes Vlog</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">12:30 am</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
-          </div>
-        </div>
-
-
       </div>
     </div>
-  </div>
 
-  <div class="column is-4">
-    <div class="box bmvii-schedule__box">
-      <img alt="Saturday, January 23" class="bmvii-schedule__date" src={{ static_path "bmviii_schedule_saturday.png" }}>
-
+    <div class="bmvii-schedule__box" id="saturday_schedule" style="display: none; border-right: 1.5px solid;">
       <div class="bmvii-schedule__day">
-
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">9:30 am</span>
-            <span class="bmviii-schedule__item_event">Announcements</span>
+            <span class="bmviii-schedule__item_time">8:00 am - 10:00 am</span>
+            <span class="bmviii-schedule__item_event">Breakfast (by zones)</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake 😘</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">10:00 am</span>
-            <span class="bmviii-schedule__item_event">Tech Talk: Ecolab</span>
+            <span class="bmviii-schedule__item_event">John Deere Talk</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">John Deere</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">11:00 am</span>
-            <span class="bmviii-schedule__item_event">Sponsor Interview: Ecolab</span>
+            <span class="bmviii-schedule__item_event">Qualcomm Talk</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">Qualcomm</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">11:30 am</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">12:00 pm</span>
-            <span class="bmviii-schedule__item_event">Arts & Crafts</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">1:00 pm</span>
-            <span class="bmviii-schedule__item_event">BM Exec Interview</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">1:30 pm</span>
-            <span class="bmviii-schedule__item_event">Hacker Interview</span>
+            <span class="bmviii-schedule__item_time">12:00 pm - 2:00 pm</span>
+            <span class="bmviii-schedule__item_event">Lunch (by zones)</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">You know who</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">2:00 pm</span>
-            <span class="bmviii-schedule__item_event">RecWell Zumba</span>
+            <span class="bmviii-schedule__item_event">Origami</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">Besties</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">3:00 pm</span>
-            <span class="bmviii-schedule__item_event">BM Alumni Panel</span>
+            <span class="bmviii-schedule__item_event">Speed Typing Event</span>
+            <div class="bmix_event_link">In Person</div>
+            <div class="bmix_event_presenter">Purdue Student Government</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">4:00 pm</span>
-            <span class="bmviii-schedule__item_event">Tech Talk: Palantir</span>
+            <span class="bmviii-schedule__item_event">Boba</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">5:00 pm</span>
-            <span class="bmviii-schedule__item_event">Tech Talk: John Deere</span>
+            <span class="bmviii-schedule__item_event">Puzzles</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">☺️</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">6:00 pm</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">7:00 pm</span>
-            <span class="bmviii-schedule__item_event">Sponsor Panel</span>
+            <span class="bmviii-schedule__item_time">6:00 pm - 8:00 pm</span>
+            <span class="bmviii-schedule__item_event">Dinner</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">🥵</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">8:00 pm</span>
-            <span class="bmviii-schedule__item_event">BM Exec Interview</span>
+            <span class="bmviii-schedule__item_event">Bob Ross MS Painting</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">MLH</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">8:30 pm</span>
-            <span class="bmviii-schedule__item_event">Behind the Scenes Vlog</span>
+            <span class="bmviii-schedule__item_time">9:30 pm</span>
+            <span class="bmviii-schedule__item_event">Craft Table</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">9:00 pm</span>
-            <span class="bmviii-schedule__item_event">Riddle Time</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">10:00 pm</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">10:30 pm</span>
-            <span class="bmviii-schedule__item_event">Submission Tutorial</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">11:00 pm</span>
-            <span class="bmviii-schedule__item_event">Pictionary</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">12:00 am</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
+            <span class="bmviii-schedule__item_time">2:00 am</span>
+            <span class="bmviii-schedule__item_event">Snacks</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">You a snack</div>
           </div>
         </div>
 
       </div>
     </div>
-  </div>
 
-  <div class="column is-4">
-    <div class="box bmvii-schedule__box">
-      <img alt="Sunday, January 24" class="bmvii-schedule__date" src={{ static_path "bmviii_schedule_sunday.png" }}>
-
+    <div class="bmvii-schedule__box" id="sunday_schedule" style="display: none; border-right: 1.5px solid;">
       <div class="bmvii-schedule__day">
-
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">8:00 am</span>
-            <span class="bmviii-schedule__item_event">Submission Tutorial</span>
-          </div>
-        </div>
-
-        <div class="bmvii-schedule__item">
-          <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">8:30 am</span>
-            <span class="bmviii-schedule__item_event">Music/Social Media Content</span>
+            <span class="bmviii-schedule__item_time">7:30 am - 9:30 am</span>
+            <span class="bmviii-schedule__item_event">Breakfast (by zones)</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake Breakfast Club</div>
           </div>
         </div>
 
@@ -256,23 +198,67 @@
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">9:00 am</span>
             <span class="bmviii-schedule__item_event">Hacking Ends</span>
+            <div class="bmix_event_link">Check Announcements</div>
+            <div class="bmix_event_presenter">BoilerMake Breakfast Club</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
             <span class="bmviii-schedule__item_time">10:00 am</span>
-            <span class="bmviii-schedule__item_event">Project Expo & Judging</span>
+            <span class="bmviii-schedule__item_event">Project Submission Deadline</span>
+            <div class="bmix_event_link">https://boilermake-ix.devpost.com/</div>
+            <div class="bmix_event_presenter">You!!</div>
           </div>
         </div>
 
         <div class="bmvii-schedule__item">
           <div class="bmvii-schedule__item_info">
-            <span class="bmviii-schedule__item_time">2:00 pm</span>
-            <span class="bmviii-schedule__item_event">Closing Ceremony</span>
+            <span class="bmviii-schedule__item_time">10:00 am</span>
+            <span class="bmviii-schedule__item_event">Expo and Judging</span>
+            <div class="bmix_event_link">None</div>
+            <div class="bmix_event_presenter">You!!</div>
           </div>
         </div>
 
+        <div class="bmvii-schedule__item">
+          <div class="bmvii-schedule__item_info">
+            <span class="bmviii-schedule__item_time">11:00 am - 1:00 pm</span>
+            <span class="bmviii-schedule__item_event">Lunch (by zones)</span>
+            <div class="bmix_event_link">In Person</div>
+            <div class="bmix_event_presenter">The Last Lunch</div>
+          </div>
+        </div>
+
+        <div class="bmvii-schedule__item">
+          <div class="bmvii-schedule__item_info">
+            <span class="bmviii-schedule__item_time">1:15 pm</span>
+            <span class="bmviii-schedule__item_event">Closing Ceremony</span>
+            <div class="bmix_event_link">None</div>
+            <div class="bmix_event_presenter">Sadness</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="column">
+    <div style="background-color: white; margin-left: -25px; border-left: 1.5px solid; border-bottom: 1.5px solid" id="day-buttons">
+      <button id="sunday_button" style="background-color: transparent; border: none; cursor: pointer; float: right; margin-top: 10px" ><p style="font-family:Raleway; font-weight:600px; color:#3F2C4E; font-size:24px;"> Sunday </p></button>
+      <button id="saturday_button" style="background-color: transparent; border: none; cursor: pointer; float: right; margin-top: 10px"><p style="font-family:Raleway; font-weight:600px; color:#3F2C4E; font-size:24px;"> Saturday </p></button>
+      <button id="friday_button" style="background-color: transparent; border: none; cursor: pointer; float: right; margin-top: 10px" ><p style="font-family:Raleway; font-weight:600px; color:#3F2C4E; font-size:24px;"> Friday </p></button>
+      <div style="clear: both"></div>
+    </div>
+
+    <div style="background-color: white; height: 100%; margin-left: -25px; border-left: 1.5px solid;" id="event-details">
+      <div style="border-bottom: 1.5px solid;" id="border-hack">
+      </div>
+      
+      <div style="padding-left: 10px;">
+        <center> <p style="font-family:Raleway; font-weight:bold; color:#3F2C4E; font-size:30px; padding-top: 10px" id="event_name"> Check-In Begins </p> </center>
+        <div style="font-family:Raleway; color:#3F2C4E; font-size:20px; padding-left: 15px; padding-top: 25px; display: flex; justify-content: start;"> <b> Presenter:</b> <p id="event_presenter" style="margin-left: 4px"> BoilerMake! </p> </div>
+        <p style="font-family:Raleway; color:#3F2C4E; font-size:20px; padding-left: 15px; padding-top: 5px"> <b> Link:</b> <a target="_blank" href="/dashboard" id="event_link"> Dashboard </a>
       </div>
     </div>
   </div>

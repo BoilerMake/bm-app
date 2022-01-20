@@ -221,6 +221,17 @@ body {
   z-index: 2;
 }
 
+.day-prev {
+  position: absolute;
+  width: 16px;
+  height: 22px;
+  left: 1004px;
+  top: 1229px;
+
+  border: 5px solid #3F2C4E;
+  transform: matrix(-1, 0, 0, 1, 0, 0);
+}
+
 .carousel-entry {
     opacity: 0;
     position: absolute;
@@ -270,6 +281,26 @@ body {
     right:0; // most right
 }
 
+.day-button-prev, .day-button-next {
+  position: absolute;
+  top: 50%;
+  width: 3rem;
+  height: 3rem;
+  //background-color: #F5F5F5; // customize the buttons
+  transform: translateY(-50%);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1001; /* Sit on top of everything */
+  border: 1px solid black;
+}
+
+.day-button-prev {
+  left: 0; // most left
+}
+.day-button-next {
+  right:0; // most right
+}
+
 .carousel-button-prev::after, .carousel-button-next::after {
     content: " ";
     position: absolute;
@@ -285,6 +316,23 @@ body {
 .carousel-button-next::after {
     left: 47%;
     transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.day-button-prev::after, .day-button-next::after {
+  content: " ";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: 50%;
+  left: 54%;
+  border-right: 2px solid black; // customize the buttons
+  border-bottom: 2px solid black;
+  transform: translate(-50%, -50%) rotate(135deg);
+}
+
+.day-button-next::after {
+  left: 47%;
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .event-photos-container {
@@ -549,18 +597,30 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   margin-bottom: 1rem;
 }
 
+.bmix_event_link {
+  display: none;
+}
+
+.bmix_event_presenter {
+  display: none;
+}
+
 .bmvii-schedule__day {
 	flex-basis: 0;
 	flex-grow: 1;
 	box-sizing: border-box;
+  cursor: pointer;
 }
 
 .bmvii-schedule__item {
 	padding: 0.5rem 0;
-  border-radius: 6px;
+  
+  &:nth-child(odd) {
+		background: #EBDCEE;
+	}
 
-	&:nth-child(odd) {
-		background: #F5F5F5;
+  &:nth-child(even) {
+		background: #E4C0CE;
 	}
 }
 
@@ -572,14 +632,16 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
 }
 
 .bmviii-schedule__item_time {
-    font-family: Cabin, serif;
-    color: black;
+    font-family: Raleway;
+    color: #3F2C4E;
 	white-space: nowrap;
+  font-weight: bold;
+  padding-left: 10px;
 }
 
 .bmviii-schedule__item_event {
-    font-family: Cabin, serif;
-    color: black;
+    font-family: Raleway;
+    color: #3F2C4E;
 	text-align: right;
 }
 
@@ -723,7 +785,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   flex-direction: row;
   justify-content: center;
 
-  color: black;
+  color: white;
 
   .live-hours,
   .live-minutes,
@@ -738,7 +800,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   }
 
   .live--countdown__time {
-    font-family: Market Deco, serif;
+    font-family: Raleway;
     line-height: 1;
     font-size: 4rem;
     margin-bottom: 0px !important;
@@ -746,7 +808,7 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   }
 
   .live--countdown__unit {
-    font-family: Cabin, serif;
+    font-family: Raleway, serif;
     font-size: 1.5rem;
   }
 }
@@ -897,6 +959,14 @@ and (max-width: 600px) {
 
   .carousel-button-prev {
       left: -18px;
+  }
+
+  .day-button-next {
+    right: -5px;
+  } 
+
+  .day-button-prev {
+    left: -18px;
   }
 
   .bmviii-live-section {
