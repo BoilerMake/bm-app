@@ -1,0 +1,140 @@
+{{ define "bmix day of" }}
+{{ template "head" . }}
+
+{{ template "bmix navbar water" . }}
+
+{{ template "flashes" .Flashes }}
+
+
+<section class="section has-background-image" style='background-color: #A7C3FF; background-image: url({{ static_path "bmix_landing_page_bg.svg" }}); min-height: 2500px'>
+    <img alt="BM IX" src={{ static_path "bmix_title_long.svg" }} width="150%" style="display: block; margin-left: auto; margin-right: auto;">
+    <div class="container">
+      <div class="blimp live-countdown">
+        <img alt="BMIX" src={{ static_path "bmix_blimp.png" }} >
+        <div class="blimp_title">
+            <p> Time Left on Cloud IX </p>
+        </div>
+        <div class="live-hours">
+            <p class="live--countdown__time hours-left">36</p>
+            <p class="live--countdown__unit">Hours</p>
+        </div>
+        <div class="live--countdown__colon_1">
+            <p class="live--countdown__time">:</p>
+        </div>
+
+        <div class="live-minutes">
+            <p class="live--countdown__time minutes-left">00</p>
+            <p class="live--countdown__unit">Minutes</p>
+        </div>
+        <div class="live--countdown__colon_2">
+            <p class="live--countdown__time">:</p>
+        </div>
+        <div class="live-seconds">
+            <p class="live--countdown__time seconds-left">00</p>
+            <p class="live--countdown__unit">Seconds</p>
+        </div> 
+        <div class="announcement_title">
+            <p> Live Announcements </p>
+        </div>
+        <div class="announcement_scroll" id="announcement-holder"> 
+            <p class="bmix-announcement-message" id="announcement-temp">Loading Announcements...</p>
+        </div>
+      </div>
+    </div>
+	<div class="container" style="margin-top: 15px">
+		<div class="columns is-centered content">
+			<div class="column is-12" style="margin-top: 150px">
+                <div class="columns">
+                    <div class="column"> <a href="#covid_info"><img src={{ static_path "bmix_covid.png" }} style="height:100%"></img></a></div>
+                    <div class="column"> <a href="https://join.slack.com/t/boilermakeix/shared_invite/zt-11kw5vrm9-pJy_Gw0CWG9NQ~Ix9w~4yw" target="_blank"><img src={{ static_path "bmix_slack.png" }} style="height:100%"></img></a></div>
+                    <div class="column"> <a href="http://boilermake-ix.devpost.com" target="_blank"><img src={{ static_path "bmix_submit.png" }} style="height:99%"></img></a></div>
+                </div>
+                <div class="column is-12" style="margin-top: 50px">
+                {{ template "schedule" }}
+                </div>
+            </div>
+        </div>
+	</div>
+    <div class="container">
+    	<div class="container" style="padding: 0 1.5rem;">
+	    	<b> <p style="font-family:Raleway; font-weight:500px; font-size:45px; color:#3F2C4E; padding-top: 75px"> FAQ </p> </b> 
+	    </div>
+
+        <div class="container" style="padding-top: 50px;">
+            <div class="columns is-mobile">
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What is a hackathon?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                A hackathon - or hacking marathon - is an event that promotes self-expression and creativity through technology.
+                                Anyone with or without a technical background can attend to learn, build, and share new things.
+                                Hackers form teams around a problem or idea, collaboratively build or code a unique solution from scratch, and compete for prizes with other teams.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">What if I don't know have a team?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                That's fine! We will have ice breakers to help you meet other students looking for a team and you can also submit a project just by yourself!</p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-left-accordion">How do we submit/demo projects?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                we will make annoucnements with more details but you will use the Devpost to submit your project!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-left-accordion">Do you do travel reimbursements?</button>
+                        <div class="bmviii-left-accordion-content">
+                            <p>
+                                Due to the ongoing pandemic we can neither allow non-Purdue students to be in person nor can we reimburse travel costs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-half">
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">Is it free?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Yes! BoilerMake is completely free for all attendees.
+                            </p>
+                        </div>
+                    </div>
+                     <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">What if I've never been to a hackathon?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                We will have events throughout the weekend to get you accustomed to a hackathon, and you can always ask exec team members questions!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container bmviii-container-accordion">
+                        <button class="bmviii-right-accordion">Who is eligible to apply?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                All undergraduate students from any major and university!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="container">
+                        <button class="bmviii-right-accordion">What if I have any other questions?</button>
+                        <div class="bmviii-right-accordion-content">
+                            <p>
+                                Please email us at <a href='mailto:team@boilermake.org'>team@boilermake.org</a>!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+</section>
+
+{{ template "bmix footer" . }}
+{{ end }}

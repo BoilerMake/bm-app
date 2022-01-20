@@ -382,7 +382,7 @@ func (h *Handler) getLive() http.HandlerFunc {
 			return
 		}
 
-		h.Templates.RenderTemplate(w, "bmviii day of", p)
+		h.Templates.RenderTemplate(w, "bmix day of", p)
 	}
 }
 

@@ -1,5 +1,5 @@
-const end = new Date('Jan 24, 2021 09:00:00 EST').getTime();
-const start = new Date('Jan 22, 2021 21:00:00 EST').getTime();
+const end = new Date('Jan 23, 2022 09:00:00 EST').getTime();
+const start = new Date('Jan 21, 2022 21:00:00 EST').getTime();
 const tzoffset = -300 * 60 * 1000; // Timezone offset for EST in milliseconds (this does not hold for Daylight Saving Time, but hopefully we won't have to specify timezone ever again)
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -286,7 +286,94 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateAnnouncements, 90000);
   }
 
+  	var schedule = document.getElementById("schedule_things");
+  if (schedule) {
+	  scheduleSelection();
+	  updateEventDetails();
+  }
 });
+
+// allow schedule to change depending on button click
+function scheduleSelection() {
+	var friday_button = document.getElementById("friday_button");
+	var saturday_button = document.getElementById("saturday_button");
+	var sunday_button = document.getElementById("sunday_button");
+	var friday_schedule = document.getElementById("friday_schedule");
+	var saturday_schedule = document.getElementById("saturday_schedule");
+	var sunday_schedule = document.getElementById("sunday_schedule");
+	var eventDetails = document.getElementById("event-details");
+	var borderHack = document.getElementById("border-hack");
+	eventDetails.style.marginTop = -1 * document.getElementById("day-buttons").offsetHeight + "px";
+	borderHack.style.paddingTop = document.getElementById("title").offsetHeight + "px";
+	// default select
+	friday_button.style.fontWeight = "bold"; 
+
+	// Friday
+	friday_button.onclick = function () {
+		// make button, SELECTED
+		friday_button.style.fontWeight = "bold";
+		saturday_button.style.fontWeight = "normal";
+		sunday_button.style.fontWeight = "normal";
+
+		// hide other schedules, show this one
+		friday_schedule.style.display = "block";
+		saturday_schedule.style.display = "none";
+		sunday_schedule.style.display = "none";
+	}
+
+	// Saturday
+	saturday_button.onclick = function () {
+		// make button, SELECTED
+		friday_button.style.fontWeight = "normal";
+		saturday_button.style.fontWeight = "bold";
+		sunday_button.style.fontWeight = "normal";
+
+		// hide other schedules, show this one
+		friday_schedule.style.display = "none";
+		saturday_schedule.style.display = "block";
+		sunday_schedule.style.display = "none";
+	}
+
+	// Sunday
+	sunday_button.onclick = function () {
+		// make button, SELECTED
+		friday_button.style.fontWeight = "normal";
+		saturday_button.style.fontWeight = "normal";
+		sunday_button.style.fontWeight = "bold";
+
+		// hide other schedules, show this one
+		friday_schedule.style.display = "none";
+		saturday_schedule.style.display = "none";
+		sunday_schedule.style.display = "block";
+	}
+}
+
+// change eventDetails based on event selected
+function updateEventDetails() {
+	var scheduleItems = document.getElementsByClassName("bmvii-schedule__item");
+	for (var i = 0; i < scheduleItems.length; i++) {
+		const textToUpdate =  scheduleItems.item(i).getElementsByClassName("bmviii-schedule__item_event").item(0).textContent;
+		const link = scheduleItems.item(i).getElementsByClassName("bmix_event_link").item(0).textContent;
+		const presenter = scheduleItems.item(i).getElementsByClassName("bmix_event_presenter").item(0).textContent;
+		scheduleItems.item(i).onclick = function() {
+			document.getElementById("event_name").textContent = textToUpdate;
+			document.getElementById("event_link").textContent = link;
+			let actual_link;
+			if (link.normalize() === "In Person".normalize() || link.normalize() === "None".normalize()) {
+				actual_link = "";
+			} else if (link.normalize() === "Check Announcements".normalize()) {
+				actual_link = "/live";
+			} else if (link.normalize() === "Dashboard".normalize()) {
+				actual_link = "dashboard";
+			} else {
+				actual_link = link;
+			}
+			const final_link = actual_link;
+			document.getElementById("event_link").href = final_link;
+			document.getElementById("event_presenter").textContent = presenter;
+		}
+	}
+}
 
 // carousel management
 const itemClassName = 'carousel-entry';
@@ -449,8 +536,10 @@ function addAnnouncement(ann) {
 	// let newAnnDiv = document.createElement('div');
 
 	// get time
-	let pField = document.createElement('p');
-	pField.classList.add('bmviii-announcement-style');
+	let mField = document.createElement('p');
+	let tField = document.createElement('p');
+	mField.classList.add('bmix-announcement-message');
+	tField.classList.add('bmix-annoucement-timestamp');
 	let rawDate = new Date(ann.createdAt);
 	rawDate.setTime(rawDate.getTime() + rawDate.getTimezoneOffset() * 60 * 1000); // convert to UTC
 
@@ -492,16 +581,17 @@ function addAnnouncement(ann) {
 	let ampm = hours < 12 ? 'am' : 'pm';
 	hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
 	minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
-	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ampm + ' EST]';
-	pField.innerHTML = formattedTime + ' ' +  ann.message;
+	mField.innerHTML = ann.message;
+	tField.innerHTML = 'Posted at ' + hours + ':' + minutes + ' ' + 'pm<hr>'
+	
 
-	annHolder.appendChild(pField)
+	annHolder.appendChild(mField);
+	annHolder.appendChild(tField);
 }
 
 function updateCountdown() {
 	const now = new Date().getTime();
 	var distance;
-
 	if (start > now || now > end) { // event has either not started or ended
 		if (now > end) { // event has ended set timer to 0's.
 			document.querySelector('.hours-left').innerHTML = '00' ;
@@ -512,7 +602,7 @@ function updateCountdown() {
 	}
 	distance = end - now;
 	// var days = Math.floor(distance / (1000 * 60 * 60 * 24)).toString();
-	var hours = Math.floor((distance % (1000 * 60 * 60 * 36)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+	var hours = Math.floor((distance) / (1000 * 60 * 60)).toString().padStart(2, '0');
 	var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
 	var seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
 
