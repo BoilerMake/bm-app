@@ -449,8 +449,10 @@ function addAnnouncement(ann) {
 	// let newAnnDiv = document.createElement('div');
 
 	// get time
-	let pField = document.createElement('p');
-	pField.classList.add('bmviii-announcement-style');
+	let mField = document.createElement('p');
+	let tField = document.createElement('p');
+	mField.classList.add('bmix-announcement-message');
+	tField.classList.add('bmix-annoucement-timestamp');
 	let rawDate = new Date(ann.createdAt);
 	rawDate.setTime(rawDate.getTime() + rawDate.getTimezoneOffset() * 60 * 1000); // convert to UTC
 
@@ -492,10 +494,12 @@ function addAnnouncement(ann) {
 	let ampm = hours < 12 ? 'am' : 'pm';
 	hours = (hours % 12) ? (hours % 12) : 12; // if hours %12 is 0, the hour should be 12 either am or pm
 	minutes = (minutes < 10) ? '0' + minutes : minutes; // prepend a 0 if needed
-	let formattedTime = '[ ' + trueDay + ' ' + hours + ':' + minutes + ampm + ' EST]';
-	pField.innerHTML = formattedTime + ' ' +  ann.message;
+	mField.innerHTML = ann.message;
+	tField.innerHTML = 'Posted at ' + hours + ':' + minutes + ' ' + 'pm<hr>'
+	
 
-	annHolder.appendChild(pField)
+	annHolder.appendChild(mField);
+	annHolder.appendChild(tField);
 }
 
 function updateCountdown() {

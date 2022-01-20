@@ -524,6 +524,9 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
  }
 
  .blimp {
+  //position:absolute;
+  width: 1338px;
+  height: 332px;
  }
 
 
@@ -726,44 +729,89 @@ button.bmviii-left-accordion:hover, button.bmviii-right-accordion:hover, button.
   flex-direction: row;
   justify-content: center;
 
-  color: black;
+  .live-hours {
+    position: absolute;
+    left: 7.5%;
+    top: 32.5%;
+  }
+  .blimp_title {
+    position: absolute;
+    left: 16%;
+    top: 24%;
+    font-family: Raleway;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 40px;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  .announcement_title {
+    position: absolute;
+    left:65.6%;
+    top:9.3%;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 27px;
+    line-height: 32px;
 
-  .live-hours,
-  .live-minutes,
+    color: #3F2C4E;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+  .announcement_scroll {
+    position: absolute;
+    left: 65.5%;
+    top: 25%;
+    overflow-y: scroll;
+    height: 61%;
+    width: 30%;
+    resize: none;
+  }
+  .live-minutes {
+    position: absolute;
+    left: 19.5%;
+    top: 32.5%;
+  }
   .live-seconds {
     position: absolute;
-    width: 459px;
-    height: 117px;
-    left: 100px;
-    top: 300px;
+    left: 31.5%;
+    top: 32.5%;
+  }
 
+  .live--countdown__colon_1 {
+    position: absolute;
+    left:17.2%;
+    top: 32.5%;
+  }
+
+  .live--countdown__colon_2 {
+    position: absolute;
+    left: 29.4%;
+    top: 32.5%;
+  }
+
+  .live--countdown__time {
     font-family: Raleway;
     font-style: normal;
     font-weight: 600;
     font-size: 90px;
     line-height: 106px;
-    text-align: center;
-
     color: #FFFFFF;
-
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
 
-  .live--countdown__colon {
-    padding: 0 5px;
-  }
-
-  .live--countdown__time {
-    font-family: Market Deco, serif;
-    line-height: 1;
-    font-size: 4rem;
-    margin-bottom: 0px !important;
-    font-weight: 600;
-  }
-
   .live--countdown__unit {
-    font-family: Cabin, serif;
-    font-size: 1.5rem;
+    font-family: Raleway;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 27px;
+    line-height: 32px;
+    text-align: center;
+    
+    color: #FFFFFF;
+    
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -955,4 +1003,21 @@ and (max-width: 600px) {
   &:nth-child(even) {
     background: #F5F5F5;
   }
+}
+.bmix-announcement-message {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 23px;
+  color: #000000;
+}
+.bmix-annoucement-timestamp {
+  font-family: Raleway;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 23px;
+  color: #000000;
+  text-align: right;
 }
