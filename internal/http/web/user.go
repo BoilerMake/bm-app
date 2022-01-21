@@ -325,8 +325,6 @@ func (h *Handler) getDashboard() http.HandlerFunc {
 			}
 		}
 
-		a.Decision = models.DecisionAccepted
-
 		// Only show to accepted users
 		if a.Decision == models.DecisionAccepted {
 			if time.Now().After(models.RSVPExpiryDate) {
